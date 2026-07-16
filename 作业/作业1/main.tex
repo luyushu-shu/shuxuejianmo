@@ -1,0 +1,182 @@
+\documentclass[openany]{./MathematicalModelCaseStudyReport}
+\let\cleardoublepage\clearpage
+
+\graphicspath{{./}{figures/}}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\setlist{itemsep=0.05\baselineskip,itemindent=0em,partopsep=0pt,parsep=0ex,topsep=0.1\baselineskip}
+\usepackage{algorithm}
+\usepackage[noEnd=false,indLines=false]{algpseudocodex}
+\floatname{algorithm}{\color{blue} 算法}
+\numberwithin{algorithm}{chapter}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+bookmarksnumbered,
+hidelinks,
+pdfborder={0 0 0}
+}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\T}{\mathrm{T}}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\argmin}{arg\,min}
+
+\begin{document}
+
+\graduateyear{2026}
+\class{O241.6}
+\ctitle{\uline{融合测角测距观测的空间目标定位研究\\
+基于牛顿法与法方程迭代的建模与实现}}
+\def\cctitle{融合测角与测距观测的空间目标定位研究}
+\caffil{数理科学学院数学系}
+\cmajor{信息与计算科学}
+\cdirection{数学建模与数值优化}
+\csupervisor{陈务深\, 教授}
+\cauthor{陆雨澍}
+\studentid{51088888888}
+\cdate{2026 年 4 月}
+
+\etitle{\uline{Plane Target Positioning with Angle-Range Fusion\\
+Modeling and Numerical Optimization}}
+\eaffil{School of Mathematical Sciences}
+\emajor{Information and Computational Science}
+\edirection{Mathematical Modeling}
+\esupervisor{CHEN Wu Shen (Professor)}
+\eauthor{LU YUSHU}
+\edate{April, 2026}
+
+\newgeometry{top=2.0cm,bottom=2.0cm,left=2.5cm,right=2.5cm}
+{\renewcommand{\baselinestretch}{1.6}\makecover}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\include{Declaration}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\include{Committee}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\frontmatter
+\restoregeometry
+\include{abstract_chs}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\include{abstract_eng}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\setcounter{tocdepth}{1}
+\phantomsection\pdfbookmark[0]{目录}{ccontents}
+\tableofcontents
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+{\let\oldnumberline\numberline
+\renewcommand{\numberline}{图~\oldnumberline}
+\listoffigures
+}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+{\let\oldnumberline\numberline
+\renewcommand{\numberline}{表~\oldnumberline}
+\listoftables
+}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\linespread{1.4}\selectfont
+\mainmatter
+
+\input{ch01_background}
+\input{ch02_model}
+\input{ch03_derivative}
+\input{ch04_initialization}
+\input{ch05_algorithms}
+\input{ch06_experiment}
+\input{ch07_uncertainty}
+\input{ch08_extensions}
+\input{ch08a_sensitivity}
+\input{ch08b_cases}
+\input{ch09_conclusion}
+
+\backmatter
+\linespread{1.1}\selectfont
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{参考文献}
+\thispagestyle{plain}
+
+\bibitem{Nocedal2006}
+\newblock J. Nocedal and S. J. Wright,
+\newblock \emph{Numerical Optimization}, 2nd Edition,
+\newblock Springer, New York, 2006.
+
+\bibitem{Bjorck1996}
+\newblock A. Bjorck,
+\newblock \emph{Numerical Methods for Least Squares Problems},
+\newblock SIAM, Philadelphia, 1996.
+
+\bibitem{Kay1993}
+\newblock S. M. Kay,
+\newblock \emph{Fundamentals of Statistical Signal Processing: Estimation Theory},
+\newblock Prentice Hall, 1993.
+
+\bibitem{Blackman1999}
+\newblock S. Blackman and R. Popoli,
+\newblock \emph{Design and Analysis of Modern Tracking Systems},
+\newblock Artech House, 1999.
+
+\bibitem{BarShalom2001}
+\newblock Y. Bar-Shalom, X. R. Li and T. Kirubarajan,
+\newblock \emph{Estimation with Applications to Tracking and Navigation},
+\newblock Wiley, 2001.
+
+\bibitem{Bancroft1985}
+\newblock S. Bancroft,
+\newblock An algebraic solution of the GPS equations,
+\newblock \emph{IEEE Transactions on Aerospace and Electronic Systems}, 21 (1985), 56--59.
+
+\bibitem{Foy1976}
+\newblock W. H. Foy,
+\newblock Position-location solutions by Taylor-series estimation,
+\newblock \emph{IEEE Transactions on Aerospace and Electronic Systems}, 12 (1976), 187--194.
+
+\bibitem{Chan1994}
+\newblock Y. T. Chan and K. C. Ho,
+\newblock A simple and efficient estimator for hyperbolic location,
+\newblock \emph{IEEE Transactions on Signal Processing}, 42 (1994), 1905--1915.
+
+\bibitem{Higham2002}
+\newblock N. J. Higham,
+\newblock \emph{Accuracy and Stability of Numerical Algorithms}, 2nd Edition,
+\newblock SIAM, Philadelphia, 2002.
+
+\bibitem{Boyd2004}
+\newblock S. Boyd and L. Vandenberghe,
+\newblock \emph{Convex Optimization},
+\newblock Cambridge University Press, 2004.
+
+\bibitem{ChenWushen2026}
+\newblock 陈务深,
+\newblock 多站观测空间定位的非线性优化讲义,
+\newblock 南京工业大学课程讲义, 2026.
+
+\bibitem{HuangYushu2026}
+\newblock 陆雨澍,
+\newblock 融合测角测距定位算法的程序实现与误差分析,
+\newblock 课程项目报告, 2026.
+
+\end{thebibliography}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 A：关键程序清单与说明}
+\addcontentsline{toc}{chapter}{附录 A：关键程序清单与说明}
+\input{appendix_a}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 B：额外实验结果}
+\addcontentsline{toc}{chapter}{附录 B：额外实验结果}
+\input{appendix_b}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{致谢}
+\addcontentsline{toc}{chapter}{致谢}
+感谢导师在选题、建模、算法与写作中的系统指导，感谢课程组提供模板与实验环境，感谢同学在代码测试和结果校验阶段的协助。本文在组织上重点保证了模型推导完整性、程序对应关系可追踪性与结果解释一致性。
+
+\end{document}

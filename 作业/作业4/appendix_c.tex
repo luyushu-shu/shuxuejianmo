@@ -1,0 +1,48 @@
+\section*{C.1 方向角到单位向量的推导}
+设方位角为 $\alpha$，仰角为 $\beta$，方向单位向量可写为
+\[
+\mathbf s=
+\begin{bmatrix}
+\cos\beta\cos\alpha\\
+\cos\beta\sin\alpha\\
+\sin\beta
+\end{bmatrix}.
+\]
+该表达在题目给定两组观测方向下均可直接计算。
+
+\section*{C.2 局部系抛物面参数回写}
+在局部系中拟合得到顶点 $\mathbf v_{\text{loc}}$ 和轴向标准形式后，通过旋转矩阵回写到地固系：
+\[
+\mathbf v_{\text{glob}}=\mathbf R^{-1}\mathbf v_{\text{loc}}.
+\]
+节点坐标同理回写并进入结果表。
+
+\section*{C.3 边长约束线性化}
+对边 $(i,j)$ 的长度函数
+\[
+\ell_{ij}(\mathbf x_i',\mathbf x_j')=\|\mathbf x_i'-\mathbf x_j'\|_2
+\]
+在当前迭代点线性化，可得增量近似：
+\[
+\Delta \ell_{ij}\approx \mathbf g_{ij,i}^\mathsf T\Delta\mathbf x_i'+\mathbf g_{ij,j}^\mathsf T\Delta\mathbf x_j',
+\]
+其中梯度向量
+\[
+\mathbf g_{ij,i}=\frac{\mathbf x_i'-\mathbf x_j'}{\|\mathbf x_i'-\mathbf x_j'\|_2},\quad
+\mathbf g_{ij,j}=-\mathbf g_{ij,i}.
+\]
+
+\section*{C.4 接收比 bootstrap 置信区间}
+对采样点集合进行有放回重采样，重复计算接收比 $\eta^{(b)}$，得到分位区间
+\[
+[\eta_{2.5\%},\eta_{97.5\%}],
+\]
+可用于报告“接收比提升是否显著”。
+
+\section*{C.5 公式到代码接口说明}
+\begin{itemize}
+  \item 方向输入模块：$(\alpha,\beta)\mapsto\mathbf s$；
+  \item 几何优化模块：节点调整与约束满足；
+  \item 光学评估模块：反射追踪与接收比；
+  \item 导出模块：生成题目规定的结果文件。
+\end{itemize}

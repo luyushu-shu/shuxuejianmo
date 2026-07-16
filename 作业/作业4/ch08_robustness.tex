@@ -1,0 +1,44 @@
+\chapter{鲁棒性实验与工程化讨论}
+
+\section{扰动实验设计}
+为了检验方案稳定性，设置以下扰动：
+\begin{enumerate}
+  \item 观测方向扰动：$\Delta\alpha,\Delta\beta\in[-0.5^\circ,0.5^\circ]$；
+  \item 节点初值扰动：在毫米级随机扰动下重复优化；
+  \item 约束边界扰动：测试行程上下限微调对结果影响。
+\end{enumerate}
+
+\section{稳定性评价指标}
+定义四个鲁棒性指标：
+\begin{itemize}
+  \item 顶点位置波动 $\sigma_v$；
+  \item 最大促动器量波动 $\sigma_{\Delta l}$；
+  \item 接收比波动 $\sigma_\eta$；
+  \item 可行率 $P_{\text{feasible}}$。
+\end{itemize}
+若 $P_{\text{feasible}}$ 高且 $\sigma_\eta$ 小，说明方案具备工程稳健性。
+
+\section{鲁棒优化扩展}
+在强扰动场景，可采用保守优化目标：
+\[
+\min \left\{\mathbb E[J]+\lambda \operatorname{Var}(J)\right\},
+\]
+其中 $\lambda$ 为风险权重。该目标可降低极端工况下约束违规概率。
+
+\section{计算开销分析}
+设节点规模为 $N$，边规模为 $M$，每轮迭代主要代价来自目标与约束计算，复杂度约为 $\mathcal O(N+M)$。大规模场景可通过以下方式提速：
+\begin{enumerate}
+  \item 稀疏矩阵求解；
+  \item 局部子域并行；
+  \item 自适应采样减少光线追踪负担。
+\end{enumerate}
+
+\section{工程实施建议}
+\begin{itemize}
+  \item 将模型输出封装为标准接口，直接对接 `result.xlsx` 生成流程；
+  \item 在实际系统中配置约束预警阈值，避免执行端超限；
+  \item 建立“方向输入 -- 方案生成 -- 光学校验”的自动化流水线。
+\end{itemize}
+
+\section{本章小结}
+本章从扰动、计算与部署三方面说明模型可落地性，为课程作业从“理论可行”走向“工程可用”提供支撑。

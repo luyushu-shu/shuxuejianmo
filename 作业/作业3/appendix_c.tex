@@ -1,0 +1,57 @@
+\section*{C.1 关键积分表达与闭式化}
+设刀具寿命密度为
+\[
+f(m)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(m-\mu)^2}{2\sigma^2}\right),
+\]
+则区间概率函数
+\[
+f_0(x,y)=\int_x^y f(m)\,dm
+\]
+可由误差函数表达为
+\[
+f_0(x,y)=\frac{1}{2}\left[\operatorname{erf}\!\left(\frac{y-\mu}{\sqrt2\sigma}\right)-\operatorname{erf}\!\left(\frac{x-\mu}{\sqrt2\sigma}\right)\right].
+\]
+
+对期望长度积分
+\[
+f_1(x,y)=\int_x^y(m-x)f(m)\,dm,\quad
+f_2(x,y)=\int_x^y(y-m)f(m)\,dm,
+\]
+可写为
+\[
+f_1(x,y)=\frac{\sigma}{\sqrt{2\pi}}\!\left(e^{-\frac{(x-\mu)^2}{2\sigma^2}}-e^{-\frac{(y-\mu)^2}{2\sigma^2}}\right)-\frac{x-\mu}{2}\Delta\operatorname{erf},
+\]
+\[
+f_2(x,y)=\frac{y-\mu}{2}\Delta\operatorname{erf}-\frac{\sigma}{\sqrt{2\pi}}\!\left(e^{-\frac{(x-\mu)^2}{2\sigma^2}}-e^{-\frac{(y-\mu)^2}{2\sigma^2}}\right),
+\]
+其中
+\[
+\Delta\operatorname{erf}=\operatorname{erf}\!\left(\frac{y-\mu}{\sqrt2\sigma}\right)-\operatorname{erf}\!\left(\frac{x-\mu}{\sqrt2\sigma}\right).
+\]
+
+\section*{C.2 目标函数梯度近似}
+固定检查次数 $n$ 时，记变量向量为 $\mathbf X_n=(x_1,\dots,x_n)$，目标函数为 $\phi(\mathbf X_n)$。数值优化可采用中心差分近似梯度：
+\[
+\frac{\partial \phi}{\partial x_i}\approx \frac{\phi(\mathbf X_n+h\mathbf e_i)-\phi(\mathbf X_n-h\mathbf e_i)}{2h}.
+\]
+在步长较小且积分计算稳定时，该近似能满足拟牛顿法与 SQP 的收敛需求。
+
+\section*{C.3 误判机制下的转移概率}
+定义状态集合 $\mathcal S=\{\text{正常},\text{故障}\}$，检测结果集合 $\mathcal O=\{\text{合格},\text{不合格}\}$。则观测矩阵为
+\[
+\mathbf P(\mathcal O\mid\mathcal S)=
+\begin{bmatrix}
+R_1 & 1-R_1\\
+R_2 & 1-R_2
+\end{bmatrix}.
+\]
+双检确认策略下，若两次独立同分布，则误停概率由 $(1-R_1)^2$ 控制，漏检概率由 $R_2^2$ 控制，形成与单检策略不同的成本平衡点。
+
+\section*{C.4 推导结果在程序中的实现映射}
+\begin{itemize}
+  \item 区间概率 $p_t$：对应概率积分函数；
+  \item $\zeta_1,\zeta_2,\gamma,\eta_1,\eta_2$：对应周期统计模块；
+  \item $h,\phi$：对应成本计算与目标函数模块；
+  \item 外层枚举 $n$：对应主控调度模块。
+\end{itemize}
+该映射保证了“公式 -- 代码 -- 结果”的一致性，便于答辩时追踪解释。

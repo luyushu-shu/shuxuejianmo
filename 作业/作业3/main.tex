@@ -1,0 +1,121 @@
+\documentclass[openany]{../作业1/MathematicalModelCaseStudyReport}
+\let\cleardoublepage\clearpage
+
+\graphicspath{{./}{figures/}}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{longtable}
+\setlist{itemsep=0.05\baselineskip,itemindent=0em,partopsep=0pt,parsep=0ex,topsep=0.1\baselineskip}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\floatname{algorithm}{\color{blue} 算法}
+\numberwithin{algorithm}{chapter}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{bookmarksnumbered,hidelinks,pdfborder={0 0 0}}
+
+\begin{document}
+
+\graduateyear{2026}
+\class{O241.6}
+\ctitle{\uline{自动化车床刀具检查与换刀策略建模\\
+基于期望成本最小化的优化分析}}
+\def\cctitle{自动化车床刀具检查与换刀策略建模}
+\caffil{数理科学学院数学系}
+\cmajor{数学与应用数学}
+\cdirection{数学建模与优化}
+\csupervisor{陈务深\, 教授}
+\cauthor{沈亿博}
+\studentid{202421148019}
+\cdate{2026 年 5 月}
+
+\etitle{\uline{Optimization of Tool Inspection and Replacement Policy\\
+for Automated Lathe Production}}
+\eaffil{School of Mathematical Sciences}
+\emajor{Mathematics And Applied Mathematics}
+\edirection{Mathematical Modeling and Optimization}
+\esupervisor{CHEN Wu Shen (Professor)}
+\eauthor{Shen Yibo}
+\edate{May, 2026}
+
+\newgeometry{top=2.0cm,bottom=2.0cm,left=2.5cm,right=2.5cm}
+{\renewcommand{\baselinestretch}{1.6}\makecover}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\include{Declaration}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\include{Committee}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\frontmatter
+\restoregeometry
+\include{abstract_chs}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\include{abstract_eng}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\setcounter{tocdepth}{1}
+\phantomsection\pdfbookmark[0]{目录}{ccontents}
+\tableofcontents
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\linespread{1.4}\selectfont
+\mainmatter
+
+\input{ch01_background}
+\input{ch02_model}
+\input{ch03_solution}
+\input{ch04_results}
+\input{ch05_conclusion}
+\input{ch06_sensitivity}
+\input{ch07_simulation}
+\input{ch08_engineering}
+\input{ch09_case_study}
+
+\backmatter
+\linespread{1.1}\selectfont
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{参考文献}
+\thispagestyle{plain}
+\bibitem{Nocedal2006}
+J. Nocedal and S. J. Wright, \emph{Numerical Optimization}, Springer, 2006.
+\bibitem{Boyd2004}
+S. Boyd and L. Vandenberghe, \emph{Convex Optimization}, Cambridge University Press, 2004.
+\bibitem{Chen2026}
+陈务深, 数学建模与优化课程讲义, 南京工业大学, 2026.
+\end{thebibliography}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 A：参数与数据}
+\addcontentsline{toc}{chapter}{附录 A：参数与数据}
+\input{appendix_a}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 B：程序与补充结果}
+\addcontentsline{toc}{chapter}{附录 B：程序与补充结果}
+\input{appendix_b}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 C：公式推导细节}
+\addcontentsline{toc}{chapter}{附录 C：公式推导细节}
+\input{appendix_c}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 D：策略枚举结果表}
+\addcontentsline{toc}{chapter}{附录 D：策略枚举结果表}
+\input{appendix_d}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 E：蒙特卡罗批量结果}
+\addcontentsline{toc}{chapter}{附录 E：蒙特卡罗批量结果}
+\input{appendix_e}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 F：参数网格扫描表}
+\addcontentsline{toc}{chapter}{附录 F：参数网格扫描表}
+\input{appendix_f}
+
+\end{document}

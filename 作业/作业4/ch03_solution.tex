@@ -1,0 +1,59 @@
+\chapter{算法设计与求解流程}
+
+\section{数据预处理}
+根据附件数据完成以下步骤：
+\begin{enumerate}
+  \item 读取主索节点编号与坐标；
+  \item 读取地锚点与促动器对应关系；
+  \item 读取反射面板节点连接关系并构造边集 $E$；
+  \item 筛选 300 m 口径区域节点集合 $\Omega$。
+\end{enumerate}
+预处理阶段输出统一索引结构，供后续优化与结果导出复用。
+
+\section{理想抛物面参数确定}
+给定 $(\alpha,\beta)$ 后：
+\begin{enumerate}
+  \item 计算目标方向单位向量 $\mathbf s$；
+  \item 根据焦面几何关系确定焦点约束；
+  \item 通过拟合条件求得理想抛物面顶点 $\mathbf v$ 与焦距 $f$。
+\end{enumerate}
+第 1 问与第 2 问仅在方向参数上不同，算法结构一致。
+
+\section{约束优化求解}
+以式 \eqref{eq:Jfast} 为目标，结合约束 \eqref{eq:stroke}、\eqref{eq:length} 求解节点位移。建议采用“罚函数 + 序列二次规划（SQP）”或“增广拉格朗日”策略。算法流程如下：
+\begin{algorithm}[H]
+\caption{FAST 反射面节点约束优化}
+\begin{algorithmic}[1]
+\State 输入节点初始坐标、边集 $E$、理想抛物面参数
+\State 初始化 $\mathbf x_i' \gets \mathbf x_i$
+\For{$k=1,2,\ldots$}
+  \State 计算目标函数与约束违反量
+  \State 求解子问题更新 $\mathbf x_i'$ 与 $\Delta l_i$
+  \If{目标下降与约束均满足收敛阈值}
+    \State break
+  \EndIf
+\EndFor
+\State 输出顶点、节点坐标、促动器伸缩量
+\end{algorithmic}
+\end{algorithm}
+
+\section{接收比计算算法}
+在得到调节后反射面后，按几何光学定律计算接收比：
+\begin{enumerate}
+  \item 对口径区域进行离散采样并给出入射方向；
+  \item 利用局部法向计算反射光线方向；
+  \item 判断反射光线是否进入馈源舱 1 m 有效圆盘；
+  \item 统计有效样本比例得到 $\eta_{\text{work}}$；
+  \item 对基准球面重复计算得 $\eta_{\text{base}}$。
+\end{enumerate}
+
+\section{结果导出}
+按照题目附件格式输出 `result.xlsx`，至少包含：
+\begin{itemize}
+  \item 理想抛物面顶点坐标；
+  \item 节点编号与调节后坐标；
+  \item 促动器径向伸缩量。
+\end{itemize}
+
+\section{本章小结}
+本章给出了可直接实现的完整计算链路：数据预处理、理想面参数确定、约束优化、光学验证和结果导出。

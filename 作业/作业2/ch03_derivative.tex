@@ -1,0 +1,69 @@
+\chapter{优化量推导与数值实现}
+
+\section{时刻级残差函数}
+在单时刻估计中，定义第 $i$ 个信标残差
+\[
+r_i(\bm p)=d_i(\bm p)-\hat d_i
+=\sqrt{(x-u_i)^2+(y-v_i)^2}-\hat d_i.
+\]
+目标函数为
+\[
+F(\bm p)=\sum_i \omega_i r_i(\bm p)^2.
+\]
+
+\section{梯度表达}
+记 $\Delta x_i=x-u_i,\ \Delta y_i=y-v_i,\ d_i=\sqrt{\Delta x_i^2+\Delta y_i^2}$，则
+\[
+\frac{\partial r_i}{\partial x}=\frac{\Delta x_i}{d_i},\qquad
+\frac{\partial r_i}{\partial y}=\frac{\Delta y_i}{d_i}.
+\]
+由链式法则有
+\begin{equation}
+\nabla F(\bm p)=2\sum_i \omega_i r_i
+\begin{bmatrix}
+\Delta x_i/d_i\\
+\Delta y_i/d_i
+\end{bmatrix}.
+\end{equation}
+
+\section{近似海森矩阵}
+在高斯牛顿近似下，忽略二阶残差项，可写
+\begin{equation}
+\bm H \approx 2\sum_i \omega_i \bm j_i\bm j_i^{\T},
+\quad
+\bm j_i=
+\begin{bmatrix}
+\Delta x_i/d_i\\
+\Delta y_i/d_i
+\end{bmatrix}.
+\end{equation}
+该近似在残差较小时具有良好数值稳定性。
+
+\section{滑动窗口展开}
+窗口长度为 $w$ 时，优化变量为
+\[
+\bm X=[\bm p_{t-w+1}^{\T},\dots,\bm p_t^{\T}]^{\T}\in\R^{2w}.
+\]
+对应法方程呈稀疏块带状结构。观测项贡献块对角矩阵，运动约束贡献相邻块耦合项，适合使用稀疏线性代数求解。
+
+\section{鲁棒迭代重加权}
+在第 $k$ 次迭代：
+\begin{enumerate}
+  \item 用当前轨迹计算残差 $r_i^{(k)}$；
+  \item 根据 Huber 规则更新权重 $\omega_i^{(k)}$；
+  \item 构造并求解线性化增量方程；
+  \item 更新轨迹并判断收敛。
+\end{enumerate}
+收敛条件可采用
+\[
+\frac{\|\Delta \bm X\|_2}{\|\bm X\|_2}<10^{-5}.
+\]
+
+\section{实现细节}
+为保证实时性，本文实现采用以下策略：
+\begin{itemize}
+  \item 只保留窗口内变量，避免全局重算；
+  \item 对极端 RSSI 值做截断，防止数值爆炸；
+  \item 对可行域投影使用最近栅格近似，降低计算量；
+  \item 每帧最多迭代固定步数，保证时延上界。
+\end{itemize}

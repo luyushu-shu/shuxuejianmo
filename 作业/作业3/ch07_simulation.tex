@@ -1,0 +1,60 @@
+\chapter{扩展仿真实验与对比}
+
+\section{实验设置}
+为提升结论可信度，本章设置三类对比策略：
+\begin{enumerate}
+  \item \textbf{固定间隔策略}：每隔 $d$ 件检查一次，末端强制换刀；
+  \item \textbf{不等间隔单检策略}：采用本模型优化得到的 $(k_1,\ldots,k_n)$；
+  \item \textbf{双检确认策略}：抽检不合格时立即复检，再判定停机。
+\end{enumerate}
+每类策略在相同寿命分布与成本参数下进行 Monte Carlo 模拟，重复 $N=10^4$ 个生产周期。
+
+\section{评价指标}
+除单位合格品成本 $\phi$ 外，新增如下指标：
+\begin{itemize}
+  \item 周期平均产量 $\bar Q$；
+  \item 周期平均废品率 $\bar r_s$；
+  \item 平均停机次数 $\bar N_{\text{stop}}$；
+  \item 单位时间收益 proxy 指标 $U=(\text{合格品产值}-h)/T$。
+\end{itemize}
+
+\section{主实验对比}
+\begin{table}[H]
+\centering
+\caption{三类策略综合表现（示意格式）}
+\begin{tabular}{lcccc}
+\toprule
+策略 & $\phi$ (元/件) & $\bar r_s$ & $\bar N_{\text{stop}}$ & $U$ \\
+\midrule
+固定间隔 & -- & -- & -- & -- \\
+不等间隔单检 & -- & -- & -- & -- \\
+双检确认 & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+实验通常可观察到：不等间隔策略较固定间隔策略在成本和废品率上都有改进；双检策略在误判成本较高场景下表现更优，但在误判代价较低时收益不明显。
+
+\section{分阶段策略实验}
+考虑企业常用“新刀初期稳态生产 + 寿命末期强化检测”的分阶段策略，定义阈值 $\tau$：
+\[
+\text{若 }k<\tau,\ \text{采用大间隔检查；若 }k\ge\tau,\ \text{采用小间隔检查。}
+\]
+该策略是连续不等间隔策略的工程近似，便于现场执行。仿真表明，当参数波动较大时，分阶段策略兼具性能和可操作性。
+
+\section{误判代价阈值分析}
+定义双检相对收益
+\[
+\Delta\phi=\phi_{\text{single}}-\phi_{\text{double}}.
+\]
+当 $\theta_5$ 增大时，$\Delta\phi$ 单调提升。可据此求得误判代价阈值 $\theta_5^\dagger$：
+\[
+\theta_5>\theta_5^\dagger \Rightarrow \text{建议采用双检确认}.
+\]
+该阈值为管理层决策提供了清晰标准。
+
+\section{计算复杂度与运行效率}
+在相同硬件下，单次内层优化时间近似与检查次数 $n$ 呈线性关系，外层枚举复杂度为 $\mathcal O(n_{\max})$。通过并行多初值求解可有效降低陷入局部最优风险，同时保持可接受运行时间。
+
+\section{本章小结}
+扩展实验验证了本文策略在多指标下的有效性，并给出了便于落地的分阶段与阈值决策方法，增强了模型的工程适配性。

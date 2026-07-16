@@ -1,0 +1,27 @@
+\begin{thebibliography}{3}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{#1}
+\expandafter\ifx\csname urlstyle\endcsname\relax\else
+  \urlstyle{same}\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \DeclareUrlCommand\doi{\urlstyle{rm}}\else
+  \providecommand\doi[1]{\href{https://doi.org/#1}{\nolinkurl{#1}}}\fi
+
+\bibitem[司守奎\ 等(2011)司守奎 and
+  孙玺菁]{司守奎2011数学建模算法与应用}
+司守奎, 孙玺菁.
+\newblock 数学建模算法与应用\allowbreak[M].
+\newblock 北京: 国防工业出版社, 2011.
+
+\bibitem[卓金武(2011)]{卓金武2011MATLAB}
+卓金武.
+\newblock MATLAB在数学建模中的应用\allowbreak[M].
+\newblock 北京: 北京航空航天大学出版社, 2011.
+
+\bibitem[陈秀梅\ 等(2001)陈秀梅 and
+  牟小军]{陈秀梅2001对类风湿关节炎病人性格的调查分析}
+陈秀梅, 牟小军.
+\newblock 对类风湿关节炎病人性格的调查分析\allowbreak[J].
+\newblock 中国组织工程研究, 2001\penalty0 (11):\penalty0 144-144.
+
+\end{thebibliography}

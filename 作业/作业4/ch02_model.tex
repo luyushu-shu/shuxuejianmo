@@ -1,0 +1,58 @@
+\chapter{几何模型与约束优化模型}
+
+\section{坐标系与方向向量}
+取基准球心为坐标原点 $O(0,0,0)$，设天体方向由方位角 $\alpha$ 和仰角 $\beta$ 给出，其单位方向向量记为 $\mathbf s(\alpha,\beta)$。馈源舱接收平面中心位于焦面，与基准球同心，半径由题面给定的焦径比关系确定。
+
+\section{理想抛物面表示}
+设理想抛物面顶点为 $\mathbf v$，轴线方向为 $\mathbf s$，焦距为 $f$。对任一点 $\mathbf x$，理想抛物面可由“到焦点距离等于到准平面距离”定义。等价地，写为参数化隐式关系
+\[
+g(\mathbf x;\mathbf v,f,\mathbf s)=0.
+\]
+第 1 问和第 2 问分别对应不同的 $(\alpha,\beta)$ 参数，从而得到不同的理想抛物面参数。
+
+\section{离散贴合目标函数}
+设 $\Omega$ 为 300 m 口径内主索节点集合，节点调节前坐标为 $\mathbf x_i$，调节后为 $\mathbf x_i'$。定义节点到理想面的距离残差 $d_i$，构造加权最小二乘目标：
+\begin{equation}
+\min J=\sum_{i\in\Omega}w_i d_i^2.
+\label{eq:Jfast}
+\end{equation}
+若无特别偏好，可取 $w_i=1$；若希望提升边缘区域精度，可按口径位置设计权重。
+
+\section{结构与执行约束}
+\subsection{促动器行程约束}
+设第 $i$ 个促动器径向伸缩量为 $\Delta l_i$，则
+\begin{equation}
+-0.6\le \Delta l_i\le 0.6,\quad i\in\Omega.
+\label{eq:stroke}
+\end{equation}
+
+\subsection{相邻节点边长变化约束}
+设 $E$ 为索网相邻节点边集，则
+\begin{equation}
+\left|\|\mathbf x_i'-\mathbf x_j'\|-\|\mathbf x_i-\mathbf x_j\|\right|
+\le 0.0007\|\mathbf x_i-\mathbf x_j\|,\quad (i,j)\in E.
+\label{eq:length}
+\end{equation}
+
+\subsection{径向运动一致性}
+节点位移方向与对应径向及下拉索几何关系一致，确保求得位移可由促动器实际执行。
+
+\section{综合优化模型}
+综上，优化问题写为
+\[
+\min_{\{\mathbf x_i',\Delta l_i\}} J
+\quad
+\text{s.t.}\quad \eqref{eq:stroke},\ \eqref{eq:length},\ \text{几何一致性约束}.
+\]
+该模型输出题目要求的节点坐标与促动器伸缩量。
+
+\section{接收比评估模型}
+对反射面离散采样点进行光线追踪。若反射后光线落入馈源舱有效圆盘，则计入有效接收。定义接收比
+\begin{equation}
+\eta=\frac{\sum_{q\in \mathcal R}I_q}{\sum_{q\in \mathcal A}I_q},
+\label{eq:eta}
+\end{equation}
+其中 $\mathcal A$ 为 300 m 口径采样集，$\mathcal R$ 为其中反射后命中接收区域的子集。通过比较 $\eta_{\text{work}}$ 与 $\eta_{\text{base}}$ 评价调节收益。
+
+\section{本章小结}
+本章完成了 FAST 题的“理想面确定 -- 节点调节 -- 接收评估”统一数学建模，为算法实现提供了明确接口。

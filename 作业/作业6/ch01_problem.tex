@@ -1,0 +1,21 @@
+\chapter{问题重述与研究框架}
+
+\section{问题重述}
+“高精度参数确定问题”关注从有限观测数据中恢复动力系统参数。已知系统满足一组非线性常微分方程，观测数据通常包含测量误差，要求在拟合精度、参数可解释性与数值稳定性之间取得平衡。
+
+\section{数据与材料说明}
+压缩包中包含题目文档、\LaTeX{} 报告、导数表达及程序文件。本文重点利用以下材料：
+\begin{itemize}
+  \item \texttt{PredatorPreyTeX/PredatorPreyProblem.tex}：问题描述与原始推导框架；
+  \item \texttt{ode56Order16.tex}, \texttt{RightFun56.tex}：高阶导数与右端项表达；
+  \item C/Fortran/Matlab代码：数值积分与参数计算实现。
+\end{itemize}
+
+\section{总体技术路线}
+本文采用四步法：
+\begin{enumerate}
+  \item 构建状态方程与观测方程；
+  \item 建立最小二乘参数辨识目标；
+  \item 设计高斯牛顿与阻尼牛顿迭代；
+  \item 通过噪声扰动、初值扰动与多组实验验证鲁棒性。
+\end{enumerate}

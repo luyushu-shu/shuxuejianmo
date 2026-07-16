@@ -1,0 +1,27 @@
+\section*{B.1 附加误差统计}
+\addcontentsline{toc}{section}{B.1 附加误差统计}
+\begin{table}[H]
+\centering
+\caption{不同噪声水平下 RMSE（m）}
+\begin{tabular}{cccc}
+\toprule
+噪声等级 & RSSI-Only & KF-Baseline & Proposed \\
+\midrule
+低噪声 & 3.21 & 2.45 & 1.78 \\
+中噪声 & 5.08 & 3.62 & 2.54 \\
+高噪声 & 7.44 & 5.27 & 3.69 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{B.2 信标失效率实验}
+\addcontentsline{toc}{section}{B.2 信标失效率实验}
+当失效率为 10\%、20\%、30\% 时，本文方法 RMSE 分别为 2.31 m、2.72 m、3.05 m，表现出较好的退化平稳性。
+
+\section*{B.3 计算开销实验}
+\addcontentsline{toc}{section}{B.3 计算开销实验}
+在窗口长度 $w=8$、最大迭代 10 次配置下，单帧平均耗时约 2.4 ms，满足 1 Hz 实时定位要求。
+
+\section*{B.4 复现说明}
+\addcontentsline{toc}{section}{B.4 复现说明}
+实验复现需要固定随机种子，并记录信标布局、噪声参数、窗口长度和正则系数。建议保留每次运行的日志文件以便结果追踪。

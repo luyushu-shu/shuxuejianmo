@@ -1,0 +1,89 @@
+\contentsline {chapter}{中文摘要}{i}{section*.3}%
+\contentsline {chapter}{Abstract}{ii}{section*.4}%
+\contentsline {chapter}{\numberline {第一章\hspace {.3em}}问题背景与研究目标}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}问题来源}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}研究难点}{1}{section.1.2}%
+\contentsline {section}{\numberline {1.3}问题定义}{1}{section.1.3}%
+\contentsline {section}{\numberline {1.4}本文目标}{1}{section.1.4}%
+\contentsline {section}{\numberline {1.5}技术路线}{2}{section.1.5}%
+\contentsline {section}{\numberline {1.6}章节安排}{2}{section.1.6}%
+\contentsline {chapter}{\numberline {第二章\hspace {.3em}}观测模型与约束建模}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}RSSI 路径损耗模型}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}几何观测关系}{3}{section.2.2}%
+\contentsline {section}{\numberline {2.3}步行运动约束}{3}{section.2.3}%
+\contentsline {section}{\numberline {2.4}融合目标函数}{4}{section.2.4}%
+\contentsline {section}{\numberline {2.5}鲁棒权重设计}{4}{section.2.5}%
+\contentsline {section}{\numberline {2.6}可行域约束}{4}{section.2.6}%
+\contentsline {chapter}{\numberline {第三章\hspace {.3em}}优化量推导与数值实现}{5}{chapter.3}%
+\contentsline {section}{\numberline {3.1}时刻级残差函数}{5}{section.3.1}%
+\contentsline {section}{\numberline {3.2}梯度表达}{5}{section.3.2}%
+\contentsline {section}{\numberline {3.3}近似海森矩阵}{5}{section.3.3}%
+\contentsline {section}{\numberline {3.4}滑动窗口展开}{5}{section.3.4}%
+\contentsline {section}{\numberline {3.5}鲁棒迭代重加权}{6}{section.3.5}%
+\contentsline {section}{\numberline {3.6}实现细节}{6}{section.3.6}%
+\contentsline {chapter}{\numberline {第四章\hspace {.3em}}初始轨迹构造}{7}{chapter.4}%
+\contentsline {section}{\numberline {4.1}初始化必要性}{7}{section.4.1}%
+\contentsline {section}{\numberline {4.2}单帧粗定位}{7}{section.4.2}%
+\contentsline {section}{\numberline {4.3}轨迹级初始化}{7}{section.4.3}%
+\contentsline {section}{\numberline {4.4}可行域投影初始化}{7}{section.4.4}%
+\contentsline {section}{\numberline {4.5}缺失观测时的补点策略}{8}{section.4.5}%
+\contentsline {section}{\numberline {4.6}初始化质量评估}{8}{section.4.6}%
+\contentsline {chapter}{\numberline {第五章\hspace {.3em}}求解算法设计}{9}{chapter.5}%
+\contentsline {section}{\numberline {5.1}总体流程}{9}{section.5.1}%
+\contentsline {section}{\numberline {5.2}IRWLS 主算法}{9}{section.5.2}%
+\contentsline {section}{\numberline {5.3}参数设置原则}{10}{section.5.3}%
+\contentsline {section}{\numberline {5.4}收敛与复杂度}{10}{section.5.4}%
+\contentsline {section}{\numberline {5.5}失败保护机制}{10}{section.5.5}%
+\contentsline {chapter}{\numberline {第六章\hspace {.3em}}实验设计与结果分析}{11}{chapter.6}%
+\contentsline {section}{\numberline {6.1}场景与数据设置}{11}{section.6.1}%
+\contentsline {section}{\numberline {6.2}对比方法}{11}{section.6.2}%
+\contentsline {section}{\numberline {6.3}评价指标}{11}{section.6.3}%
+\contentsline {section}{\numberline {6.4}主实验结果}{11}{section.6.4}%
+\contentsline {section}{\numberline {6.5}遮挡鲁棒性实验}{12}{section.6.5}%
+\contentsline {section}{\numberline {6.6}窗口长度影响}{12}{section.6.6}%
+\contentsline {section}{\numberline {6.7}参数敏感性}{12}{section.6.7}%
+\contentsline {section}{\numberline {6.8}结果可视化结论}{12}{section.6.8}%
+\contentsline {chapter}{\numberline {第七章\hspace {.3em}}不确定性分析}{13}{chapter.7}%
+\contentsline {section}{\numberline {7.1}局部协方差近似}{13}{section.7.1}%
+\contentsline {section}{\numberline {7.2}二维置信椭圆}{13}{section.7.2}%
+\contentsline {section}{\numberline {7.3}不确定性来源分解}{13}{section.7.3}%
+\contentsline {section}{\numberline {7.4}覆盖几何指标}{13}{section.7.4}%
+\contentsline {section}{\numberline {7.5}Bootstrap 经验区间}{14}{section.7.5}%
+\contentsline {section}{\numberline {7.6}在线可信度输出}{14}{section.7.6}%
+\contentsline {chapter}{\numberline {第八章\hspace {.3em}}模型扩展与工程建议}{15}{chapter.8}%
+\contentsline {section}{\numberline {8.1}多楼层扩展}{15}{section.8.1}%
+\contentsline {section}{\numberline {8.2}多源融合扩展}{15}{section.8.2}%
+\contentsline {section}{\numberline {8.3}地图匹配扩展}{15}{section.8.3}%
+\contentsline {section}{\numberline {8.4}在线部署建议}{15}{section.8.4}%
+\contentsline {section}{\numberline {8.5}工程参数建议}{16}{section.8.5}%
+\contentsline {section}{\numberline {8.6}风险与应对}{16}{section.8.6}%
+\contentsline {chapter}{\numberline {第九章\hspace {.3em}}灵敏度分析}{17}{chapter.9}%
+\contentsline {section}{\numberline {9.1}分析目标}{17}{section.9.1}%
+\contentsline {section}{\numberline {9.2}噪声放大实验}{17}{section.9.2}%
+\contentsline {section}{\numberline {9.3}信标密度实验}{17}{section.9.3}%
+\contentsline {section}{\numberline {9.4}参数偏差实验}{17}{section.9.4}%
+\contentsline {section}{\numberline {9.5}综合结果}{18}{section.9.5}%
+\contentsline {chapter}{\numberline {第十章\hspace {.3em}}案例分析与应用讨论}{19}{chapter.10}%
+\contentsline {section}{\numberline {10.1}案例一：火灾疏散引导}{19}{section.10.1}%
+\contentsline {section}{\numberline {10.2}案例二：救援队员协同定位}{19}{section.10.2}%
+\contentsline {section}{\numberline {10.3}案例三：局部信标失效}{19}{section.10.3}%
+\contentsline {section}{\numberline {10.4}调度价值分析}{19}{section.10.4}%
+\contentsline {section}{\numberline {10.5}落地限制}{19}{section.10.5}%
+\contentsline {section}{\numberline {10.6}实践建议}{20}{section.10.6}%
+\contentsline {chapter}{\numberline {第十一章\hspace {.3em}}总结与展望}{21}{chapter.11}%
+\contentsline {section}{\numberline {11.1}主要工作}{21}{section.11.1}%
+\contentsline {section}{\numberline {11.2}主要结论}{21}{section.11.2}%
+\contentsline {section}{\numberline {11.3}不足}{21}{section.11.3}%
+\contentsline {section}{\numberline {11.4}后续工作}{21}{section.11.4}%
+\contentsline {chapter}{参考文献}{23}{chapter*.12}%
+\contentsline {chapter}{附录 A：关键程序清单与说明}{24}{chapter*.13}%
+\contentsline {section}{A.1 数据字段说明}{24}{section*.14}%
+\contentsline {section}{A.2 参数配置}{24}{section*.16}%
+\contentsline {section}{A.3 伪代码补充}{24}{section*.17}%
+\contentsline {chapter}{附录 B：额外实验结果}{25}{chapter*.18}%
+\contentsline {section}{B.1 附加误差统计}{25}{section*.19}%
+\contentsline {section}{B.2 信标失效率实验}{25}{section*.21}%
+\contentsline {section}{B.3 计算开销实验}{25}{section*.22}%
+\contentsline {section}{B.4 复现说明}{25}{section*.23}%
+\contentsline {chapter}{致谢}{26}{chapter*.24}%
+\contentsfinish 

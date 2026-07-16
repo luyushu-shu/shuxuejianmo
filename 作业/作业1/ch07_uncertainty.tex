@@ -1,0 +1,81 @@
+\chapter{不确定性传播与置信区域}
+
+\section{协方差近似}
+在最优点 $\hat{\bm p}$ 附近，令加权残差向量为 $\bm r(\bm p)$，雅可比为 $\bm J(\bm p)$，则
+\[
+\bm A=\bm J^{\T}\bm J
+\]
+可视为信息矩阵近似。若模型线性化误差较小，估计协方差可近似为
+\begin{equation}
+\bm\Sigma\approx \bm A^{-1}.
+\label{eq:cov_approx}
+\end{equation}
+在牛顿法中也可使用海森矩阵逆近似协方差。两者在残差较小时通常等价到同一量级。
+
+\section{置信椭球构造}
+定义二次型
+\[
+Q(\bm p)=
+(\bm p-\hat{\bm p})^{\T}\bm\Sigma^{-1}(\bm p-\hat{\bm p}).
+\]
+给定置信水平 $p$，令 $\chi^2_{3,p}$ 为自由度 3 的卡方分位数，则置信区域可写为
+\begin{equation}
+\mathcal E_p=
+\left\{\bm p\in\R^3:\ Q(\bm p)\le \chi^2_{3,p}\right\}.
+\end{equation}
+将 $\bm\Sigma$ 作特征分解
+\[
+\bm\Sigma=\bm U\diag(\lambda_1,\lambda_2,\lambda_3)\bm U^{\T},
+\]
+则椭球三条半轴长度为
+\[
+a_i=\sqrt{\chi^2_{3,p}\lambda_i},\quad i=1,2,3.
+\]
+
+\section{与代码输出的一致性}
+代码中基于目标函数值与海森矩阵特征值给出 95\% 和 99\% 置信椭球半轴。该输出与上节理论形式一致，区别仅在于符号缩放方式和自由度取值设置。工程应用中建议明确自由度定义并统一统计口径，以便跨项目比较。
+
+\section{主轴方向解释}
+设特征向量矩阵 $\bm U=[\bm u_1,\bm u_2,\bm u_3]$。则：
+\begin{itemize}
+  \item $\bm u_i$ 给出不确定性的主方向；
+  \item $\lambda_i$ 越大，沿 $\bm u_i$ 方向方差越大；
+  \item 若第三主轴对应近竖直方向且半轴显著更长，说明高程估计较弱。
+\end{itemize}
+这与第 6 章误差统计结论保持一致。
+
+\section{误差传播分析}
+考虑观测噪声微扰 $\delta\bm y$，由线性化关系有
+\[
+\delta\bm p\approx(\bm J^{\T}\bm W\bm J)^{-1}\bm J^{\T}\bm W\,\delta\bm y.
+\]
+因此误差传播受三方面影响：
+\begin{enumerate}
+  \item 观测噪声本身（$\delta\bm y$）；
+  \item 权重设计（$\bm W$）；
+  \item 几何条件（$\bm J$ 的列相关性）。
+\end{enumerate}
+几何退化时，即使噪声很小也可能导致较大位置误差。
+
+\section{GDOP 类指标}
+为了量化几何优劣，可定义
+\[
+GDOP=\sqrt{\operatorname{trace}(\bm\Sigma)}.
+\]
+并进一步分解为
+\[
+HDOP=\sqrt{\Sigma_{xx}+\Sigma_{yy}},\qquad
+VDOP=\sqrt{\Sigma_{zz}}.
+\]
+在本文实验中，$VDOP$ 通常显著大于 $HDOP$，反映垂向几何弱化现象。
+
+\section{稳健置信评估建议}
+在实际工程中，噪声可能偏离高斯假设。建议：
+\begin{itemize}
+  \item 采用残差归一化检验，筛查异常观测；
+  \item 使用重采样（Bootstrap）估计经验置信区间；
+  \item 对非高斯噪声引入 M-估计或 Huber 损失函数。
+\end{itemize}
+
+\section{本章小结}
+本章建立了从矩阵近似到置信椭球构造的完整不确定性评估流程，并解释了估计误差方向性来源。该部分使定位结果从“点估计”提升为“带可信度的估计”。

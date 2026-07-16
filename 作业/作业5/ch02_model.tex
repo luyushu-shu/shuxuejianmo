@@ -1,0 +1,63 @@
+\chapter{模型建立}
+
+\section{状态方程与参数向量}
+设系统状态为
+\[
+\mathbf{x}(t)=\left[x_1(t),x_2(t),\ldots,x_n(t)\right]^\mathsf{T},
+\]
+参数向量为
+\[
+\boldsymbol{\theta}=\left[\theta_1,\theta_2,\ldots,\theta_p\right]^\mathsf{T},
+\]
+动力学系统写为
+\[
+\dot{\mathbf{x}}(t)=\mathbf{f}\!\left(t,\mathbf{x}(t),\boldsymbol{\theta}\right),\quad \mathbf{x}(t_0)=\mathbf{x}_0.
+\]
+
+\section{高阶导数递推关系}
+为构造高阶泰勒积分器，记
+\[
+\mathbf{x}^{(k)}(t)=\frac{d^k\mathbf{x}(t)}{dt^k},\quad k\ge 1.
+\]
+根据链式法则可得
+\[
+\mathbf{x}^{(k+1)}(t)=\frac{d}{dt}\mathbf{x}^{(k)}(t)=
+\frac{\partial \mathbf{x}^{(k)}}{\partial t}+
+\frac{\partial \mathbf{x}^{(k)}}{\partial \mathbf{x}}\mathbf{f}(t,\mathbf{x},\boldsymbol{\theta}).
+\]
+在程序实现中，可通过符号推导后自动生成C代码，或采用人工拆分表达式逐层递推计算。
+
+\section{参数辨识目标函数}
+设观测时刻为 $t_i,\ i=1,\ldots,m$，观测量为 $\mathbf{y}_i$，模型输出为
+\[
+\hat{\mathbf{y}}_i(\boldsymbol{\theta})=\mathbf{h}(\mathbf{x}(t_i;\boldsymbol{\theta})).
+\]
+定义残差向量
+\[
+\mathbf{r}_i(\boldsymbol{\theta})=\mathbf{y}_i-\hat{\mathbf{y}}_i(\boldsymbol{\theta}),
+\]
+总目标函数
+\[
+\Phi(\boldsymbol{\theta})=\frac{1}{2}\sum_{i=1}^m \|\mathbf{r}_i(\boldsymbol{\theta})\|_2^2.
+\]
+
+\section{优化迭代模型}
+\subsection{牛顿法}
+牛顿法更新公式：
+\[
+\boldsymbol{\theta}^{(k+1)}=\boldsymbol{\theta}^{(k)}-\mathbf{H}^{-1}(\boldsymbol{\theta}^{(k)})\mathbf{g}(\boldsymbol{\theta}^{(k)}),
+\]
+其中 $\mathbf{g}=\nabla\Phi$，$\mathbf{H}=\nabla^2\Phi$。
+
+\subsection{高斯牛顿法}
+设雅可比矩阵为 $\mathbf{J}$，其元素为
+\[
+J_{ij}=\frac{\partial r_i}{\partial \theta_j},
+\]
+则高斯牛顿法采用
+\[
+\left(\mathbf{J}^\mathsf{T}\mathbf{J}\right)\Delta\boldsymbol{\theta}
+=-\mathbf{J}^\mathsf{T}\mathbf{r},\quad
+\boldsymbol{\theta}^{(k+1)}=\boldsymbol{\theta}^{(k)}+\Delta\boldsymbol{\theta}.
+\]
+必要时引入阻尼项 $\lambda\mathbf{I}$ 保证方程可解性。

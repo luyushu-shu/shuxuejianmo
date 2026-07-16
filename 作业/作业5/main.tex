@@ -1,0 +1,131 @@
+\documentclass[openany]{../作业1/MathematicalModelCaseStudyReport}
+\let\cleardoublepage\clearpage
+
+\graphicspath{{./}{figures/}}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{longtable}
+\setlist{itemsep=0.05\baselineskip,itemindent=0em,partopsep=0pt,parsep=0ex,topsep=0.1\baselineskip}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\floatname{algorithm}{\color{blue} 算法}
+\numberwithin{algorithm}{chapter}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{bookmarksnumbered,hidelinks,pdfborder={0 0 0}}
+
+\begin{document}
+
+\graduateyear{2026}
+\class{O241.6}
+\ctitle{\uline{高阶泰勒级数法与牛顿类迭代求解研究\\
+基于 CTaylorSeriesSecond20250324 的建模与实现}}
+\def\cctitle{高阶泰勒级数法与牛顿类迭代求解研究}
+\caffil{数理科学学院数学系}
+\cmajor{信息与计算科学}
+\cdirection{数学建模与科学计算}
+\csupervisor{陈务深\, 教授}
+\cauthor{陆雨澍}
+\studentid{51088888888}
+\cdate{2026 年 5 月}
+
+\etitle{\uline{High-Order Taylor Series and Newton-Type Iteration\\
+Modeling and Implementation from CTaylorSeriesSecond20250324}}
+\eaffil{School of Mathematical Sciences}
+\emajor{Information and Computational Science}
+\edirection{Mathematical Modeling and Scientific Computing}
+\esupervisor{CHEN Wu Shen (Professor)}
+\eauthor{LU YUSHU}
+\edate{May, 2026}
+
+\newgeometry{top=2.0cm,bottom=2.0cm,left=2.5cm,right=2.5cm}
+{\renewcommand{\baselinestretch}{1.6}\makecover}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\include{Declaration}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\include{Committee}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\frontmatter
+\restoregeometry
+\include{abstract_chs}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\include{abstract_eng}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\setcounter{tocdepth}{1}
+\phantomsection\pdfbookmark[0]{目录}{ccontents}
+\tableofcontents
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\linespread{1.7}\selectfont
+\mainmatter
+
+\input{ch01_background}
+\input{ch02_model}
+\input{ch03_derivative}
+\input{ch04_algorithms}
+\input{ch05_experiment}
+\input{ch06_conclusion}
+\input{ch07_sensitivity}
+\input{ch08_simulation}
+\input{ch09_engineering}
+
+\backmatter
+\linespread{1.1}\selectfont
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{参考文献}
+\thispagestyle{plain}
+\bibitem{Nocedal2006}
+J. Nocedal and S. J. Wright, \emph{Numerical Optimization}, Springer, 2006.
+\bibitem{Hairer1993}
+E. Hairer, S. P. Norsett and G. Wanner, \emph{Solving Ordinary Differential Equations I}, Springer, 1993.
+\bibitem{Higham2002}
+N. J. Higham, \emph{Accuracy and Stability of Numerical Algorithms}, SIAM, 2002.
+\end{thebibliography}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 A：关键代码与模块说明}
+\addcontentsline{toc}{chapter}{附录 A：关键代码与模块说明}
+\input{appendix_a}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 B：参数与批量实验记录}
+\addcontentsline{toc}{chapter}{附录 B：参数与批量实验记录}
+\input{appendix_b}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 C：步长扫描完整数据}
+\addcontentsline{toc}{chapter}{附录 C：步长扫描完整数据}
+\input{appendix_c}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 D：噪声扰动统计记录}
+\addcontentsline{toc}{chapter}{附录 D：噪声扰动统计记录}
+\input{appendix_d}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 E：初值敏感性批量试验}
+\addcontentsline{toc}{chapter}{附录 E：初值敏感性批量试验}
+\input{appendix_e}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 F：算法日志摘要}
+\addcontentsline{toc}{chapter}{附录 F：算法日志摘要}
+\input{appendix_f}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 G：综合实验全量结果表}
+\addcontentsline{toc}{chapter}{附录 G：综合实验全量结果表}
+\input{appendix_g}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 H：扩展讨论与复现实务}
+\addcontentsline{toc}{chapter}{附录 H：扩展讨论与复现实务}
+\input{appendix_h}
+
+\end{document}

@@ -1,0 +1,12 @@
+\beamer@sectionintoc {2}{研究背景}{3}{0}{1}
+\beamer@subsectionintoc {2}{1}{问题来源}{3}{0}{1}
+\beamer@sectionintoc {3}{数学建模}{6}{0}{2}
+\beamer@subsectionintoc {3}{1}{观测模型}{6}{0}{2}
+\beamer@subsectionintoc {3}{2}{优化推导}{10}{0}{2}
+\beamer@sectionintoc {4}{算法设计}{12}{0}{3}
+\beamer@subsectionintoc {4}{1}{初始化}{12}{0}{3}
+\beamer@subsectionintoc {4}{2}{求解流程}{13}{0}{3}
+\beamer@sectionintoc {5}{实验结果}{16}{0}{4}
+\beamer@subsectionintoc {5}{1}{主实验}{16}{0}{4}
+\beamer@subsectionintoc {5}{2}{扩展分析}{19}{0}{4}
+\beamer@sectionintoc {6}{总结}{22}{0}{5}

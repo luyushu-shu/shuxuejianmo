@@ -1,0 +1,64 @@
+\chapter{观测模型与约束建模}
+
+\section{RSSI 路径损耗模型}
+对第 $i$ 个信标，在时刻 $t$ 的观测模型写为
+\begin{equation}
+z_{i,t}=P_0-10n\log_{10}(d_{i,t})+\varepsilon_{i,t},
+\end{equation}
+其中 $P_0$ 为参考距离处信号强度，$n$ 为路径损耗指数，$d_{i,t}$ 为人员到信标的几何距离，$\varepsilon_{i,t}$ 表示噪声项。
+
+由此得到距离反演式
+\begin{equation}
+\hat d_{i,t}=10^{\frac{P_0-z_{i,t}}{10n}}.
+\label{eq:rssi2dist}
+\end{equation}
+
+\section{几何观测关系}
+设信标坐标 $\bm b_i=[u_i,v_i]^{\T}$，则理论距离
+\begin{equation}
+d_{i,t}(\bm p_t)=\sqrt{(x_t-u_i)^2+(y_t-v_i)^2}.
+\end{equation}
+时刻 $t$ 的观测残差定义为
+\[
+r_{i,t}=d_{i,t}(\bm p_t)-\hat d_{i,t}.
+\]
+
+\section{步行运动约束}
+考虑人员相邻时刻位移：
+\[
+\Delta s_t=\|\bm p_t-\bm p_{t-1}\|_2.
+\]
+根据应急行走速度范围，设采样周期为 $\Delta t$，则
+\[
+v_{\min}\Delta t \le \Delta s_t \le v_{\max}\Delta t.
+\]
+此外引入方向变化约束，限制相邻航向角跳变，避免轨迹出现非物理折返。
+
+\section{融合目标函数}
+在滑动窗口 $\mathcal W_t=\{t-w+1,\dots,t\}$ 上构建目标：
+\begin{align}
+J=&\sum_{\tau\in\mathcal W_t}\sum_{i\in\mathcal B_\tau}
+\omega_{i,\tau}\left(d_{i,\tau}(\bm p_\tau)-\hat d_{i,\tau}\right)^2 \notag\\
+&+\lambda_s\sum_{\tau\in\mathcal W_t}\|\bm p_\tau-\bm p_{\tau-1}\|_2^2
++\lambda_h\sum_{\tau\in\mathcal W_t}\phi(\Delta\theta_\tau),
+\label{eq:fusion_obj}
+\end{align}
+其中 $\omega_{i,\tau}$ 为鲁棒权重，$\lambda_s,\lambda_h$ 为正则系数，$\phi$ 为方向平滑惩罚函数。
+
+\section{鲁棒权重设计}
+为降低异常 RSSI 影响，使用 Huber 型权重：
+\[
+\omega_{i,\tau}=
+\begin{cases}
+1, & |r_{i,\tau}| \le \delta,\\
+\delta/|r_{i,\tau}|, & |r_{i,\tau}|>\delta.
+\end{cases}
+\]
+该设计使大残差样本被自动降权，增强抗遮挡能力。
+
+\section{可行域约束}
+停车场存在不可通行区域（墙体、封闭车位区）。通过栅格地图定义可行域 $\Omega$，并强制
+\[
+\bm p_t\in\Omega,\quad \forall t.
+\]
+若优化中出现越界点，采用投影修正到最近可行栅格。

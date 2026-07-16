@@ -1,0 +1,111 @@
+\documentclass[12pt,a4paper]{ctexart}
+\usepackage{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\geometry{left=2.5cm,right=2.5cm,top=2.6cm,bottom=2.6cm}
+
+\title{作业3：自动化车床刀具问题建模}
+\author{数学建模课程作业}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{题目背景与重述}
+一道工序使用自动化车床连续加工零件。工序故障中，刀具损坏占比约 $95\%$，其他故障占比约 $5\%$。通过检查零件质量判断工序是否故障。已知有 $100$ 次刀具故障记录（故障发生时该刀具已加工的零件数），并给出费用参数：
+\begin{itemize}
+  \item 故障产生不合格品损失：$\theta_1=200$ 元/件；
+  \item 每次检查费用：$\theta_2=10$ 元/次；
+  \item 发现故障并恢复正常费用：$\theta_3=3000$ 元/次；
+  \item 未发现故障时主动换刀费用：$\theta_4=1000$ 元/次。
+\end{itemize}
+
+要求：
+\begin{enumerate}
+  \item 在“正常全合格、故障全不合格”的理想判定条件下，设计最优检查间隔与换刀策略；
+  \item 在存在误判概率（正常时 $2\%$ 不合格，故障时 $40\%$ 合格）条件下，设计最优策略；
+  \item 探讨是否可通过改进检查方式进一步降低单位合格品成本。
+\end{enumerate}
+
+\section{建模假设}
+\begin{enumerate}
+  \item 刀具寿命（以加工件数计）服从截断正态分布：$m\sim\mathcal N(\mu,\sigma^2)$，定义域取 $(0,1500)$；
+  \item 每个生产周期中，最多执行 $n$ 次检查，检查序号对应产出件号 $k_1<k_2<\cdots<k_n$；
+  \item 前 $n-1$ 次通过成品抽检判断，可能误判；第 $n$ 次直接检查刀具状态，不发生误判；
+  \item 生产策略目标为最小化“单位合格品平均成本”。
+\end{enumerate}
+
+\section{符号与目标函数}
+令
+\[
+A_t=\{m\mid k_{t-1}\le m<k_t\},\quad k_0=0,\ k_{n+1}=1500,\quad
+p_t=\int_{k_{t-1}}^{k_t}f(m)\,dm.
+\]
+设 $R_1$ 为正常状态下合格率，$R_2$ 为故障状态下合格率。
+
+记一个生产周期内的期望量：
+\begin{itemize}
+  \item $\zeta_1$：合格品数期望；
+  \item $\zeta_2$：总产出数期望；
+  \item $\zeta_3=\zeta_2-\zeta_1$：不合格品数期望；
+  \item $\gamma$：检查次数期望；
+  \item $\eta_1$：误判停机次数期望；
+  \item $\eta_2$：主动换刀事件概率。
+\end{itemize}
+
+总期望损失为
+\[
+h=\theta_1\zeta_3+\theta_2\gamma+1500\eta_1+\theta_4\eta_2+\theta_3(1-\eta_1-\eta_2).
+\]
+单位合格品平均成本
+\[
+\phi=\frac{h}{\zeta_1}.
+\]
+最终优化模型写为
+\[
+\min_{n\ge 1}\ \min_{\mathbf X_n}\ \phi(\mathbf X_n),\quad
+\mathbf X_n=(x_1,\ldots,x_n)^\mathsf T,\ x_i>0,
+\]
+其中 $x_1=k_1,\ x_i=k_i-k_{i-1}(i\ge2)$。
+
+\section{求解流程}
+\begin{enumerate}
+  \item 根据 100 组刀具寿命样本估计 $\mu,\sigma$（原始材料给出典型估计：$\mu\approx600,\sigma\approx196.4$）；
+  \item 固定检查次数 $n$，优化检查步长向量 $\mathbf X_n$，获得该 $n$ 下最优成本；
+  \item 枚举或迭代不同 $n$，比较最优成本，得到全局最优检查策略；
+  \item 分别代入两组参数：
+  \[
+  (R_1,R_2)=(1,0),\quad (R_1,R_2)=(0.98,0.4),
+  \]
+  比较策略差异并分析敏感性。
+\end{enumerate}
+
+\section{结论模板（可按你实算结果替换）}
+\begin{itemize}
+  \item 最优策略对应检查次数为 $n^\star=\underline{\qquad}$；
+  \item 最优检查序列为 $(k_1^\star,\ldots,k_{n^\star}^\star)=\underline{\qquad}$；
+  \item 单位合格品平均成本最小值为 $\phi^\star=\underline{\qquad}$ 元/件；
+  \item 在误判场景下，可采用“双次确认检查”或“后段加密检查”进一步降低误停损失。
+\end{itemize}
+
+\section*{附：100次刀具故障记录（原题数据）}
+{\small
+\begin{center}
+\begin{tabular}{cccccccccc}
+459 & 612 & 926 & 527 & 775 & 402 & 699 & 447 & 621 & 764 \\
+362 & 452 & 653 & 552 & 859 & 960 & 634 & 654 & 724 & 558 \\
+624 & 434 & 164 & 513 & 755 & 885 & 555 & 564 & 531 & 378 \\
+542 & 982 & 487 & 781 & 649 & 610 & 570 & 339 & 512 & 765 \\
+509 & 640 & 734 & 474 & 697 & 292 & 84  & 280 & 577 & 666 \\
+584 & 742 & 608 & 388 & 515 & 837 & 416 & 246 & 496 & 763 \\
+433 & 565 & 428 & 824 & 628 & 473 & 606 & 687 & 468 & 217 \\
+748 & 706 & 1153& 538 & 954 & 677 & 1062& 539 & 499 & 715 \\
+815 & 593 & 593 & 862 & 771 & 358 & 484 & 790 & 544 & 310 \\
+505 & 680 & 844 & 659 & 609 & 638 & 120 & 581 & 645 & 851 \\
+\end{tabular}
+\end{center}
+}
+
+\end{document}

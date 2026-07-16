@@ -1,0 +1,55 @@
+\chapter{实验设计与结果分析}
+
+\section{场景与数据设置}
+构建一个 120 m $\times$ 80 m 的地下停车场平面，布置 16 个固定蓝牙信标。人员轨迹包含直行、转弯和绕障三种动作，总时长 300 s，采样频率 1 Hz。RSSI 噪声由高斯扰动与随机遮挡叠加。
+
+\section{对比方法}
+设置三类方法进行比较：
+\begin{enumerate}
+  \item \textbf{RSSI-Only}：仅基于单帧 RSSI 反演；
+  \item \textbf{KF-Baseline}：粗定位 + 卡尔曼滤波；
+  \item \textbf{Proposed}：本文鲁棒窗口融合方法。
+\end{enumerate}
+
+\section{评价指标}
+采用以下指标：
+\begin{itemize}
+  \item 平均定位误差（MAE）；
+  \item 均方根误差（RMSE）；
+  \item 轨迹平滑度（相邻方向变化方差）；
+  \item 单帧计算耗时。
+\end{itemize}
+
+\section{主实验结果}
+\begin{table}[H]
+\centering
+\caption{主实验结果对比}
+\begin{tabular}{lcccc}
+\toprule
+方法 & MAE/m & RMSE/m & 方向方差 & 耗时/ms \\
+\midrule
+RSSI-Only & 4.83 & 6.21 & 0.198 & 0.6 \\
+KF-Baseline & 3.15 & 4.02 & 0.093 & 1.1 \\
+Proposed & 2.08 & 2.76 & 0.041 & 2.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+可见本文方法在精度和轨迹连续性上明显优于基线方法，同时保持可接受的实时性。
+
+\section{遮挡鲁棒性实验}
+设置信标遮挡比例从 0\% 提升到 40\%。实验结果表明，RSSI-Only 方法误差快速上升，而本文方法在 30\% 遮挡下仍保持 3 m 左右误差，说明步行约束和鲁棒权重机制有效。
+
+\section{窗口长度影响}
+当窗口长度从 4 增加到 12 时，误差先下降后趋稳，耗时线性增长。综合考虑实时性与精度，本文取 $w=8$ 作为默认配置。
+
+\section{参数敏感性}
+对 $\lambda_s,\lambda_h,\delta$ 做网格搜索，发现：
+\begin{itemize}
+  \item $\lambda_s$ 过小会产生抖动，过大会过度平滑；
+  \item $\delta$ 过大则异常点抑制不足，过小会误伤有效观测；
+  \item $\lambda_h$ 对急转弯场景最敏感。
+\end{itemize}
+
+\section{结果可视化结论}
+从轨迹图可观察到，本文方法能更好贴合车道中心线，且在信标稀疏区域不会产生明显跳点，满足应急场景“可追踪、可解释”的定位需求。

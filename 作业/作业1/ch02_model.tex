@@ -1,0 +1,86 @@
+\chapter{观测模型与加权最小二乘建模}
+
+\section{测距观测模型}
+对于测距站 $\hat{\bm q}_k=[\hat{x}_k,\hat{y}_k,\hat{z}_k]^{\T}$，理论斜距定义为
+\begin{equation}
+\rho_k(\bm p)=\sqrt{(x-\hat{x}_k)^2+(y-\hat{y}_k)^2+(z-\hat{z}_k)^2}.
+\label{eq:rho_model}
+\end{equation}
+测距残差写成
+\begin{equation}
+r^{(\rho)}_k(\bm p)=\rho_k^{obs}-\rho_k(\bm p).
+\end{equation}
+若测距噪声标准差为 $\sigma_{\rho,k}$，则加权残差为 $r^{(\rho)}_k/\sigma_{\rho,k}$。
+
+\section{测角观测模型}
+对测角站 $\hat{\bm q}_j$，定义相对向量
+\[
+\Delta x_j=x-\hat{x}_j,\quad
+\Delta y_j=y-\hat{y}_j,\quad
+\Delta z_j=z-\hat{z}_j.
+\]
+在与代码一致的约定下，理论方位角和俯仰角可写为
+\begin{equation}
+A_j(\bm p)=\pi-\operatorname{atan2}(\Delta y_j,\Delta x_j),
+\end{equation}
+\begin{equation}
+h_j(\bm p)=\arcsin\left(\frac{\Delta z_j}{\sqrt{\Delta x_j^2+\Delta y_j^2+\Delta z_j^2}}\right).
+\end{equation}
+
+方位角残差为
+\[
+\tilde r^{(A)}_j=A_j^{obs}-A_j(\bm p),
+\]
+并进行周期性修正：
+\[
+r^{(A)}_j=
+\begin{cases}
+\tilde r^{(A)}_j+2\pi, & \tilde r^{(A)}_j<-\tau_A,\\
+\tilde r^{(A)}_j-2\pi, & \tilde r^{(A)}_j>\tau_A,\\
+\tilde r^{(A)}_j, & \text{otherwise},
+\end{cases}
+\]
+其中 $\tau_A$ 为阈值（实现中采用约 $5\sim 6$ 弧度区间判断）。
+
+俯仰角残差定义为
+\[
+r^{(h)}_j=h_j^{obs}-h_j(\bm p).
+\]
+
+\section{统一目标函数}
+令测角样本数为 $m$，测距样本数为 $n$。定义目标函数
+\begin{align}
+F(\bm p)=
+&\sum_{j=1}^{m}\left(\frac{r^{(A)}_j(\bm p)}{\sigma_{A,j}}\right)^2
++\sum_{j=1}^{m}\left(\frac{r^{(h)}_j(\bm p)}{\sigma_{A,j}}\right)^2 \notag\\
++&\sum_{k=1}^{n}\left(\frac{r^{(\rho)}_k(\bm p)}{\sigma_{\rho,k}}\right)^2.
+\label{eq:objective}
+\end{align}
+该函数即程序中 \texttt{objfun()} 的数学表达形式。
+
+\section{统计解释}
+若观测误差近似独立同分布高斯，并且权重参数对应真实标准差，则最小化 \eqref{eq:objective} 等价于极大似然估计。收敛解 $\hat{\bm p}$ 在局部可近似满足
+\[
+\hat{\bm p}\sim \mathcal N\left(\bm p^\star,\ \bm\Sigma\right),
+\]
+其中 $\bm\Sigma$ 可由信息矩阵或海森矩阵逆近似得到。这个性质为后续置信椭球构造提供理论基础。
+
+\section{模型可观性讨论}
+对于三维位置参数估计，理论上至少需要三条独立约束；但由于噪声存在与几何退化，实际需要冗余观测以提升稳定性。本文实验设置 4 组测角 + 4 组测距，具有较强冗余度：
+\begin{itemize}
+  \item 角度观测提供方向约束，改善水平分量估计；
+  \item 距离观测提供尺度约束，减少远距离角度误差放大效应；
+  \item 混合观测在站位对称时能提升估计条件性。
+\end{itemize}
+
+\section{目标函数局部性质}
+在真值附近，残差可线性化为
+\[
+\bm r(\bm p+\Delta\bm p)\approx \bm r(\bm p)-\bm J(\bm p)\Delta\bm p.
+\]
+因此
+\[
+F(\bm p+\Delta\bm p)\approx
+F(\bm p)-2\bm g^{\T}\Delta\bm p+\Delta\bm p^{\T}\bm H\Delta\bm p,
+\]
+其中 $\bm g$ 与 $\bm H$ 分别对应梯度和海森矩阵。若 $\bm H$ 在最优点附近正定，则局部最优解唯一，迭代算法通常可快速收敛。

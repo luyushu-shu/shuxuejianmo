@@ -1,0 +1,172 @@
+\documentclass[openany]{./MathematicalModelCaseStudyReport}
+\let\cleardoublepage\clearpage
+
+\graphicspath{{./}{figures/}}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\setlist{itemsep=0.05\baselineskip,itemindent=0em,partopsep=0pt,parsep=0ex,topsep=0.1\baselineskip}
+\usepackage{algorithm}
+\usepackage[noEnd=false,indLines=false]{algpseudocodex}
+\floatname{algorithm}{\color{blue} 算法}
+\numberwithin{algorithm}{chapter}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+bookmarksnumbered,
+hidelinks,
+pdfborder={0 0 0}
+}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\T}{\mathrm{T}}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\argmin}{arg\,min}
+
+\begin{document}
+
+\graduateyear{2026}
+\class{O241.6}
+\ctitle{\uline{地下停车场应急人员定位问题研究\\
+基于蓝牙 RSSI 与步行约束融合的建模与求解}}
+\def\cctitle{地下停车场应急人员定位问题研究}
+\caffil{数理科学学院数学系}
+\cmajor{信息与计算科学}
+\cdirection{数据建模与智能定位}
+\csupervisor{陈务深\, 教授}
+\cauthor{陆雨澍}
+\studentid{202421146020}
+\cdate{2026 年 4 月}
+
+\etitle{\uline{Emergency Indoor Localization in Underground Parking Lots\\
+Fusion Modeling of BLE RSSI and Pedestrian Constraints}}
+\eaffil{School of Mathematical Sciences}
+\emajor{Information and Computational Science}
+\edirection{Data Modeling and Intelligent Localization}
+\esupervisor{CHEN Wu Shen (Professor)}
+\eauthor{LU YUSHU}
+\edate{April, 2026}
+
+\newgeometry{top=2.0cm,bottom=2.0cm,left=2.5cm,right=2.5cm}
+{\renewcommand{\baselinestretch}{1.6}\makecover}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\include{Declaration}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\include{Committee}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\frontmatter
+\restoregeometry
+\include{abstract_chs}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\include{abstract_eng}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\setcounter{tocdepth}{1}
+\phantomsection\pdfbookmark[0]{目录}{ccontents}
+\tableofcontents
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+{\let\oldnumberline\numberline
+\renewcommand{\numberline}{图~\oldnumberline}
+\listoffigures
+}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+{\let\oldnumberline\numberline
+\renewcommand{\numberline}{表~\oldnumberline}
+\listoftables
+}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\linespread{1.4}\selectfont
+\mainmatter
+
+\input{ch01_background}
+\input{ch02_model}
+\input{ch03_derivative}
+\input{ch04_initialization}
+\input{ch05_algorithms}
+\input{ch06_experiment}
+\input{ch07_uncertainty}
+\input{ch08_extensions}
+\input{ch08a_sensitivity}
+\input{ch08b_cases}
+\input{ch09_conclusion}
+
+\backmatter
+\linespread{1.1}\selectfont
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{参考文献}
+\thispagestyle{plain}
+
+\bibitem{Nocedal2006}
+\newblock J. Nocedal and S. J. Wright,
+\newblock \emph{Numerical Optimization}, 2nd Edition,
+\newblock Springer, New York, 2006.
+
+\bibitem{Bjorck1996}
+\newblock A. Bjorck,
+\newblock \emph{Numerical Methods for Least Squares Problems},
+\newblock SIAM, Philadelphia, 1996.
+
+\bibitem{Faragher2015}
+\newblock R. Faragher and R. Harle,
+\newblock Location fingerprinting with Bluetooth Low Energy beacons,
+\newblock \emph{IEEE Journal on Selected Areas in Communications}, 33 (2015), 2418--2428.
+
+\bibitem{Gu2019}
+\newblock Y. Gu, A. Lo and I. Niemegeers,
+\newblock A survey of indoor positioning systems for wireless personal networks,
+\newblock \emph{IEEE Communications Surveys \& Tutorials}, 11 (2019), 13--32.
+
+\bibitem{He2016}
+\newblock S. He and S. H. G. Chan,
+\newblock Wi-Fi fingerprint-based indoor positioning: Recent advances and comparisons,
+\newblock \emph{IEEE Communications Surveys \& Tutorials}, 18 (2016), 466--490.
+
+\bibitem{Li2021}
+\newblock B. Li, Y. Wang and H. K. Lee,
+\newblock Robust RSSI-based indoor localization with outlier suppression,
+\newblock \emph{Sensors}, 21 (2021), 4432.
+
+\bibitem{Boyd2004}
+\newblock S. Boyd and L. Vandenberghe,
+\newblock \emph{Convex Optimization},
+\newblock Cambridge University Press, 2004.
+
+\bibitem{Higham2002}
+\newblock N. J. Higham,
+\newblock \emph{Accuracy and Stability of Numerical Algorithms}, 2nd Edition,
+\newblock SIAM, Philadelphia, 2002.
+
+\bibitem{Chen2026Notes}
+\newblock 陈务深,
+\newblock 室内定位与优化计算课程讲义,
+\newblock 南京工业大学课程讲义, 2026.
+
+\bibitem{Lu2026Proj}
+\newblock 陆雨澍,
+\newblock 地下停车场应急定位建模与仿真实验,
+\newblock 课程作业报告, 2026.
+
+\end{thebibliography}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 A：关键程序清单与说明}
+\addcontentsline{toc}{chapter}{附录 A：关键程序清单与说明}
+\input{appendix_a}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 B：额外实验结果}
+\addcontentsline{toc}{chapter}{附录 B：额外实验结果}
+\input{appendix_b}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{致谢}
+\addcontentsline{toc}{chapter}{致谢}
+感谢导师在选题、建模、算法与写作中的系统指导，感谢课程组提供模板与实验环境，感谢同学在代码测试和结果校验阶段的协助。本文在组织上重点保证了模型推导完整性、程序对应关系可追踪性与结果解释一致性。
+
+\end{document}

@@ -1,0 +1,41 @@
+\chapter{问题背景与资料整理}
+
+\section{研究背景}
+在科学计算、控制工程与生物系统建模中，常微分方程（ODE）参数模型广泛用于描述系统动态。实际任务通常同时要求：
+\begin{enumerate}
+  \item 对状态轨迹进行高精度数值求解；
+  \item 对未知参数进行稳定、可重复的估计。
+\end{enumerate}
+传统低阶积分方法在长时间积分或高精度场景下会出现误差累积；而仅依赖数值差分构造梯度/海森矩阵又容易放大噪声。基于高阶导数构造泰勒级数，可以在局部区间内提高逼近精度，并为参数优化提供更稳定的导数信息。
+
+\section{数据与代码来源说明}
+本作业基于压缩包 \texttt{CTaylorSeriesSecond20250324.zip} 中的实现文件进行整理，重点包含：
+\begin{itemize}
+  \item 导数模块：\texttt{derivative2Order16.c}、\texttt{derivative14Order16.c}、\texttt{derivative56Order16.c}；
+  \item 主程序与测试入口：\texttt{main.c}、\texttt{normal\_test.c}；
+  \item 随机与概率辅助模块：\texttt{normal.c}、\texttt{ranlib.c} 相关代码。
+\end{itemize}
+这些文件反映了“高阶导数显式编码 + 泰勒展开积分 + 牛顿类求参”的核心思路。
+
+\section{研究目标}
+本文聚焦三个目标：
+\begin{enumerate}
+  \item 构建面向一般ODE系统的16阶泰勒积分框架；
+  \item 建立基于残差平方和的牛顿法与高斯牛顿法参数估计模型；
+  \item 通过对比实验评估精度、稳定性与计算开销。
+\end{enumerate}
+
+\section{技术路线}
+整体流程见图~\ref{fig:flow5}。本文采用“模型抽象--算法设计--实验验证”的组织方式。
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\textwidth}{
+\centering
+数据与模型设定 $\rightarrow$ 高阶导数递推 $\rightarrow$ 泰勒积分 \\
+$\downarrow$ \\
+残差构建 $\rightarrow$ 牛顿/高斯牛顿迭代 $\rightarrow$ 精度与鲁棒性评估
+}}
+\caption{作业5技术路线示意}
+\label{fig:flow5}
+\end{figure}

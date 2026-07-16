@@ -1,0 +1,25 @@
+\chapter{不确定性传播与置信区间评估}
+
+\section{线性近似传播}
+在线性近似下，参数协方差矩阵估计为
+\[
+\Sigma_\theta\approx \left(J^\mathsf{T}\Sigma_y^{-1}J\right)^{-1}.
+\]
+由此可计算每个参数的标准差及95\%置信区间。
+
+\section{Bootstrap评估}
+对观测残差进行重采样并重复估计，得到参数经验分布。与线性近似相比，Bootstrap 能更好反映非线性效应导致的偏态。
+
+\section{风险指标}
+定义参数稳定风险分数
+\[
+\mathcal{R}=\sum_{j=1}^p w_j \frac{\text{std}(\theta_j)}{|\theta_j|+\epsilon}.
+\]
+当 $\mathcal{R}$ 超阈值时，需增加观测长度或调整实验设计。
+
+\section{不确定性控制建议}
+\begin{enumerate}
+  \item 提升高敏感参数对应观测通道采样密度；
+  \item 对低信噪比窗口设置较低权重；
+  \item 在部署阶段保存参数分布而非仅保存点估计。
+\end{enumerate}

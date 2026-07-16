@@ -1,0 +1,30 @@
+\section*{B.1 批量试验记录}
+{
+\footnotesize
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{cccccccc}
+\caption{参数辨识批量试验表（模板）}\\
+\toprule
+编号 & 初值方案 & 噪声水平 & 正则系数 & 迭代次数 & RMSE & 参数误差(\%) & 备注 \\
+\midrule
+\endfirsthead
+\multicolumn{8}{c}{续表：参数辨识批量试验表}\\
+\toprule
+编号 & 初值方案 & 噪声水平 & 正则系数 & 迭代次数 & RMSE & 参数误差(\%) & 备注 \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & P1 & 0.00 & 0.0 & 8 & $1.8\times10^{-4}$ & 0.42 & 收敛 \\
+2 & P2 & 0.01 & 0.0 & 13 & $4.7\times10^{-3}$ & 2.31 & 收敛 \\
+3 & P3 & 0.03 & 0.1 & 18 & $9.8\times10^{-3}$ & 4.12 & 收敛 \\
+4 & P4 & 0.05 & 0.2 & 20 & $1.6\times10^{-2}$ & 6.87 & 慢收敛 \\
+\end{longtable}
+}
+
+\section*{B.2 复现实验建议}
+\begin{enumerate}
+  \item 固定随机种子并保存每次扰动初值；
+  \item 同时记录残差、梯度范数与阻尼参数变化轨迹；
+  \item 将失败样本单独归档用于初值策略优化。
+\end{enumerate}

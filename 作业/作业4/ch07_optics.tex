@@ -1,0 +1,42 @@
+\chapter{光学接收模型与误差传播}
+
+\section{反射定律离散实现}
+对每个采样点 $q$，入射方向为 $\mathbf d_{\text{in}}$，局部单位法向为 $\mathbf n_q$，反射方向为
+\[
+\mathbf d_{\text{out}}=\mathbf d_{\text{in}}-2(\mathbf d_{\text{in}}\cdot\mathbf n_q)\mathbf n_q.
+\]
+以此构建离散光线追踪算法，统计命中馈源舱有效区域的光线占比。
+
+\section{接收比与加权接收比}
+若考虑面板面积差异，可定义加权接收比：
+\[
+\eta_w=\frac{\sum_{q\in\mathcal R}A_q I_q}{\sum_{q\in\mathcal A}A_q I_q},
+\]
+其中 $A_q$ 为采样点对应面积权重。该指标较普通命中率更接近能量意义。
+
+\section{误差来源分解}
+接收性能误差可分解为三类：
+\begin{enumerate}
+  \item 几何拟合误差（节点偏离理想抛物面）；
+  \item 结构约束残差（边长变化与行程边界）；
+  \item 数值离散误差（采样密度、法向近似误差）。
+\end{enumerate}
+三类误差共同决定接收比估计的置信区间。
+
+\section{误差传播近似}
+设参数向量为 $\bm\theta$（含节点坐标、法向、焦点等），则接收比一阶近似方差可写为
+\[
+\operatorname{Var}(\eta)\approx \nabla_{\bm\theta}\eta^\mathsf T\mathbf\Sigma_\theta\nabla_{\bm\theta}\eta.
+\]
+若无法显式求梯度，可采用 bootstrap 采样估计分布区间。
+
+\section{对比实验设计}
+本章建议至少做三组光学对比：
+\begin{itemize}
+  \item 工作态与基准态接收比对比；
+  \item 不同采样密度下接收比收敛性对比；
+  \item 不同方向角下接收比稳定性对比。
+\end{itemize}
+
+\section{本章小结}
+光学模型将几何调节结果转化为可量化性能指标，是评估方案优劣的最终环节。接收比及其误差区间应作为结论的核心证据之一。

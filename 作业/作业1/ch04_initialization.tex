@@ -1,0 +1,66 @@
+\chapter{初值构造与几何子问题}
+
+\section{初值在非线性定位中的作用}
+非线性最优化通常只保证局部收敛。若初值偏差过大，可能出现：
+\begin{itemize}
+  \item 收敛速度变慢；
+  \item 进入错误局部极小；
+  \item 在角度奇异区附近数值震荡。
+\end{itemize}
+因此，本文在迭代前先通过几何定位方法构造初值，再进入牛顿法或法方程迭代法。
+
+\section{三测站测距定位模型}
+给定三个测站坐标 $\bm q_1,\bm q_2,\bm q_3$ 及对应距离 $\rho_1,\rho_2,\rho_3$，目标点满足
+\begin{equation}
+\|\bm p-\bm q_i\|_2^2=\rho_i^2,\quad i=1,2,3.
+\label{eq:tri_sphere}
+\end{equation}
+对式 \eqref{eq:tri_sphere} 进行两两相减可消去二次项，得到关于 $(x,y,z)$ 的线性关系，再代回任一球方程可形成一元二次方程，最终得到候选解。程序中实现为 \texttt{trilateration\_3d()}，并结合判别式判断是否存在实解。
+
+\section{双测站测角几何辅助}
+模板代码还提供双测站测角定位函数 \texttt{locate\_dual()}。其核心思想是将两条视线表示为
+\[
+\bm l_1(s_1)=\bm q_1+s_1\bm u,\quad
+\bm l_2(s_2)=\bm q_2+s_2\bm v,
+\]
+求两条空间直线最短连线中点作为估计点。该方法在无测距条件下可作为粗定位，但精度受交会角影响较大。
+
+\section{单站角距直接定位}
+\texttt{AzElRho2Position()} 实现了单站“方位角 + 俯仰角 + 斜距”直接定位：
+\[
+\bm p=\bm q+\rho\bm u(A,h),
+\]
+其中单位方向向量为
+\[
+\bm u=
+\left[
+-\cos h\cos A,\ \cos h\sin A,\ \sin h
+\right]^{\T}.
+\]
+该方法可在仿真中用于快速生成参考点，也可用于局部检验多站融合结果。
+
+\section{初值方案比较}
+结合代码功能，本文比较三种初值策略：
+\begin{enumerate}
+  \item \textbf{三测距交会初值}：稳定性较高，适合当前混合观测场景；
+  \item \textbf{双测角交会初值}：对角度噪声敏感，远距时误差放大；
+  \item \textbf{人工给定初值}：实现简单，但依赖先验经验。
+\end{enumerate}
+实验中选用方案 1 作为默认初值构造。
+
+\section{几何退化情形讨论}
+初值阶段可能遇到退化几何：
+\begin{itemize}
+  \item 三测站近共线或共面导致方程组病态；
+  \item 双测站视线近平行导致交会不稳定；
+  \item 目标过近导致角度导数出现大幅波动。
+\end{itemize}
+工程上可采用以下缓解策略：
+\begin{enumerate}
+  \item 引入冗余站并进行组合筛选；
+  \item 对候选初值计算残差并择优；
+  \item 对近奇异站位进行权重衰减。
+\end{enumerate}
+
+\section{本章小结}
+本章给出了从几何定位到优化初值的完整过渡路径。通过三测距交会得到的初始位置具有较好可行性，为后续迭代收敛提供了可靠入口，是本文算法流程中的关键步骤。

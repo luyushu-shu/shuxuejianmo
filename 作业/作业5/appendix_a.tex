@@ -1,0 +1,37 @@
+\section*{A.1 关键模块映射}
+\begin{table}[H]
+\centering
+\caption{源码模块与功能对应关系}
+\begin{tabular}{lll}
+\toprule
+文件名 & 主要功能 & 在本文中的作用 \\
+\midrule
+\texttt{main.c} & 主流程组织 & 实验任务调度 \\
+\texttt{derivative2Order16.c} & 低维高阶导数 & 单元测试与验证 \\
+\texttt{derivative14Order16.c} & 中维高阶导数 & 子系统计算 \\
+\texttt{derivative56Order16.c} & 高维高阶导数 & 全模型积分 \\
+\texttt{normal.c} & 正态随机数模块 & 噪声扰动模拟 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{A.2 伪代码：阻尼高斯牛顿}
+\begin{algorithm}[H]
+\caption{阻尼高斯牛顿参数估计}
+\begin{algorithmic}[1]
+\Require 初值 $\boldsymbol{\theta}^{(0)}$，阻尼参数 $\lambda_0$
+\For{$k=0,1,\ldots,k_{\max}$}
+\State 计算残差 $\mathbf{r}^{(k)}$ 与雅可比 $\mathbf{J}^{(k)}$
+\State 求解 $\left((\mathbf{J}^{(k)})^\mathsf{T}\mathbf{J}^{(k)}+\lambda_k\mathbf{I}\right)\Delta\boldsymbol{\theta}=- (\mathbf{J}^{(k)})^\mathsf{T}\mathbf{r}^{(k)}$
+\State 试探更新并比较目标函数下降量
+\If{下降充分}
+\State 接受更新，减小 $\lambda_k$
+\Else
+\State 拒绝更新，增大 $\lambda_k$
+\EndIf
+\If{$\|\Delta\boldsymbol{\theta}\|_2<\varepsilon_\theta$}
+\State \textbf{break}
+\EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}

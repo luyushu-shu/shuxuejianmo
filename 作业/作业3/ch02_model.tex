@@ -1,0 +1,82 @@
+\chapter{概率模型与优化模型建立}
+
+\section{建模假设}
+为保证模型可计算且与题意一致，作如下假设：
+\begin{enumerate}
+  \item 刀具寿命 $m$（加工件数）服从截断正态分布，定义域为 $(0,1500)$；
+  \item 生产按周期运行，每周期从“新刀开始”到“检测停机并恢复/换刀”结束；
+  \item 每周期最多执行 $n$ 次检查，检查节点满足 $0<k_1<\cdots<k_n<1500$；
+  \item 前 $n-1$ 次通过产品抽检判断状态，第 $n$ 次可视为直接刀具检查（不误判）；
+  \item 目标是最小化单位合格品平均成本，而非单次周期成本。
+\end{enumerate}
+
+\section{故障区间事件与概率}
+定义区间事件
+\[
+A_t=\{m\mid k_{t-1}\le m<k_t\},\quad t=1,\ldots,n+1,
+\]
+其中 $k_0=0,\ k_{n+1}=1500$。事件概率为
+\begin{equation}
+p_t=\int_{k_{t-1}}^{k_t}f(m)\,dm,\qquad \sum_{t=1}^{n+1}p_t=1.
+\label{eq:pt}
+\end{equation}
+该划分的意义是：若事件 $A_t$ 发生，表示刀具在第 $t$ 个检查区间内失效，从而影响后续检查触发机制与损失构成。
+
+\section{期望产出与期望损失}
+记：
+\begin{itemize}
+  \item $\zeta_1$：合格品数量期望；
+  \item $\zeta_2$：总产出数量期望；
+  \item $\zeta_3=\zeta_2-\zeta_1$：废品数量期望；
+  \item $\gamma$：检查次数期望；
+  \item $\eta_1$：误判停机次数期望；
+  \item $\eta_2$：最终主动换刀事件概率。
+\end{itemize}
+
+设费用参数分别为 $\theta_1,\ldots,\theta_5$，则周期总损失期望为
+\begin{equation}
+h=\theta_1\zeta_3+\theta_2\gamma+\theta_5\eta_1+\theta_4\eta_2+\theta_3(1-\eta_1-\eta_2).
+\label{eq:h}
+\end{equation}
+在第一问场景中可取 $\eta_1=0$；第二问场景中 $\theta_5=1500$ 且 $\eta_1$ 由误判概率决定。
+
+\section{目标函数}
+采用“单位合格品平均成本”作为优化指标：
+\begin{equation}
+\phi=\frac{h}{\zeta_1}.
+\label{eq:phi}
+\end{equation}
+该指标避免仅最小化总成本导致“过度保守（过少生产）”的策略偏差，更符合产线持续运行中的效益衡量标准。
+
+\section{变量参数化与约束}
+为便于优化，使用步长变量
+\[
+\mathbf X_n=(x_1,\ldots,x_n)^\mathsf T,\quad x_1=k_1,\ x_i=k_i-k_{i-1}\ (i\ge2).
+\]
+则有约束
+\[
+x_i>0,\quad \sum_{i=1}^{n}x_i<1500.
+\]
+对应检查节点可由递推关系恢复：
+\[
+k_1=x_1,\quad k_i=\sum_{j=1}^{i}x_j.
+\]
+
+\section{双层优化结构}
+固定检查次数 $n$ 时，求内层最优：
+\begin{equation}
+\phi_n^\star=\min_{\mathbf X_n}\phi(\mathbf X_n).
+\label{eq:inner}
+\end{equation}
+在不同 $n$ 间求外层最优：
+\begin{equation}
+\phi^\star=\min_{n\ge1}\phi_n^\star.
+\label{eq:outer}
+\end{equation}
+整体问题可写为
+\[
+\min_{n\ge1}\left\{\min_{\mathbf X_n}\phi(\mathbf X_n)\right\}.
+\]
+
+\section{本章小结}
+本章完成了从随机寿命与检查机制到期望成本优化的完整数学化表达，后续将给出可执行的数值求解方案。

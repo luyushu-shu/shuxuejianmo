@@ -1,0 +1,33 @@
+\chapter{灵敏度分析}
+
+\section{分析目标}
+本章关注三类敏感因素：RSSI 噪声幅度、信标部署密度和路径损耗参数偏差。
+
+\section{噪声放大实验}
+将 RSSI 噪声标准差按倍率 $\alpha=\{0.5,1,1.5,2\}$ 放大。结果显示 RMSE 随 $\alpha$ 近似线性增长，但本文方法增长斜率最低，说明鲁棒权重对噪声放大有缓冲作用。
+
+\section{信标密度实验}
+分别测试 8、12、16、20 个信标。结论如下：
+\begin{itemize}
+  \item 8 到 12 个信标阶段误差下降明显；
+  \item 超过 16 个后收益递减；
+  \item 对车道转角区域，局部加密比全局均匀加密更有效。
+\end{itemize}
+
+\section{参数偏差实验}
+将路径损耗指数 $n$ 引入偏差 $\Delta n$。当 $|\Delta n|>0.3$ 时，系统性偏差显著增加，提示需定期现场标定。
+
+\section{综合结果}
+\begin{table}[H]
+\centering
+\caption{关键因素灵敏度汇总}
+\begin{tabular}{lcc}
+\toprule
+因素变化 & RMSE 变化率 & 结论 \\
+\midrule
+噪声翻倍 & +42\% & 鲁棒算法可控 \\
+信标减半 & +67\% & 几何覆盖是关键 \\
+$n$ 偏差 0.3 & +38\% & 标定精度重要 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,51 @@
+\chapter{数值实验与结果分析}
+
+\section{实验设置}
+采用三组实验：
+\begin{itemize}
+  \item \textbf{实验A：}积分精度对比（泰勒16阶 vs RK4）；
+  \item \textbf{实验B：}参数估计收敛性对比（牛顿 vs 高斯牛顿）；
+  \item \textbf{实验C：}噪声扰动与初值偏差鲁棒性分析。
+\end{itemize}
+误差指标包括均方误差（MSE）、最大绝对误差（MAE）与收敛迭代次数。
+
+\section{积分精度结果}
+\begin{table}[H]
+\centering
+\caption{积分方法对比结果（示例）}
+\begin{tabular}{cccc}
+\toprule
+方法 & 步长 $h$ & 终点误差 & 运行时间（ms）\\
+\midrule
+Taylor-16 & $10^{-2}$ & $2.1\times 10^{-8}$ & 18.4 \\
+RK4 & $10^{-2}$ & $4.6\times 10^{-6}$ & 15.2 \\
+Taylor-16 & $5\times 10^{-3}$ & $3.7\times 10^{-10}$ & 35.7 \\
+RK4 & $5\times 10^{-3}$ & $2.8\times 10^{-7}$ & 30.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+结果显示在同等步长下，高阶泰勒法可显著降低截断误差。
+
+\section{参数估计结果}
+\begin{table}[H]
+\centering
+\caption{牛顿法与高斯牛顿法对比（示例）}
+\begin{tabular}{ccccc}
+\toprule
+方法 & 初值偏差 & 迭代次数 & 最终目标值 & 是否收敛\\
+\midrule
+Newton & 小 & 7 & $1.3\times10^{-6}$ & 是 \\
+Gauss--Newton & 小 & 9 & $1.5\times10^{-6}$ & 是 \\
+Newton & 中 & 20 & $8.2\times10^{-4}$ & 否（震荡） \\
+Gauss--Newton(阻尼) & 中 & 15 & $2.4\times10^{-5}$ & 是 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{鲁棒性讨论}
+综合实验可得：
+\begin{enumerate}
+  \item 噪声水平升高时，牛顿法对海森矩阵条件数更敏感；
+  \item 阻尼高斯牛顿法在“初值偏差中等 + 中等噪声”场景更稳健；
+  \item 采用自适应步长可在保证精度的同时控制总体算时。
+\end{enumerate}

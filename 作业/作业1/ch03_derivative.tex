@@ -1,0 +1,106 @@
+\chapter{梯度、海森矩阵及数值实现细节}
+
+\section{导数推导的意义}
+非线性优化性能高度依赖导数信息质量。若梯度与海森矩阵计算准确，则牛顿法具有更快的局部收敛速度；法方程方法也可借助雅可比构造稳定的近似二阶信息。课程代码中对测距、方位角、俯仰角函数分别实现了一阶与二阶导数，本章给出其数学对应关系。
+
+\section{测距函数导数}
+记
+\[
+r=\sqrt{\Delta x^2+\Delta y^2+\Delta z^2}.
+\]
+则测距函数梯度为
+\begin{equation}
+\nabla \rho=
+\left[
+\frac{\Delta x}{r},
+\frac{\Delta y}{r},
+\frac{\Delta z}{r}
+\right]^{\T}.
+\label{eq:dist_grad}
+\end{equation}
+海森矩阵为
+\begin{equation}
+\nabla^2\rho=
+\frac{1}{r}\bm I_3-\frac{1}{r^3}
+\begin{bmatrix}
+\Delta x^2 & \Delta x\Delta y & \Delta x\Delta z\\
+\Delta y\Delta x & \Delta y^2 & \Delta y\Delta z\\
+\Delta z\Delta x & \Delta z\Delta y & \Delta z^2
+\end{bmatrix}.
+\label{eq:dist_hess}
+\end{equation}
+该结果与代码 \texttt{distgrad()}、\texttt{disthess()} 完全一致。
+
+\section{角度函数导数}
+\subsection{方位角梯度}
+定义 $s=\Delta x^2+\Delta y^2$，则
+\begin{equation}
+\frac{\partial A}{\partial x}=\frac{\Delta y}{s},\quad
+\frac{\partial A}{\partial y}=-\frac{\Delta x}{s},\quad
+\frac{\partial A}{\partial z}=0.
+\end{equation}
+
+\subsection{俯仰角梯度}
+令 $r_{xy}=\sqrt{\Delta x^2+\Delta y^2}$，$r=\sqrt{\Delta x^2+\Delta y^2+\Delta z^2}$，则
+\begin{equation}
+\frac{\partial h}{\partial x}=-\frac{\Delta x\Delta z}{r_{xy}r^2},\quad
+\frac{\partial h}{\partial y}=-\frac{\Delta y\Delta z}{r_{xy}r^2},\quad
+\frac{\partial h}{\partial z}=\frac{r_{xy}}{r^2}.
+\end{equation}
+代码中在 $r$ 过小情况下设置异常标记，以避免除零风险。
+
+\subsection{二阶导数实现}
+角度函数二阶导数表达较长，程序中通过显式公式给出，关键考虑包括：
+\begin{itemize}
+  \item 利用对称性减少重复计算；
+  \item 将公共项提取为中间变量，提高效率；
+  \item 在近奇异几何（目标接近测站）时触发保护逻辑。
+\end{itemize}
+
+\section{目标函数梯度与海森矩阵}
+目标函数可写为
+\[
+F(\bm p)=\sum_i w_i r_i(\bm p)^2,\quad w_i=\sigma_i^{-2}.
+\]
+因此梯度为
+\begin{equation}
+\nabla F(\bm p)= -2\sum_i w_i r_i(\bm p)\nabla f_i(\bm p),
+\end{equation}
+其中 $f_i$ 表示理论观测函数。海森矩阵为
+\begin{equation}
+\nabla^2 F(\bm p)=
+2\sum_i w_i\left[\nabla f_i\nabla f_i^{\T}-r_i\nabla^2 f_i\right].
+\label{eq:hessian_full}
+\end{equation}
+式 \eqref{eq:hessian_full} 与程序 \texttt{hessfun()} 的实现一一对应。
+
+\section{线性方程求解与矩阵逆}
+代码中对 $3\times3$ 线性方程组采用显式代数公式求解，并给出 $3\times3$ 矩阵伴随法求逆。该策略在小规模问题中计算量低、实现直接，但需要注意：
+\begin{enumerate}
+  \item 若矩阵接近奇异，显式公式数值稳定性下降；
+  \item 实际工程建议增加条件数监测；
+  \item 在高维扩展问题中应改用 Cholesky、QR 或 SVD 分解。
+\end{enumerate}
+
+\section{程序模块与数学模块对应关系}
+\begin{table}[H]
+\centering
+\caption{主要函数与数学角色对应}
+\begin{tabular}{ll}
+\toprule
+函数名 & 数学含义 \\
+\midrule
+\texttt{dist()}, \texttt{dire()} & 观测函数 $f_i(\bm p)$ \\
+\texttt{distgrad()}, \texttt{diregrad()} & 雅可比（梯度）分量 \\
+\texttt{disthess()}, \texttt{direhess()} & 二阶导数分量 \\
+\texttt{objfun()} & 目标函数 $F(\bm p)$ \\
+\texttt{gradfun()} & 梯度 $\nabla F(\bm p)$ \\
+\texttt{hessfun()} & 海森矩阵 $\nabla^2F(\bm p)$ \\
+\texttt{AXB()} & 线性系统求解器 \\
+\texttt{AInverse3()} & 小维矩阵逆 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{本章小结}
+本章建立了导数计算与程序实现之间的可核查映射。通过解析导数而非数值差分，算法在效率和精度上均具优势，也为后续收敛性分析和不确定性评估提供了可靠基础。

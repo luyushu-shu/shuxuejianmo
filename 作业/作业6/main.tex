@@ -1,0 +1,144 @@
+\documentclass[openany]{../作业1/MathematicalModelCaseStudyReport}
+\let\cleardoublepage\clearpage
+
+\graphicspath{{./}{figures/}}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{longtable}
+\setlist{itemsep=0.05\baselineskip,itemindent=0em,partopsep=0pt,parsep=0ex,topsep=0.1\baselineskip}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\floatname{algorithm}{\color{blue} 算法}
+\numberwithin{algorithm}{chapter}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{bookmarksnumbered,hidelinks,pdfborder={0 0 0}}
+
+\begin{document}
+
+\graduateyear{2026}
+\class{O241.6}
+\ctitle{\uline{高精度参数确定问题建模研究\\
+基于常微分方程系统的辨识与验证}}
+\def\cctitle{高精度参数确定问题建模研究}
+\caffil{数理科学学院数学系}
+\cmajor{信息与计算科学}
+\cdirection{数学建模与科学计算}
+\csupervisor{陈务深\, 教授}
+\cauthor{陆雨澍}
+\studentid{51088888888}
+\cdate{2026 年 5 月}
+
+\etitle{\uline{High-Precision Parameter Determination\\
+Identification and Validation for ODE Systems}}
+\eaffil{School of Mathematical Sciences}
+\emajor{Information and Computational Science}
+\edirection{Mathematical Modeling and Scientific Computing}
+\esupervisor{CHEN Wu Shen (Professor)}
+\eauthor{LU YUSHU}
+\edate{May, 2026}
+
+\newgeometry{top=2.0cm,bottom=2.0cm,left=2.5cm,right=2.5cm}
+{\renewcommand{\baselinestretch}{1.6}\makecover}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\include{Declaration}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\include{Committee}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\frontmatter
+\restoregeometry
+\include{abstract_chs}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\include{abstract_eng}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\setcounter{tocdepth}{1}
+\phantomsection\pdfbookmark[0]{目录}{ccontents}
+\tableofcontents
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\linespread{1.8}\selectfont
+\mainmatter
+
+\input{ch01_problem}
+\input{ch02_model}
+\input{ch03_identification}
+\input{ch04_numerical}
+\input{ch05_robustness}
+\input{ch06_conclusion}
+\input{ch07_case_analysis}
+\input{ch08_uncertainty}
+\input{ch09_application}
+\input{ch10_extended_discussion}
+
+\backmatter
+\linespread{1.1}\selectfont
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{参考文献}
+\thispagestyle{plain}
+\bibitem{Lotka1925}
+A. J. Lotka, \emph{Elements of Physical Biology}, Williams \& Wilkins, 1925.
+\bibitem{Volterra1926}
+V. Volterra, Fluctuations in the abundance of a species considered mathematically, \emph{Nature}, 1926.
+\bibitem{Bjorck1996}
+A. Bj\"orck, \emph{Numerical Methods for Least Squares Problems}, SIAM, 1996.
+\bibitem{Nocedal2006}
+J. Nocedal and S. J. Wright, \emph{Numerical Optimization}, Springer, 2006.
+\end{thebibliography}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 A：方程、变量与代码映射}
+\addcontentsline{toc}{chapter}{附录 A：方程、变量与代码映射}
+\input{appendix_a}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 B：批量试验记录模板}
+\addcontentsline{toc}{chapter}{附录 B：批量试验记录模板}
+\input{appendix_b}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 C：参数估计全量结果}
+\addcontentsline{toc}{chapter}{附录 C：参数估计全量结果}
+\input{appendix_c}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 D：扰动试验统计表}
+\addcontentsline{toc}{chapter}{附录 D：扰动试验统计表}
+\input{appendix_d}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 E：多初值并行日志}
+\addcontentsline{toc}{chapter}{附录 E：多初值并行日志}
+\input{appendix_e}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 F：实验结论补充说明}
+\addcontentsline{toc}{chapter}{附录 F：实验结论补充说明}
+\input{appendix_f}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 G：全量批次结果扩展表}
+\addcontentsline{toc}{chapter}{附录 G：全量批次结果扩展表}
+\input{appendix_g}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 H：参数轨迹监控日志}
+\addcontentsline{toc}{chapter}{附录 H：参数轨迹监控日志}
+\input{appendix_h}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 I：超参数网格扫描记录}
+\addcontentsline{toc}{chapter}{附录 I：超参数网格扫描记录}
+\input{appendix_i}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{附录 J：工程部署与质量保证细则}
+\addcontentsline{toc}{chapter}{附录 J：工程部署与质量保证细则}
+\input{appendix_j}
+
+\end{document}

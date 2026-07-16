@@ -1,0 +1,90 @@
+\documentclass[12pt,a4paper]{ctexart}
+\usepackage{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{left=2.5cm,right=2.5cm,top=2.6cm,bottom=2.6cm}
+
+\title{作业4：FAST主动反射面形状调节建模}
+\author{数学建模课程作业}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{题目背景}
+FAST（中国天眼）主动反射面系统由主索网、反射面板、下拉索、促动器和支承结构组成。基准态下反射面为半径约 300 m、口径 500 m 的球面；工作态下需要将其中 300 m 口径区域调节为近似旋转抛物面，使来自目标天体方向的电磁波聚焦于馈源舱有效接收区域。
+
+本题核心是在结构约束下，让调节后的工作抛物面尽量接近理想抛物面，并评估信号接收效果。
+
+\section{问题重述}
+根据题面（CUMCM 2021 A 题），需完成三项任务：
+\begin{enumerate}
+  \item 当天体方向为 $\alpha=0^\circ,\beta=90^\circ$ 时，确定理想抛物面；
+  \item 当天体方向为 $\alpha=36.795^\circ,\beta=78.169^\circ$ 时，建立反射面板调节模型，给出顶点坐标、300 m 口径内主索节点坐标及促动器伸缩量；
+  \item 基于第2问方案，计算馈源舱接收比，并与基准球面接收比比较。
+\end{enumerate}
+
+\section{已知参数与约束}
+\begin{itemize}
+  \item 主索节点 2226 个、主索 6525 根、反射面板 4300 块；
+  \item 节点调节后，相邻节点距离相对变化不超过 $0.07\%$；
+  \item 促动器径向伸缩量范围：$[-0.6,\ 0.6]$ m；
+  \item 电磁波按几何光学直线传播；
+  \item 反射面板顶点由主索节点坐标确定。
+\end{itemize}
+
+\section{模型建立}
+\subsection{坐标与方向向量}
+设基准球心为原点 $O$，天体方向单位向量记作 $\mathbf s(\alpha,\beta)$。馈源舱中心点在焦面上，理想抛物面轴线方向与 $\mathbf s$ 一致。用顶点 $\mathbf v$ 与焦点 $\mathbf p$ 参数化理想抛物面：
+\[
+\|\mathbf x-\mathbf p\|=\mathbf s^\mathsf T(\mathbf x-\mathbf v)+f,
+\]
+其中 $f$ 为焦距参数。
+
+\subsection{离散节点最小二乘贴合}
+设调节后节点坐标为 $\mathbf x_i'$，理想抛物面到节点的法向距离误差为 $d_i$。建立目标函数：
+\[
+\min\ J=\sum_{i\in\Omega}w_i d_i^2,
+\]
+其中 $\Omega$ 为 300 m 口径内节点集合，$w_i$ 为权重（可取 1）。
+
+\subsection{结构约束}
+\[
+\left|\|\mathbf x_i'-\mathbf x_j'\|-\|\mathbf x_i-\mathbf x_j\|\right|
+\le 0.0007\|\mathbf x_i-\mathbf x_j\|,\quad (i,j)\in E,
+\]
+\[
+-0.6\le \Delta l_i\le 0.6,\quad i\in\Omega,
+\]
+其中 $\Delta l_i$ 为对应促动器径向伸缩量，$E$ 为相邻节点边集。
+
+\subsection{接收比计算}
+将入射平行光经局部法向反射后，统计落入馈源舱有效区域（直径 1 m 圆盘）的能量占比。离散近似写为：
+\[
+\eta=\frac{\sum_{q\in\mathcal R}I_q}{\sum_{q\in\mathcal A}I_q},
+\]
+其中 $\mathcal A$ 是 300 m 口径反射区域离散采样点集合，$\mathcal R$ 是反射后落入接收盘的点集。
+
+\section{算法流程}
+\begin{enumerate}
+  \item 读取附件中的节点、地锚点、面板连接关系；
+  \item 给定观测方向 $(\alpha,\beta)$，初始化抛物面参数 $(\mathbf v,f)$；
+  \item 在约束条件下优化节点位移，最小化 $J$；
+  \item 输出顶点坐标、节点新坐标、促动器伸缩量到 `result.xlsx`；
+  \item 光线追踪计算接收比，并与基准球面对比。
+\end{enumerate}
+
+\section{结果展示模板（可按你程序结果填充）}
+\begin{itemize}
+  \item 理想抛物面顶点坐标：$\mathbf v^\star=(\underline{\qquad},\underline{\qquad},\underline{\qquad})$；
+  \item 最大促动器伸缩量：$\max |\Delta l_i|=\underline{\qquad}\,\mathrm m$；
+  \item 调节后接收比：$\eta_{\text{work}}=\underline{\qquad}$；
+  \item 基准球面接收比：$\eta_{\text{base}}=\underline{\qquad}$；
+  \item 提升率：$(\eta_{\text{work}}-\eta_{\text{base}})/\eta_{\text{base}}=\underline{\qquad}$。
+\end{itemize}
+
+\section{结论}
+本建模框架把 FAST 反射面调节问题统一为“几何贴合 + 结构约束 + 光学验证”的优化问题。其优势是：模型结构清晰、约束可解释、便于与数值优化算法（如 SQP、罚函数法、序列二次规划或混合启发式算法）结合。后续可进一步加入风载、温度等工况，形成更稳健的工程化方案。
+
+\end{document}

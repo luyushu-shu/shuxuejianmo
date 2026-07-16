@@ -1,0 +1,75 @@
+\contentsline {chapter}{中文摘要}{i}{section*.3}%
+\contentsline {chapter}{Abstract}{ii}{section*.4}%
+\contentsline {chapter}{\numberline {第一章\hspace {.3em}}问题背景、任务重述与分析}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}工程背景}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}问题重述}{1}{section.1.2}%
+\contentsline {section}{\numberline {1.3}问题难点}{1}{section.1.3}%
+\contentsline {section}{\numberline {1.4}建模思路}{1}{section.1.4}%
+\contentsline {section}{\numberline {1.5}本章小结}{2}{section.1.5}%
+\contentsline {chapter}{\numberline {第二章\hspace {.3em}}几何模型与约束优化模型}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}坐标系与方向向量}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}理想抛物面表示}{3}{section.2.2}%
+\contentsline {section}{\numberline {2.3}离散贴合目标函数}{3}{section.2.3}%
+\contentsline {section}{\numberline {2.4}结构与执行约束}{3}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}促动器行程约束}{3}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}相邻节点边长变化约束}{4}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}径向运动一致性}{4}{subsection.2.4.3}%
+\contentsline {section}{\numberline {2.5}综合优化模型}{4}{section.2.5}%
+\contentsline {section}{\numberline {2.6}接收比评估模型}{4}{section.2.6}%
+\contentsline {section}{\numberline {2.7}本章小结}{4}{section.2.7}%
+\contentsline {chapter}{\numberline {第三章\hspace {.3em}}算法设计与求解流程}{5}{chapter.3}%
+\contentsline {section}{\numberline {3.1}数据预处理}{5}{section.3.1}%
+\contentsline {section}{\numberline {3.2}理想抛物面参数确定}{5}{section.3.2}%
+\contentsline {section}{\numberline {3.3}约束优化求解}{5}{section.3.3}%
+\contentsline {section}{\numberline {3.4}接收比计算算法}{6}{section.3.4}%
+\contentsline {section}{\numberline {3.5}结果导出}{6}{section.3.5}%
+\contentsline {section}{\numberline {3.6}本章小结}{6}{section.3.6}%
+\contentsline {chapter}{\numberline {第四章\hspace {.3em}}结果展示、验证与敏感性分析}{7}{chapter.4}%
+\contentsline {section}{\numberline {4.1}结果展示格式}{7}{section.4.1}%
+\contentsline {section}{\numberline {4.2}约束可行性验证}{7}{section.4.2}%
+\contentsline {section}{\numberline {4.3}性能指标对比}{7}{section.4.3}%
+\contentsline {section}{\numberline {4.4}结果表模板}{8}{section.4.4}%
+\contentsline {section}{\numberline {4.5}敏感性分析}{8}{section.4.5}%
+\contentsline {section}{\numberline {4.6}本章小结}{8}{section.4.6}%
+\contentsline {chapter}{\numberline {第五章\hspace {.3em}}结论与展望}{9}{chapter.5}%
+\contentsline {section}{\numberline {5.1}主要结论}{9}{section.5.1}%
+\contentsline {section}{\numberline {5.2}工程意义}{9}{section.5.2}%
+\contentsline {section}{\numberline {5.3}不足与改进方向}{9}{section.5.3}%
+\contentsline {section}{\numberline {5.4}总结}{9}{section.5.4}%
+\contentsline {chapter}{\numberline {第六章\hspace {.3em}}坐标变换与几何约束细化}{10}{chapter.6}%
+\contentsline {section}{\numberline {6.1}地固坐标与局部坐标}{10}{section.6.1}%
+\contentsline {section}{\numberline {6.2}理想抛物面在局部系中的表达}{10}{section.6.2}%
+\contentsline {section}{\numberline {6.3}节点筛选边界}{10}{section.6.3}%
+\contentsline {section}{\numberline {6.4}索网边集构造}{10}{section.6.4}%
+\contentsline {section}{\numberline {6.5}几何一致性检查}{11}{section.6.5}%
+\contentsline {section}{\numberline {6.6}本章小结}{11}{section.6.6}%
+\contentsline {chapter}{\numberline {第七章\hspace {.3em}}光学接收模型与误差传播}{12}{chapter.7}%
+\contentsline {section}{\numberline {7.1}反射定律离散实现}{12}{section.7.1}%
+\contentsline {section}{\numberline {7.2}接收比与加权接收比}{12}{section.7.2}%
+\contentsline {section}{\numberline {7.3}误差来源分解}{12}{section.7.3}%
+\contentsline {section}{\numberline {7.4}误差传播近似}{12}{section.7.4}%
+\contentsline {section}{\numberline {7.5}对比实验设计}{13}{section.7.5}%
+\contentsline {section}{\numberline {7.6}本章小结}{13}{section.7.6}%
+\contentsline {chapter}{\numberline {第八章\hspace {.3em}}鲁棒性实验与工程化讨论}{14}{chapter.8}%
+\contentsline {section}{\numberline {8.1}扰动实验设计}{14}{section.8.1}%
+\contentsline {section}{\numberline {8.2}稳定性评价指标}{14}{section.8.2}%
+\contentsline {section}{\numberline {8.3}鲁棒优化扩展}{14}{section.8.3}%
+\contentsline {section}{\numberline {8.4}计算开销分析}{14}{section.8.4}%
+\contentsline {section}{\numberline {8.5}工程实施建议}{15}{section.8.5}%
+\contentsline {section}{\numberline {8.6}本章小结}{15}{section.8.6}%
+\contentsline {chapter}{\numberline {第九章\hspace {.3em}}多方向扫描案例分析}{16}{chapter.9}%
+\contentsline {section}{\numberline {9.1}扫描实验目标}{16}{section.9.1}%
+\contentsline {section}{\numberline {9.2}实验网格}{16}{section.9.2}%
+\contentsline {section}{\numberline {9.3}结果规律}{16}{section.9.3}%
+\contentsline {section}{\numberline {9.4}连续观测下的平滑策略}{16}{section.9.4}%
+\contentsline {section}{\numberline {9.5}应用建议}{17}{section.9.5}%
+\contentsline {section}{\numberline {9.6}本章小结}{17}{section.9.6}%
+\contentsline {chapter}{参考文献}{18}{chapter*.8}%
+\contentsline {chapter}{附录 A：参数与符号}{19}{chapter*.9}%
+\contentsline {chapter}{附录 B：结果文件说明}{20}{chapter*.12}%
+\contentsline {chapter}{附录 C：几何推导与坐标变换}{21}{chapter*.15}%
+\contentsline {chapter}{附录 D：节点调节样例表}{23}{chapter*.21}%
+\contentsline {chapter}{附录 E：方向扫描实验表}{25}{chapter*.24}%
+\contentsline {chapter}{附录 F：时序平滑结果表}{28}{chapter*.26}%
+\contentsline {chapter}{附录 G：多目标权重实验}{30}{chapter*.28}%
+\contentsfinish 

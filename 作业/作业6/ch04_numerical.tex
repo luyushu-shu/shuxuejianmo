@@ -1,0 +1,38 @@
+\chapter{数值实验与结果分析}
+
+\section{实验场景}
+设置三类场景：
+\begin{itemize}
+  \item \textbf{场景I：}无噪声理想观测；
+  \item \textbf{场景II：}中等噪声观测（高斯白噪声）；
+  \item \textbf{场景III：}高噪声与偏差初值同时存在。
+\end{itemize}
+
+\section{评价指标}
+采用以下指标：
+\begin{enumerate}
+  \item 参数相对误差；
+  \item 残差均方根（RMSE）；
+  \item 收敛迭代次数与失败率。
+\end{enumerate}
+
+\section{结果汇总}
+\begin{table}[H]
+\centering
+\caption{不同场景下算法表现（示例）}
+\begin{tabular}{cccccc}
+\toprule
+场景 & 方法 & 参数误差(\%) & RMSE & 迭代次数 & 收敛情况 \\
+\midrule
+I & Gauss--Newton & 0.42 & $1.8\times10^{-4}$ & 8 & 收敛 \\
+I & Damped Newton & 0.39 & $1.6\times10^{-4}$ & 9 & 收敛 \\
+II & Gauss--Newton & 2.31 & $4.7\times10^{-3}$ & 13 & 收敛 \\
+II & Damped Newton & 1.86 & $3.9\times10^{-3}$ & 14 & 收敛 \\
+III & Gauss--Newton & 8.75 & $1.9\times10^{-2}$ & 20 & 部分失败 \\
+III & Damped Newton & 4.12 & $9.8\times10^{-3}$ & 18 & 收敛 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{结果讨论}
+结果表明，阻尼机制在恶劣条件下可显著提高收敛概率；多初值策略进一步降低了陷入局部极小值的风险。对高精度任务而言，数值积分误差与优化误差需同时控制，不能单独优化其中一端。

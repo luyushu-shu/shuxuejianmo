@@ -1,0 +1,429 @@
+% !TeX program = xelatex
+\documentclass[aspectratio=169]{beamer}
+\usetheme{thubeamer}
+
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{bm}
+
+\graphicspath{{figures/}}
+\input{macros}
+
+\newcommand{\T}{\mathrm{T}}
+\newcommand{\R}{\mathbb{R}}
+
+\title[地下停车场应急人员定位]{地下停车场应急人员定位问题研究\\[2mm]基于蓝牙 RSSI 与步行约束融合的建模与求解}
+\author[陆雨澍]{学生：陆雨澍\\[5mm] 导师：陈务深~教授}
+\institute[南京工业大学]{\small 南京工业大学\\数理科学学院数学系}
+\date{\small \vskip -10pt 2026 年 4 月}
+
+\begin{document}
+
+\begin{frame}
+  \maketitle
+\end{frame}
+
+\section*{目录}
+\frame{
+  \frametitle{\secname}
+  \tableofcontents[hideallsubsections]
+}
+
+\section{研究背景}
+
+\subsection{问题来源}
+
+\begin{frame}{问题来源}
+  \begin{block}{应用场景}
+    \begin{itemize}
+      \setlength{\itemsep}{6pt}
+      \item 地下停车场火灾、烟雾扩散或结构异常时，GNSS 信号不可用
+      \item 人工语音定位存在延迟与误判
+      \item BLE 信标部署成本低，适合规则空间应急定位
+    \end{itemize}
+  \end{block}
+  \begin{block}{研究目标}
+    在噪声与缺失观测下，估计人员轨迹 $\{\bm p_t\}_{t=1}^{T}$，$\bm p_t=[x_t,y_t]^{\T}$
+  \end{block}
+\end{frame}
+
+\begin{frame}{研究难点}
+  \begin{enumerate}
+    \setlength{\itemsep}{8pt}
+    \item 金属车体与立柱导致多路径反射，RSSI 波动大
+    \item 车辆动态进出造成遮挡，观测噪声非平稳
+    \item 单时刻点位估计抖动明显，难以形成可用轨迹
+    \item 应急场景要求算法实时、稳定、可解释
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{技术路线}
+  \begin{enumerate}
+    \setlength{\itemsep}{8pt}
+    \item 对数路径损耗模型：RSSI $\rightarrow$ 距离观测
+    \item 多信标加权最小二乘：时刻级粗定位
+    \item 步长与转向约束：滑动窗口轨迹平滑
+    \item 迭代重加权（IRWLS）：抑制粗差，输出稳定轨迹
+  \end{enumerate}
+  \vspace{6mm}
+  \centering
+  场景抽象 $\rightarrow$ 数学建模 $\rightarrow$ 鲁棒优化 $\rightarrow$ 实验评估
+\end{frame}
+
+\section{数学建模}
+
+\subsection{观测模型}
+
+\begin{frame}{RSSI 路径损耗模型}
+  \begin{block}{观测方程}
+    \[
+      z_{i,t}=P_0-10n\log_{10}(d_{i,t})+\varepsilon_{i,t}
+    \]
+  \end{block}
+  \begin{block}{距离反演}
+    \[
+      \hat d_{i,t}=10^{\frac{P_0-z_{i,t}}{10n}}
+    \]
+  \end{block}
+  \begin{itemize}
+    \item $P_0$：参考距离处信号强度；$n$：路径损耗指数
+    \item $d_{i,t}$：人员到第 $i$ 个信标的几何距离
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{几何观测关系}
+  信标坐标 $\bm b_i=[u_i,v_i]^{\T}$，理论距离
+  \[
+    d_{i,t}(\bm p_t)=\sqrt{(x_t-u_i)^2+(y_t-v_i)^2}
+  \]
+  观测残差
+  \[
+    r_{i,t}=d_{i,t}(\bm p_t)-\hat d_{i,t}
+  \]
+  \begin{block}{单帧目标函数}
+    \[
+      F(\bm p)=\sum_i \omega_i r_i(\bm p)^2
+    \]
+  \end{block}
+\end{frame}
+
+\begin{frame}{融合目标函数}
+  滑动窗口 $\mathcal W_t=\{t-w+1,\dots,t\}$ 上：
+  \small
+  \begin{align*}
+    J=&\sum_{\tau\in\mathcal W_t}\sum_{i\in\mathcal B_\tau}
+    \omega_{i,\tau}\left(d_{i,\tau}(\bm p_\tau)-\hat d_{i,\tau}\right)^2 \\
+    &+\lambda_s\sum_{\tau\in\mathcal W_t}\|\bm p_\tau-\bm p_{\tau-1}\|_2^2
+    +\lambda_h\sum_{\tau\in\mathcal W_t}\phi(\Delta\theta_\tau)
+  \end{align*}
+  \normalsize
+  \begin{itemize}
+    \item $\omega_{i,\tau}$：Huber 鲁棒权重
+    \item $\lambda_s$：步长平滑；$\lambda_h$：航向平滑
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{鲁棒权重与可行域约束}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+    \begin{block}{Huber 权重}
+      \[
+        \omega_{i,\tau}=
+        \begin{cases}
+          1, & |r_{i,\tau}| \le \delta,\\
+          \delta/|r_{i,\tau}|, & |r_{i,\tau}|>\delta
+        \end{cases}
+      \]
+      大残差自动降权，增强抗遮挡能力
+    \end{block}
+    \column{0.48\textwidth}
+    \begin{block}{可行域约束}
+      \[
+        \bm p_t\in\Omega,\quad \forall t
+      \]
+      栅格地图定义可行域，越界点投影到最近可行栅格
+    \end{block}
+  \end{columns}
+\end{frame}
+
+\subsection{优化推导}
+
+\begin{frame}{梯度与高斯牛顿近似}
+  \[
+    \frac{\partial r_i}{\partial x}=\frac{\Delta x_i}{d_i},\qquad
+    \frac{\partial r_i}{\partial y}=\frac{\Delta y_i}{d_i}
+  \]
+  \[
+    \nabla F(\bm p)=2\sum_i \omega_i r_i
+    \begin{bmatrix}
+      \Delta x_i/d_i\\
+      \Delta y_i/d_i
+    \end{bmatrix}
+  \]
+  \begin{block}{近似海森矩阵}
+    \[
+      \bm H \approx 2\sum_i \omega_i \bm j_i\bm j_i^{\T},
+      \quad \bm j_i=\begin{bmatrix}\Delta x_i/d_i\\ \Delta y_i/d_i\end{bmatrix}
+    \]
+  \end{block}
+\end{frame}
+
+\begin{frame}{滑动窗口变量与收敛条件}
+  窗口长度 $w$ 时，优化变量
+  \[
+    \bm X=[\bm p_{t-w+1}^{\T},\dots,\bm p_t^{\T}]^{\T}\in\R^{2w}
+  \]
+  \begin{itemize}
+    \item 观测项：块对角结构
+    \item 运动约束：相邻块耦合，呈稀疏块带状
+    \item 收敛判据：$\|\Delta \bm X\|_2/\|\bm X\|_2<10^{-5}$
+  \end{itemize}
+\end{frame}
+
+\section{算法设计}
+
+\subsection{初始化}
+
+\begin{frame}{初始轨迹构造}
+  \begin{enumerate}
+    \setlength{\itemsep}{6pt}
+    \item \textbf{单帧粗定位}：选信号最强 $K$ 个信标，网格搜索得 $\tilde{\bm p}_t$
+    \item \textbf{轨迹修正}：中值滤波去跳点 + 速度上界裁剪异常位移
+    \item \textbf{可行域投影}：$\bm p_t^{(0)}=\Pi_{\Omega}(\tilde{\bm p}_t)$
+    \item \textbf{缺失补点}：$\bm p_t^{(0)}=\bm p_{t-1}^{(0)}+\alpha(\bm p_{t-1}^{(0)}-\bm p_{t-2}^{(0)})$
+  \end{enumerate}
+  \vspace{3mm}
+  充分初始化可使主优化迭代次数降低约 30\%
+\end{frame}
+
+\subsection{求解流程}
+
+\begin{frame}{总体求解流程}
+  \begin{enumerate}
+    \setlength{\itemsep}{8pt}
+    \item 读取当前窗口 RSSI 数据并做异常预处理
+    \item 构造初始轨迹 $\bm X^{(0)}$
+    \item 执行 IRWLS 迭代求解
+    \item 输出当前时刻位置，滑动到下一窗口
+  \end{enumerate}
+  \vspace{4mm}
+  \begin{block}{失败保护机制}
+    迭代上限、阻尼缩放、异常回退、信标不足时短时外推
+  \end{block}
+\end{frame}
+
+\begin{frame}{滑动窗口鲁棒定位算法（IRWLS）}
+  \small
+  \begin{enumerate}
+    \setlength{\itemsep}{4pt}
+    \item 输入：窗口观测、初始轨迹、$\lambda_s,\lambda_h,\delta$
+    \item \textbf{For} $k=1$ to MaxIter
+    \item \quad 计算残差 $r_i$，按 Huber 规则更新 $\omega_i$
+    \item \quad 构造法方程 $\bm A\Delta\bm X=\bm b$ 并求解
+    \item \quad 更新 $\bm X\leftarrow\bm X+\Delta\bm X$，执行可行域投影
+    \item \quad 若 $\|\Delta\bm X\|/\|\bm X\|<\varepsilon$，终止
+    \item 输出窗口末端位置估计
+  \end{enumerate}
+  \normalsize
+  复杂度：$\mathcal O(w^3)$；默认 $w=8$，单帧毫秒级
+\end{frame}
+
+\begin{frame}{核心参数设置}
+  \begin{table}
+    \centering
+    \caption{推荐参数范围}
+    \small
+    \begin{tabular}{lll}
+      \toprule
+      参数 & 建议范围 & 说明 \\
+      \midrule
+      窗口长度 $w$ & 6--10 & 平衡时延与平滑性 \\
+      Huber 阈值 $\delta$ & 2--4 m & 异常抑制强度 \\
+      $\lambda_s$ & 0.1--1.0 & 速度平滑权重 \\
+      $\lambda_h$ & 0.01--0.2 & 转向平滑权重 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  \begin{itemize}
+    \item $\lambda_s$ 过小抖动，过大抑制转弯
+    \item $\delta$ 过大抑制不足，过小误伤有效观测
+  \end{itemize}
+\end{frame}
+
+\section{实验结果}
+
+\subsection{主实验}
+
+\begin{frame}{实验设置}
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+    \begin{itemize}
+      \setlength{\itemsep}{5pt}
+      \item 场景：$120\,\mathrm{m}\times 80\,\mathrm{m}$ 地下停车场
+      \item 信标：16 个固定 BLE 信标
+      \item 轨迹：直行、转弯、绕障，共 300 s，1 Hz 采样
+      \item 噪声：高斯扰动 + 随机遮挡
+    \end{itemize}
+    \column{0.42\textwidth}
+    \begin{block}{对比方法}
+      \begin{enumerate}
+        \item RSSI-Only
+        \item KF-Baseline
+        \item Proposed（本文）
+      \end{enumerate}
+    \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{主实验结果对比}
+  \begin{table}
+    \centering
+    \caption{定位精度与实时性对比}
+    \begin{tabular}{lcccc}
+      \toprule
+      方法 & MAE/m & RMSE/m & 方向方差 & 耗时/ms \\
+      \midrule
+      RSSI-Only & 4.83 & 6.21 & 0.198 & 0.6 \\
+      KF-Baseline & 3.15 & 4.02 & 0.093 & 1.1 \\
+      \textbf{Proposed} & \textbf{2.08} & \textbf{2.76} & \textbf{0.041} & 2.4 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  \begin{itemize}
+    \item 融合模型精度与轨迹连续性明显优于基线
+    \item 单帧计算 2.4 ms，满足应急实时需求
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{遮挡鲁棒性与窗口长度}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+    \begin{block}{遮挡实验}
+      \begin{itemize}
+        \item 遮挡比例 0\% $\rightarrow$ 40\%
+        \item RSSI-Only 误差快速上升
+        \item 30\% 遮挡下本文方法仍约 3 m
+      \end{itemize}
+    \end{block}
+    \column{0.48\textwidth}
+    \begin{block}{窗口长度}
+      \begin{itemize}
+        \item $w$ 从 4 增至 12：误差先降后稳
+        \item 耗时线性增长
+        \item 默认取 $w=8$
+      \end{itemize}
+    \end{block}
+  \end{columns}
+\end{frame}
+
+\subsection{扩展分析}
+
+\begin{frame}{灵敏度分析}
+  \begin{table}
+    \centering
+    \small
+    \begin{tabular}{lcc}
+      \toprule
+      因素变化 & RMSE 变化率 & 结论 \\
+      \midrule
+      噪声翻倍 & +42\% & 鲁棒算法可控 \\
+      信标减半 & +67\% & 几何覆盖是关键 \\
+      $n$ 偏差 0.3 & +38\% & 标定精度重要 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  \begin{itemize}
+    \item 8$\rightarrow$12 个信标阶段误差下降明显，超过 16 个收益递减
+    \item 车道转角区域局部加密优于全局均匀加密
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{不确定性分析}
+  \begin{block}{局部协方差近似}
+    \[
+      \bm\Sigma_X\approx (\bm J^\T\bm W\bm J)^{-1}
+    \]
+  \end{block}
+  \begin{block}{二维置信椭圆}
+    \[
+      (\bm p-\hat{\bm p})^\T \bm\Sigma_t^{-1}(\bm p-\hat{\bm p})\le \chi^2_{2,p}
+    \]
+  \end{block}
+  \begin{itemize}
+    \item 误差来源：RSSI 噪声、路径损耗标定误差、几何遮挡偏差
+    \item 在线输出：椭圆轴长、有效信标数、残差统计、异常保护状态
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{案例分析与应用价值}
+  \begin{enumerate}
+    \setlength{\itemsep}{6pt}
+    \item \textbf{火灾疏散引导}：实时位置 + 可信度，判断偏离疏散通道
+    \item \textbf{救援协同定位}：多终端独立定位，跳变时可信度告警
+    \item \textbf{信标局部失效}：30\% 失效时运动约束维持连续轨迹
+  \end{enumerate}
+  \vspace{4mm}
+  调度支持：路径推荐、位置回放、覆盖评估、风险预警
+\end{frame}
+
+\section{总结}
+
+\begin{frame}{主要工作与结论}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+    \begin{block}{主要工作}
+      \begin{itemize}
+        \setlength{\itemsep}{4pt}
+        \item BLE RSSI + 步行约束融合模型
+        \item 鲁棒 IRWLS + 滑动窗口优化
+        \item 初始化与可行域投影机制
+        \item 多噪声、多遮挡实验验证
+      \end{itemize}
+    \end{block}
+    \column{0.48\textwidth}
+    \begin{block}{主要结论}
+      \begin{itemize}
+        \setlength{\itemsep}{4pt}
+        \item 显著优于单一 RSSI 定位
+        \item 运动约束抑制轨迹抖动
+        \item 遮挡场景表现稳定
+        \item 满足实时计算需求
+      \end{itemize}
+    \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{不足与后续工作}
+  \begin{block}{不足}
+    \begin{itemize}
+      \item 尚未在真实地下停车场长周期实测
+      \item 多目标互扰场景考虑不足
+      \item 多层立体拓扑尚未引入
+    \end{itemize}
+  \end{block}
+  \begin{block}{后续方向}
+    真实演练数据采集；融合 IMU/UWB 因子图；多目标协同定位；可视化指挥端联调
+  \end{block}
+\end{frame}
+
+\begin{frame}{参考文献}
+  \small
+  \begin{enumerate}
+    \setlength{\itemsep}{3pt}
+    \item J. Nocedal, S. J. Wright, \emph{Numerical Optimization}, Springer, 2006.
+    \item R. Faragher, R. Harle, BLE beacons fingerprinting, \emph{IEEE JSAC}, 2015.
+    \item B. Li \emph{et al.}, Robust RSSI-based indoor localization, \emph{Sensors}, 2021.
+    \item S. Boyd, L. Vandenberghe, \emph{Convex Optimization}, Cambridge, 2004.
+    \item 陈务深, 室内定位与优化计算课程讲义, 2026.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    {\Huge\calligra Thanks for your attention!}
+    \vspace{1cm}
+    {\Huge Q \& A}
+  \end{center}
+\end{frame}
+
+\end{document}

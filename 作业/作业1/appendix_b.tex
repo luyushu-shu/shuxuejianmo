@@ -1,0 +1,65 @@
+\section*{B.1 噪声水平分组实验}
+\addcontentsline{toc}{section}{B.1 噪声水平分组实验}
+在基准噪声水平基础上设置四组倍率 $\alpha\in\{0.5,1,2,4\}$，每组进行 200 次重复试验。统计结果呈现以下规律：
+\begin{itemize}
+  \item 误差均值随 $\alpha$ 增大而上升；
+  \item 垂向误差方差增长率高于水平分量；
+  \item 牛顿法与法方程法在中低噪声区间性能差异较小。
+\end{itemize}
+
+\section*{B.2 站位扰动实验}
+\addcontentsline{toc}{section}{B.2 站位扰动实验}
+将测站坐标施加小扰动 $\delta\bm q\sim\mathcal N(0,\sigma_q^2\bm I)$，研究站位标定误差对定位的影响。实验表明：
+\begin{enumerate}
+  \item 当 $\sigma_q$ 从 0 增至 0.5 m 时，定位误差明显上升；
+  \item 若站位误差系统偏置一致，估计会出现整体偏移；
+  \item 站位标定精度应与测距精度同量级，才能保持高精度定位。
+\end{enumerate}
+
+\section*{B.3 初值偏差实验}
+\addcontentsline{toc}{section}{B.3 初值偏差实验}
+围绕真实位置构造不同初值偏差半径 $r_0$，比较迭代成功率。统计显示：
+\begin{itemize}
+  \item $r_0<100$ m 时，两方法几乎总能收敛；
+  \item $r_0\in[100,1000]$ m 时，法方程法更稳健；
+  \item $r_0>1000$ m 时，建议先做几何粗定位再优化。
+\end{itemize}
+
+\section*{B.4 角度跳变边界测试}
+\addcontentsline{toc}{section}{B.4 角度跳变边界测试}
+针对方位角接近 $\pm\pi$ 的场景，比较是否进行周期修正。结果表明，若缺失周期修正，残差会在边界处出现非连续跳变，导致迭代方向异常。加入修正后，目标函数与梯度曲面更平滑，算法收敛显著改善。
+
+\section*{B.5 条件数统计}
+\addcontentsline{toc}{section}{B.5 条件数统计}
+记录法化矩阵条件数 $\kappa(\bm A)$。在当前站位布局下，$\kappa(\bm A)$ 多数样本位于 $10^1\sim10^2$ 区间，说明问题条件性良好；当测站近共线时，$\kappa(\bm A)$ 可迅速升高到 $10^5$ 以上，定位稳定性显著下降。
+
+\section*{B.6 算法耗时统计}
+\addcontentsline{toc}{section}{B.6 算法耗时统计}
+在相同测试平台下，统计 1000 次求解平均耗时：
+\begin{table}[H]
+\centering
+\caption{求解耗时对比}
+\begin{tabular}{lcc}
+\toprule
+方法 & 平均迭代次数 & 单次平均耗时（ms） \\
+\midrule
+牛顿法 & 6.2 & 0.034 \\
+法方程法 & 8.8 & 0.031 \\
+\bottomrule
+\end{tabular}
+\end{table}
+法方程法单步略快，但牛顿法迭代次数更少，两者总体耗时接近。
+
+\section*{B.7 结果复现说明}
+\addcontentsline{toc}{section}{B.7 结果复现说明}
+为保证复现性，建议在实验脚本中固定随机种子，并记录以下信息：
+\begin{itemize}
+  \item 程序版本号与编译参数；
+  \item 噪声配置、测站布局和样本规模；
+  \item 停机阈值与最大迭代次数；
+  \item 失败样本定义与统计方式。
+\end{itemize}
+
+\section*{B.8 附加讨论}
+\addcontentsline{toc}{section}{B.8 附加讨论}
+本文实验主要针对课程级静态场景。若进一步引入真实传感器时间同步误差、坐标系配准误差和多路径误差，模型复杂度会显著提升。建议在后续工作中结合传感器标定模型与时序滤波框架进行联合处理。

@@ -1,0 +1,36 @@
+\chapter{动力系统与参数辨识模型}
+
+\section{状态方程}
+以捕食--被捕食类模型为代表，状态向量记为 $\mathbf{x}(t)$，参数向量记为 $\boldsymbol{\theta}$，其动力学系统可写为
+\[
+\dot{\mathbf{x}}(t)=\mathbf{f}(t,\mathbf{x}(t),\boldsymbol{\theta}),\quad \mathbf{x}(t_0)=\mathbf{x}_0.
+\]
+在高维推广情形中，$\mathbf{x}$ 可扩展至多变量耦合系统。
+
+\section{观测方程与误差模型}
+观测量记为
+\[
+\mathbf{y}_i=\mathbf{h}(\mathbf{x}(t_i))+\boldsymbol{\eta}_i,\quad i=1,\ldots,m,
+\]
+其中 $\boldsymbol{\eta}_i$ 为零均值噪声向量。
+
+\section{目标函数}
+定义残差
+\[
+\mathbf{r}_i(\boldsymbol{\theta})=\mathbf{y}_i-\mathbf{h}(\mathbf{x}(t_i;\boldsymbol{\theta})),
+\]
+建立最小二乘目标
+\[
+\Phi(\boldsymbol{\theta})=\frac{1}{2}\sum_{i=1}^{m}\|\mathbf{r}_i(\boldsymbol{\theta})\|_2^2.
+\]
+若引入先验参数约束，可扩展为正则化目标：
+\[
+\Phi_\lambda(\boldsymbol{\theta})=\Phi(\boldsymbol{\theta})+\frac{\lambda}{2}\|\boldsymbol{\theta}-\boldsymbol{\theta}_{ref}\|_2^2.
+\]
+
+\section{可辨识性讨论}
+为确保参数可估，要求局部雅可比矩阵
+\[
+\mathbf{J}(\boldsymbol{\theta})=\frac{\partial \mathbf{r}}{\partial \boldsymbol{\theta}}
+\]
+在最优附近具有足够秩。本文在实验中通过条件数和灵敏度指标评估可辨识性。

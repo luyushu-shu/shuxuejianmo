@@ -1,0 +1,43 @@
+\chapter{多方向扫描案例分析}
+
+\section{扫描实验目标}
+为验证模型在不同观测方向下的一致性，本章设置方向扫描实验：在给定方位角和仰角范围内等间隔取样，对每个方向独立求解理想抛物面与调节方案，统计接收比和约束可行性。
+
+\section{实验网格}
+设
+\[
+\alpha\in[\alpha_{\min},\alpha_{\max}],\quad
+\beta\in[\beta_{\min},\beta_{\max}],
+\]
+分别取 $n_\alpha,n_\beta$ 个采样点，得到 $n_\alpha\times n_\beta$ 组方向。每组方向输出以下指标：
+\begin{itemize}
+  \item 目标函数值 $J^\star$；
+  \item 接收比 $\eta$；
+  \item 最大促动器量 $\max|\Delta l_i|$；
+  \item 边长约束最大违反量（应接近 0）。
+\end{itemize}
+
+\section{结果规律}
+方向扫描通常会呈现以下特征：
+\begin{enumerate}
+  \item 中等仰角区域接收比较稳定；
+  \item 接近边界方向时，促动器量逼近约束边界；
+  \item 当方向变化较快时，连续帧方案差异增大，需考虑动态平滑。
+\end{enumerate}
+
+\section{连续观测下的平滑策略}
+对时间序列方向 $\{(\alpha_t,\beta_t)\}$，可增加时序平滑项：
+\[
+\min \sum_t J_t + \lambda\sum_t\|\mathbf u_t-\mathbf u_{t-1}\|_2^2,
+\]
+其中 $\mathbf u_t$ 为第 $t$ 时刻促动器向量。该策略可减少执行抖动和机械冲击。
+
+\section{应用建议}
+\begin{itemize}
+  \item 对高频指向变化任务，优先采用时序平滑优化；
+  \item 对边界方向任务，增加可行性预判，提前规避超限；
+  \item 将扫描实验结果固化为“方向-方案”查表，提升在线计算效率。
+\end{itemize}
+
+\section{本章小结}
+多方向扫描实验验证了模型的方向适应能力，并给出了连续观测场景下的策略扩展思路，为工程化应用提供进一步依据。

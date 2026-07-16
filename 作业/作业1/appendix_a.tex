@@ -1,0 +1,83 @@
+\section*{A.1 关键函数接口说明}
+\addcontentsline{toc}{section}{A.1 关键函数接口说明}
+\begin{table}[H]
+\centering
+\caption{关键函数说明}
+\begin{tabular}{ll}
+\toprule
+函数名 & 作用 \\
+\midrule
+\texttt{simudata()} & 生成测角和测距仿真观测数据 \\
+\texttt{TriRhoPosition()} & 三测站测距几何定位初值 \\
+\texttt{objfun()} & 计算加权残差平方和 \\
+\texttt{gradfun()} & 计算目标函数梯度 \\
+\texttt{hessfun()} & 计算目标函数海森矩阵 \\
+\texttt{plane\_position\_newton\_method\_detailed()} & 牛顿法主流程 \\
+\texttt{plane\_position\_LM\_method\_detailed()} & 法方程迭代主流程 \\
+\texttt{NewtonLaTeXOut()} & 输出牛顿法结果到 TeX 文档 \\
+\texttt{LMLaTeXOut()} & 输出法方程结果到 TeX 文档 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{A.2 观测数据结构}
+\addcontentsline{toc}{section}{A.2 观测数据结构}
+\begin{itemize}
+  \item 测角数组 \texttt{S1[100][6]}：前 3 列为测站坐标，第 4 列方位角，第 5 列俯仰角，第 6 列角度标准差；
+  \item 测距数组 \texttt{S2[100][5]}：前 3 列为测站坐标，第 4 列斜距，第 5 列距离标准差。
+\end{itemize}
+
+\section*{A.3 迭代日志建议格式}
+\addcontentsline{toc}{section}{A.3 迭代日志建议格式}
+为便于调试和复现实验，建议每次迭代记录以下字段：
+\[
+\{k,\ F_k,\ \|\nabla F_k\|_2,\ \|\Delta\bm p_k\|_2,\ \bm p_k\}.
+\]
+对于法方程方法，建议额外记录
+\[
+\det(\bm A_k),\ \kappa(\bm A_k),
+\]
+用于判断病态程度。
+
+\section*{A.4 导数校验方法}
+\addcontentsline{toc}{section}{A.4 导数校验方法}
+可采用中心差分检验解析梯度：
+\[
+\frac{\partial F}{\partial x_i}\approx
+\frac{F(\bm p+h\bm e_i)-F(\bm p-h\bm e_i)}{2h},
+\]
+并计算相对误差
+\[
+\epsilon_i=\frac{|g_i^{ana}-g_i^{num}|}{\max(1,|g_i^{ana}|,|g_i^{num}|)}.
+\]
+若 $\epsilon_i<10^{-6}$，通常可认为导数实现正确。
+
+\section*{A.5 伪代码补充}
+\addcontentsline{toc}{section}{A.5 伪代码补充}
+\begin{algorithm}[H]
+\caption{导数一致性测试}
+\begin{algorithmic}[1]
+\State 给定测试点 $\bm p$ 和扰动 $h$
+\For{$i=1$ to $3$}
+\State 计算解析梯度分量 $g_i^{ana}$
+\State 计算数值梯度分量 $g_i^{num}$
+\State 计算相对误差 $\epsilon_i$
+\If{$\epsilon_i$ 超阈值}
+\State 标记该导数分量可能存在实现错误
+\EndIf
+\EndFor
+\State 输出测试报告
+\end{algorithmic}
+\end{algorithm}
+
+\section*{A.6 参数文件样例}
+\addcontentsline{toc}{section}{A.6 参数文件样例}
+建议采用文本或 JSON 保存实验参数，示例字段如下：
+\begin{itemize}
+  \item \texttt{angle\_sigma}：测角标准差（弧度）；
+  \item \texttt{range\_sigma}：测距标准差（米）；
+  \item \texttt{max\_iter}：最大迭代次数；
+  \item \texttt{tol\_step}：步长收敛阈值；
+  \item \texttt{seed}：随机种子；
+  \item \texttt{station\_layout\_id}：测站布局编号。
+\end{itemize}

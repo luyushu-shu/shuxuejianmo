@@ -1,0 +1,25 @@
+\chapter{结论与展望}
+
+\section{主要结论}
+本文基于 \texttt{CTaylorSeriesSecond20250324} 的代码与说明，建立了高阶泰勒积分和牛顿类参数估计的统一建模框架。研究表明：
+\begin{itemize}
+  \item 16阶泰勒展开在高精度积分场景具有明显优势；
+  \item 高斯牛顿法在噪声环境下更易保持稳定收敛；
+  \item 阻尼机制与步长自适应是提升工程可用性的关键。
+\end{itemize}
+
+\section{模型不足}
+当前模型仍存在如下限制：
+\begin{enumerate}
+  \item 高阶导数表达较复杂，维护成本较高；
+  \item 当系统刚性较强时，显式泰勒法稳定域有限；
+  \item 大规模参数场景下，雅可比构造成本较高。
+\end{enumerate}
+
+\section{后续工作}
+后续可从以下方向拓展：
+\begin{itemize}
+  \item 引入自动微分框架降低导数实现负担；
+  \item 将阻尼高斯牛顿与信赖域策略结合；
+  \item 在真实实验数据上进行跨数据集泛化验证。
+\end{itemize}

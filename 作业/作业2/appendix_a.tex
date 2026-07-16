@@ -1,0 +1,44 @@
+\section*{A.1 数据字段说明}
+\addcontentsline{toc}{section}{A.1 数据字段说明}
+\begin{table}[H]
+\centering
+\caption{定位数据字段}
+\begin{tabular}{ll}
+\toprule
+字段名 & 含义 \\
+\midrule
+\texttt{time} & 时间戳 \\
+\texttt{beacon\_id} & 信标编号 \\
+\texttt{rssi} & 信号强度（dBm） \\
+\texttt{x\_gt,y\_gt} & 真实位置（仿真标签） \\
+\texttt{x\_est,y\_est} & 估计位置 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{A.2 参数配置}
+\addcontentsline{toc}{section}{A.2 参数配置}
+\begin{itemize}
+  \item \texttt{window\_size}: 滑动窗口长度；
+  \item \texttt{huber\_delta}: 鲁棒阈值；
+  \item \texttt{lambda\_step}: 步长正则权重；
+  \item \texttt{lambda\_heading}: 航向平滑权重；
+  \item \texttt{max\_iter}: 窗口内最大迭代次数。
+\end{itemize}
+
+\section*{A.3 伪代码补充}
+\addcontentsline{toc}{section}{A.3 伪代码补充}
+\begin{algorithm}[H]
+\caption{窗口定位主循环}
+\begin{algorithmic}[1]
+\For{每个时刻 $t$}
+\State 读取窗口观测
+\State 初始化轨迹 $\bm X^{(0)}$
+\For{$k=1$ to MaxIter}
+\State 更新残差与鲁棒权重
+\State 求解增量并更新轨迹
+\EndFor
+\State 输出 $\hat{\bm p}_t$
+\EndFor
+\end{algorithmic}
+\end{algorithm}

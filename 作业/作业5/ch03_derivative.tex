@@ -1,0 +1,43 @@
+\chapter{高阶导数与泰勒积分求解}
+
+\section{16阶泰勒展开}
+在步长 $h$ 内，对状态进行局部展开：
+\[
+\mathbf{x}(t+h)=\sum_{k=0}^{16}\frac{h^k}{k!}\mathbf{x}^{(k)}(t)+\mathbf{R}_{17}(h).
+\]
+若导数计算准确且 $h$ 足够小，截断误差主要由17阶余项控制，因此在平滑系统中可获得较高精度。
+
+\section{导数计算模块化设计}
+结合代码结构，按状态维度分组构建导数子模块：
+\begin{itemize}
+  \item 低维状态（如2维）用于单元测试与调参；
+  \item 中维状态（如14维）用于局部子系统验证；
+  \item 高维状态（如56维）用于完整模型计算。
+\end{itemize}
+该分层策略有利于定位公式错误，并降低一次性调试难度。
+
+\section{局部误差与步长控制}
+通过比较16阶与14阶展开值构造误差估计：
+\[
+\varepsilon=\left\|\mathbf{x}_{(16)}(t+h)-\mathbf{x}_{(14)}(t+h)\right\|_2.
+\]
+设容差为 \texttt{tol}，则步长调整为
+\[
+h_{\text{new}}=h\cdot \min\!\left(2,\max\!\left(0.5,\left(\frac{\texttt{tol}}{\varepsilon+\epsilon_0}\right)^{1/15}\right)\right),
+\]
+其中 $\epsilon_0$ 为防止除零的小常数。
+
+\section{算法描述}
+\begin{algorithm}[H]
+\caption{16阶泰勒一步积分}
+\begin{algorithmic}[1]
+\Require 当前时刻 $t$，状态 $\mathbf{x}(t)$，步长 $h$，参数 $\boldsymbol{\theta}$
+\Ensure 新状态 $\mathbf{x}(t+h)$
+\State 计算 $\mathbf{x}^{(1)},\mathbf{x}^{(2)},\ldots,\mathbf{x}^{(16)}$
+\State $\mathbf{x}_{new}\gets \mathbf{x}(t)$
+\For{$k=1$ to $16$}
+  \State $\mathbf{x}_{new}\gets \mathbf{x}_{new}+\dfrac{h^k}{k!}\mathbf{x}^{(k)}(t)$
+\EndFor
+\State \Return $\mathbf{x}_{new}$
+\end{algorithmic}
+\end{algorithm}

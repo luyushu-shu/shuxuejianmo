@@ -1,0 +1,18 @@
+\thispagestyle{plain}
+\phantomsection
+\addcontentsline{toc}{chapter}{Abstract}
+\centerline{\zihao{3}\bfseries ABSTRACT}
+
+\linespread{1.4}\zihao{-4}\bigskip
+
+This report addresses emergency indoor localization in underground parking lots, where GNSS signals are unavailable and multipath effects are significant. A fusion framework is proposed by combining BLE beacon RSSI observations with pedestrian motion constraints. Instead of relying on RSSI-only inversion, the method first computes a coarse estimate from a path-loss model and then refines the trajectory through robust weighted least squares with a sliding window.
+
+The modeling component includes logarithmic RSSI-distance conversion, outlier-aware weighting, and physically interpretable constraints such as step-length bounds, heading-rate limits, and lane topology feasibility. The optimization component adopts an iterative reweighted least-squares strategy to suppress abnormal measurements while preserving real-time performance.
+
+Simulation experiments are conducted under multiple noise levels, beacon densities, and blockage ratios. Metrics include point-wise localization error, trajectory smoothness, robustness under beacon loss, and runtime per frame. Results show that the proposed fusion model significantly outperforms RSSI-only localization in medium-to-high noise conditions and maintains stable tracking when partial beacons fail.
+
+The study provides a complete workflow for underground emergency positioning, from problem formulation to algorithm design, implementation, and evaluation. The framework can be extended to shopping malls, tunnels, and other GNSS-denied environments.
+
+\bigskip
+\noindent\textbf{\zihao{4} Keywords:}
+indoor localization; underground parking lots; BLE RSSI; weighted least squares; robust estimation; trajectory smoothing

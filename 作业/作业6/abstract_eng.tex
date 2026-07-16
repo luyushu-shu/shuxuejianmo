@@ -1,0 +1,16 @@
+\thispagestyle{plain}
+\phantomsection
+\addcontentsline{toc}{chapter}{ABSTRACT}
+\centerline{\zihao{-3}\bfseries ABSTRACT}
+
+\linespread{1.3}\zihao{-4}\bigskip
+
+This report studies a high-precision parameter determination problem for nonlinear ODE systems. Based on the provided materials, especially \texttt{PredatorPreyProblem.tex} and associated derivative codes, we reconstruct a complete workflow from model formulation to robust identification.
+
+The system is represented by state and observation equations with measurement noise, and parameter estimation is formulated as nonlinear least squares. Gauss--Newton and damped Newton methods are developed as the core optimization engines. In simulation, high-order Taylor expansion with adaptive step-size control is used to improve trajectory accuracy and parameter sensitivity.
+
+To address practical difficulties such as initialization sensitivity, noise amplification, and local minima, we further introduce multi-start initialization, regularization constraints, and Monte Carlo perturbation tests. Numerical results indicate that Gauss--Newton converges efficiently in low-to-medium noise settings, while damping strategies significantly improve robustness under higher noise and poor initial guesses.
+
+\bigskip
+\noindent{\bfseries Key words:}
+parameter determination; ordinary differential equations; Gauss--Newton; damped Newton; robustness analysis

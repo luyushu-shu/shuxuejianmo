@@ -1,0 +1,49 @@
+\chapter{数值求解方法与实现流程}
+
+\section{寿命分布参数估计}
+对 100 组刀具故障寿命样本进行描述统计与正态性检验，估计参数 $(\mu,\sigma)$。若样本与正态拟合偏差较小，则采用截断正态模型计算式 \eqref{eq:pt} 中各区间概率。若后续检验发现偏离明显，可扩展为核密度估计或对数正态分布进行稳健比较。
+
+\section{内层优化：固定 $n$ 的最优检查点搜索}
+给定检查次数 $n$ 后，目标函数 $\phi(\mathbf X_n)$ 为连续可导函数。可采用以下两种实现方式：
+\begin{enumerate}
+  \item \textbf{网格粗搜 + 局部优化}：先用较粗网格得到初值，再以 SQP 或拟牛顿法细化；
+  \item \textbf{多初值局部优化}：对不同随机初值并行优化，取最小目标值结果。
+\end{enumerate}
+内层输出为 $(\mathbf X_n^\star,\phi_n^\star)$。
+
+\section{外层优化：检查次数搜索}
+令 $n=1,2,\ldots,n_{\max}$（通常取 8--20，视计算预算与收益变化而定），逐一求解内层问题并比较 $\phi_n^\star$。当 $\phi_n^\star$ 随 $n$ 增加进入平台区，可提前终止枚举以降低计算量。
+
+\section{算法伪代码}
+\begin{algorithm}[H]
+\caption{刀具检查策略双层优化}
+\begin{algorithmic}[1]
+\State 输入寿命样本、费用参数、质量参数 $(R_1,R_2)$
+\State 估计寿命分布参数 $(\mu,\sigma)$
+\For{$n=1,2,\ldots,n_{\max}$}
+  \State 构造变量 $\mathbf X_n$ 与约束
+  \State 求解 $\phi_n^\star=\min_{\mathbf X_n}\phi(\mathbf X_n)$
+  \State 记录 $(n,\mathbf X_n^\star,\phi_n^\star)$
+\EndFor
+\State 输出全局最优 $(n^\star,\mathbf X_{n^\star}^\star,\phi^\star)$
+\end{algorithmic}
+\end{algorithm}
+
+\section{两类场景参数设置}
+\begin{itemize}
+  \item \textbf{场景 I（第一问）}：$R_1=1,\ R_2=0$，无误判项；
+  \item \textbf{场景 II（第二问）}：$R_1=0.98,\ R_2=0.4$，计入误判停机成本。
+\end{itemize}
+通过两场景对比可分析“检验可靠性下降”对最优检查频度和成本水平的影响。
+
+\section{计算稳定性处理}
+为增强数值稳定性，建议在实现中采用：
+\begin{enumerate}
+  \item 积分表达预计算与缓存，避免重复数值积分；
+  \item 约束重参数化（如 softplus）保障步长正值；
+  \item 目标值监控与异常回退，防止局部迭代发散；
+  \item 多初值一致性检验，降低陷入局部极值风险。
+\end{enumerate}
+
+\section{本章小结}
+本章给出了从参数估计到双层优化求解的完整算法框架，为后续结果章节的策略比较与灵敏度分析提供计算基础。

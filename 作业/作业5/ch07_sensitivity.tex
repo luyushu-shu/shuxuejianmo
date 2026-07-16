@@ -1,0 +1,36 @@
+\chapter{敏感性分析与稳定域讨论}
+
+\section{参数灵敏度定义}
+对参数 $\theta_j$ 的归一化敏感度定义为
+\[
+S_j(t)=\frac{\partial x(t)}{\partial \theta_j}\cdot \frac{\theta_j}{x(t)+\epsilon}.
+\]
+在离散时刻上，用中心差分近似：
+\[
+S_j(t_i)\approx \frac{x(t_i;\theta_j+\delta)-x(t_i;\theta_j-\delta)}{2\delta}\cdot \frac{\theta_j}{x(t_i)+\epsilon}.
+\]
+
+\section{单参数扰动结果}
+围绕标称参数对每一维进行 $\pm 1\%$、$\pm 3\%$、$\pm 5\%$ 扰动，观察终点误差、峰值偏移和积分时间变化。结果表明，系统对增益类参数更敏感，对衰减类参数相对平缓。
+
+\section{多参数联合扰动}
+采用拉丁超立方抽样生成 500 组参数样本，统计轨迹偏差分位数。定义鲁棒指标
+\[
+R_{0.95}=\text{Quantile}_{0.95}\left(\|\mathbf{x}_{sample}(t_f)-\mathbf{x}_{ref}(t_f)\|_2\right).
+\]
+当步长控制启用时，$R_{0.95}$ 可明显降低，说明自适应机制能抑制扰动传播。
+
+\section{稳定域经验边界}
+以最大特征值模和局部截断误差共同构造经验稳定判据：
+\[
+\rho\left(\frac{\partial \mathbf{f}}{\partial \mathbf{x}}\right)\cdot h \le \kappa,\qquad \varepsilon_{loc}\le \tau.
+\]
+在本实验设置下，$\kappa\in [0.8,1.4]$ 为较稳定区间，超过该范围需显著减小步长。
+
+\section{小结}
+敏感性分析说明：
+\begin{enumerate}
+  \item 参数估计前应优先识别高敏感参数并提高其观测分辨率；
+  \item 算法层面建议采用阻尼+步长自适应联合策略；
+  \item 工程部署中应设置动态告警阈值应对参数漂移。
+\end{enumerate}

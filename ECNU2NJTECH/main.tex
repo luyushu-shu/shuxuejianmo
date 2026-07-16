@@ -1,0 +1,955 @@
+%
+% 用 xelatex 编译
+%
+
+ \documentclass[openany]{MathematicalModelCaseStudyReport}  % 数学模型课程报告
+% \documentclass[openany]{ecnubachelor}  % 学士学位论文
+% \documentclass[openany]{ecnumaster}  % 硕士学位论文
+% \documentclass{ecnuphd}     % 博士学位论文
+% \documentclass[openany]{ecnumasterpro}  % 专业硕士
+%\documentclass{ecnuphdpro}     % 专业博士
+%
+% 选项: openany -- 连续排版，缺省为 openright（每章的首页位于奇数页）
+%
+
+%%% 双面打印时注释掉下面的命令，确保封面、摘要、目录和第一章出现在奇数页
+\let\cleardoublepage\clearpage
+
+\graphicspath{{./}{figures/}}  % 插图所在的文件夹
+\usepackage{float}        % 浮动对象宏包
+\usepackage{booktabs}     % 表格宏包
+\usepackage{fancyvrb}
+  \fvset{formatcom=\color{blue},frame=single,rulecolor=\color{red}}
+\usepackage{multirow}
+\usepackage{mathtools}
+
+%%%%% 列表
+\usepackage{enumitem}
+\setlist{itemsep=0.05\baselineskip,itemindent=0em,partopsep=0pt,parsep=0ex,topsep=0.1\baselineskip}
+\setlist[enumerate,1]{label=(\arabic*), ref=(\arabic*)}
+\setlist[enumerate,2]{label=\emph{\alph*}), ref=\theenumi.\emph{\alph*}}
+\setlist[enumerate,3]{label=\roman*), ref=\theenumii.\roman*}
+
+%%%%% 自定义的 Block 结构
+\usepackage[tikz]{bclogo}
+\usepackage[many]{tcolorbox}
+\newenvironment{Block}[1][]{%
+  \begin{tcolorbox}[enhanced,breakable,boxrule=1pt,colback=white,colframe=blue!20!white,arc=0pt,
+    colbacktitle=blue!20!white,coltitle=black,fonttitle=\bfseries,before skip=1ex,
+    boxed title style={arc=0pt,top=0.5ex,bottom=0.5ex},top=2.5ex,left=1ex,right=1ex,
+    attach boxed title to top left={xshift=1em,yshift=-\tcboxedtitleheight/2},title=#1]}
+  {\end{tcolorbox}}
+\newenvironment{Alert}
+  {\begin{tcolorbox}[enhanced,boxrule=0.1pt,
+    fontlower=\small\kaishu,top=0.5ex,bottom=0.0ex,
+    left=0.5ex,right=1.0ex,arc=0mm,bicolor,
+    sidebyside,sidebyside gap=1.2ex,sidebyside align=center, lefthand width=1.4em,
+    colback=blue!20!white,colbacklower=blue!5!white]
+    \scalebox{0.85}{\bclampe}\tcblower}
+  {\end{tcolorbox}}
+
+%%%%% algorithm
+\usepackage{algorithm}
+\usepackage[noEnd=false,indLines=false]{algpseudocodex} % indLines=false 不画竖线
+\floatname{algorithm}{\color{blue} 算法}
+\algrenewcommand{\algorithmiccomment}[1]{\quad{\color{red}\%\ #1}}
+\numberwithin{algorithm}{chapter}
+% \renewcommand{\listalgorithmname}{算\ 法\ 目\ 录}
+
+%%%%% 定义可跨页的算法环境
+\makeatletter
+\newenvironment{breakablealgorithm}
+{
+  \begin{center}
+  \refstepcounter{algorithm}
+  \renewcommand{\caption}[1]
+  {
+    \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##1}
+    \parbox{\textwidth} % Makes a unbreakable block and can also be done by `minipage`.
+    { \hrule height.8pt depth0pt \kern3pt
+      {\raggedright\textbf{\fname@algorithm~\thealgorithm} ##1\par}\kern3pt\hrule\kern2pt
+    }
+  }
+}
+{\kern2pt\hrule\relax\end{center}}
+\makeatother
+
+%%%%% 源代码
+\usepackage{listings}
+\lstset{language=TeX}
+%%\lstset{escapeinside=`'}
+\lstset{basicstyle=\ttfamily\small,showstringspaces=false,tabsize=4}
+\lstset{flexiblecolumns=true}
+\lstset{commentstyle=\color{red},keywordstyle=\color{blue},breaklines=true}
+\makeatletter
+\lstnewenvironment{syntax}
+  {\lstset{language=TeX,basicstyle=\ttfamily,
+    numbers=none,nolol,frame=tblr,
+    backgroundcolor=\color{white},rulecolor=\color{blue!30},%
+    xleftmargin=0em,xrightmargin=0em,lineskip=-0.05ex}%
+    \csname\@lst @SetFirstNumber\endcsname}
+    {\csname\@lst @SaveFirstNumber\endcsname}
+\makeatother
+
+
+%%%%% hyperref
+\usepackage[xetex,colorlinks,breaklinks]{hyperref}
+\hypersetup{bookmarksnumbered,linkcolor=blue,citecolor=blue,urlcolor=blue}
+% 以下代码用于检测参考文献是否被引用
+%\PassOptionsToPackage{pagebackref}{hyperref}
+%\newcommand*{\backrefalt}[4]%
+%  {\ifcase #1 No citations. \or Cited on page #2.
+%   \else Cited on pages #2. \fi}
+
+%%%%% ===== 自定义命令
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\dis}{\displaystyle}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\bbm}{\begin{bmatrix}}
+\newcommand{\ebm}{\end{bmatrix}}
+%\renewcommand{\d}{\mspace{4mu}\mathrm{d}}
+\newcommand{\myemph}[1]{{\bfseries\color{blue}#1}}
+
+\newcommand{\Georgia}{\fontspec{Georgia}}
+\newcommand{\pkg}[1]{{\color{blue}\Georgia\textbackslash{usepackage}\{#1\}}}
+\newcommand{\pkgg}[1]{{\color{blue}\Georgia{#1}}}
+\newcommand{\env}[1]{{\color{blue}\Arial{#1}}}
+
+\DeclareMathAlphabet{\mathsfsl}{OT1}{cmss}{m}{n}
+\SetMathAlphabet{\mathsfsl}{bold}{OT1}{cmss}{bx}{n}
+\newcommand{\T}{\mathsfsl{T}}
+
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\tridiag}{tridiag}
+
+
+\begin{document}
+
+%%%%% ===== 中文封面信息
+\graduateyear{20xx} % 毕业年份
+\class{O241.6} % 中图分类号: 数值分析 O241, 数值线性代数 O241.6, 微分方程数值解 O241.8
+\ctitle{\uline{论文标题论文标题论文标题\linebreak\makebox[1ex]{} 如果一行放不下就放两行\makebox[1ex]{}}}
+% 上面的标题可以自已手工调整，使得标题显示更合理一些
+\def\cctitle{论文标题} % 在原创性声明中使用, 不能出现手工换行
+\caffil{数理科学学院数学系}
+\cmajor{信息与计算科学} % 计算数学
+\cdirection{方向定位问题} % 数值代数
+\csupervisor{陈务深\, 教授}
+\cauthor{陆雨澍}
+\studentid{51088888888}
+\cdate{2026 年 4 月}
+
+%%%%% ===== 英文封面信息
+\etitle{\uline{飞机方位定位问题}}
+\eaffil{School of Mathematical Sciences}
+\emajor{Information and Computational Science} % Computational Mathematics
+\edirection{Numerical Algebra} % Numerical Algebra
+\esupervisor{CHEN Wu Shen (Professor)}
+\eauthor{luyushu}
+\edate{April, 2026}
+
+%%%%% ===== 生成封面 =====
+\newgeometry{top=2.0cm,bottom=2.0cm,left=2.5cm,right=2.5cm}
+{ \renewcommand{\baselinestretch}{1.6} \makecover }
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+%%%%% ===== 原创性声明与著作权使用声明 =====
+\include{Declaration}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+%%%%% ===== 答辩委员会成员 =====
+\include{Committee}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\frontmatter
+\restoregeometry
+%%%%% ===== 中文摘要 =====
+\include{Abstract_chs}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+%%%%% ===== 英文摘要 =====
+\include{Abstract_eng}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+%%%%% ===== 生成目录
+\setcounter{tocdepth}{1}
+\phantomsection\pdfbookmark[0]{目录}{ccontents}
+\tableofcontents
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+{\let\oldnumberline\numberline % 在插图目录的条目前加 "图", 若不需要可以注释掉
+\renewcommand{\numberline}{图~\oldnumberline}
+\listoffigures % 插图目录
+}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+{\let\oldnumberline\numberline % 在表格目录的条目前加 "表", 若不需要可以注释掉
+\renewcommand{\numberline}{表~\oldnumberline}
+\listoftables  % 表格目录
+}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+%%%%%% ===== 正文部分 ===== %%%%%
+\linespread{1.4}\selectfont
+\mainmatter
+%\setlength{\baselineskip}{0.88175cm}
+
+\input{第一章}
+
+\input{第二章}
+
+\input{第三章}
+
+\chapter{排版建议}
+
+这里介绍一些用 \LaTeX{} 书写论文时的注意事项和排版建议, 仅供参考.
+
+\section{源文件的书写}
+
+\begin{itemize}
+  \item \myemph{整篇论文的标点符号要统一}.
+  \begin{enumerate}[label=$\triangleright$]
+    \item 数学公式和英文摘要中使用英文标点符号;
+    \item 中文部分可以用中文标点，或者英文标点, 但要统一;
+    \item 其他符号, 如小括号 \Verb|()|, 问号 \Verb|?| 等, 也要与中文部分的标点符号统一.
+  \end{enumerate}
+
+  \item \myemph{英文标点后面要留空格}.
+
+  \item \myemph{中文和英文之间, 中文与数学公式 (包括单个数学变量) 之间,
+   中文与参考文献、定理引理、算法、公式等的引用之间 $\to$ 用空格隔开}.
+
+  \item 左双引号 $\to$ 两个连续的 ``反引号" (通常位于键盘左上角).
+
+  \item \Verb|\ldots| 和 \Verb|\cdots| 的使用场合, 例如:
+    $k=1,2,\ldots,n$,\quad $f=1+2+\cdots+n$.
+
+  \item 页面不要出现大片空白 (页面存在浮动表格或图片时, 可能会现大段空白, 此时可以做适当调整).
+
+  \item \myemph{参考文献格式要统一}: 相关建议详见第 \ref{sec:Advice-bib} 节.
+  % 作者, 标题, 杂志名称, 年份, 卷期, 页码
+%
+%  \item 参考文献的标签命名, 多名作者: 姓 (前三个作者) + 年; 单个作者: 姓 (前三个字母) + 年
+
+  \item \myemph{没有被引用的公式无需编号, 没有被引用的文献不用出现在论文末尾的参考文献列表中}.
+
+  \item \myemph{数学函数}一律用直立字体, 可以通过 \Verb|\DeclareMathOperator| 定义, 如: \\
+     \Verb|\DeclareMathOperator{\rank}{rank}|, \\
+     \Verb|\DeclareMathOperator{\diag}{diag}|.
+
+     如果只是临时使用, 也可以用 \Verb|\operatorname| 命令, 如
+
+     \Verb|$\operatorname{span}\{v_1,v_2\}$|
+
+\end{itemize}
+
+\bigskip
+\begin{Block}[常见排版问题]
+\begin{itemize}
+  \item 遗漏行间数学公式后面的标点符号.
+  \item 数学函数名, 如 $\sin,\log,\max$ 等, 没有用直立字体 (函数对应的命令).
+  \item 中文与参考文献的引用之间, 中文与数学公式的引用之间, 没有留空格.
+  \item 左双引号.
+\end{itemize}
+\end{Block}
+
+\section{源文件书写建议}
+
+%以下是对书写 \Verb|tex| 源文件的一些建议, 供参考.
+\begin{itemize}
+  \item 各种环境的开始 \Verb|\begin{...}|
+     和结束 \Verb|\end{...}| $\to$ 独占一行.
+
+  \item 自然分段 $\to$ 建议使用一个空行, 增加源文件可读性.
+
+  \item 自然分行, 慎用强制换行符 ``\Verb|\\|".
+  \item[] 如果由于内容超越了右边界而只能通过手工换行时,
+   建议使用 \Verb|\linebreak|, 可以避免出现右边空白
+   (类似 Word 中两边对齐效果)
+
+  \item \myemph{源文件一行不要太长, 特别地, 不要一整段都写在一行上}, 建议在适当的地方换行,
+    增强源文件的可读性, 也便于查找错误.
+
+  \item \myemph{如果数学公式太长 (源代码, 不是指公式本身), 建议在适当的地方换行}.
+
+  \item 多行数学公式: 建议使用 \Verb|align| (带编号) 或 \Verb|align*| (不带编号).
+    另外, 建议源文件也尽量对齐.
+    \begin{align}
+      f(x,y) & = (x+y)^2 \label{eq:fxy-align-a} \\
+             & = x^2 + 2xy + y^2. \label{eq:fxy-align-b}
+    \end{align}
+    源代码如下所示:
+
+%\begin{syntax}
+%  \begin{align}
+%    f(x,y) & = (x+y)^2 \label{eq:fxy-align-a} \\
+%            & = x^2 + 2xy + y^2. \label{eq:fxy-align-b}
+%  \end{align}
+%\end{syntax}
+
+  \begin{center}
+    \boxed{\includegraphics[width=0.75\linewidth]{fig_align.png}}
+  \end{center}
+
+  \item 多行数学公式: 每行都居中对齐, 可用 \Verb|gather| 或 \Verb|gather*| 环境.
+    \begin{gather}
+      f(x,y) = (x+y)^2 \\
+      g(x,y) = x^2 + 2xy + y^2.
+    \end{gather}
+
+  \item 多行数学公式: 整体一个编号, 可以使用 \Verb|align + \notag| 
+    \begin{align}
+      f(x,y) & = (x+y)^2 \notag \\
+             & = x^2 + 2xy + y^2. \label{eq:fxy-align-c}
+    \end{align}
+    
+  \begin{center}
+    \boxed{\includegraphics[width=0.75\linewidth]{fig_align_notag.png}}
+  \end{center}
+    
+    
+    或 \Verb|equation + aligned| (公式编号垂向位置居中)
+    \begin{equation} \label{eq:fxy-aligned}
+      \begin{aligned}
+        f(x,y) & = (x+y)^2 \\
+               & = x^2 + 2xy + y^2.
+      \end{aligned}
+    \end{equation} 
+    
+  \begin{center}
+    \boxed{\includegraphics[width=0.75\linewidth]{fig_equation_aligned.png}}
+  \end{center}
+
+\begin{Alert}
+  多行数学公式不建议用 \Verb|eqnarray|.
+\end{Alert}
+
+\item 数学公式的引用: 建议使用 \Verb|\eqref{...}|,
+如 \Verb|\eqref{eq:fxy-align-b}|, 输出结果为 \eqref{eq:fxy-align-b}.
+
+\item 数学公式手工编号: \Verb|equation*| 环境 + \Verb|\tag| 或 \Verb|\tag*|,
+  可正常引用, 如 \eqref{eq:taga}
+    \begin{equation*}
+      f(x,y)  = (x+y)^2 \label{eq:taga} \tag{A}
+    \end{equation*}
+
+  \begin{center}
+    \boxed{\includegraphics[width=0.75\linewidth]{fig_equation_tag.png}}
+  \end{center}
+\end{itemize}
+
+
+\section{参考文献书写建议}
+\label{sec:Advice-bib}
+
+\begin{itemize}
+  \item \myemph{排序}: 建议按作者姓氏的字母排序.
+
+  \item 参考文献的标签命名 (也可以与 zotero 中的 Better BibTeX 保持一致)
+  \begin{itemize}
+    \item 单个作者, 采用 ``姓 (前三个字母) + 年份 (后两位)", 如 ``\Verb|Hua16|"
+    \item 2-3 个作者, 采用 ``姓 (首字母) + 年份", 如 ``\Verb|DDH07|"
+    \item 超过 3 个作者, 采用 ``前三个作者的姓 (首字母) + 加号 + 年份", 如 ``\Verb|XTZ+18|"
+  \end{itemize}
+  \begin{center}
+    \boxed{\includegraphics[width=0.85\linewidth]{bib_art.png}}
+  \end{center}
+
+
+  \item 格式要求: 普通论文 (示例源文件见上图)
+  \begin{itemize}
+    \item 作者名: 格式统一, 可以是 ``名" 在前, ``姓" 在后, 如 ``\Verb|J. Demmel|";
+      作者之间用分号隔开; 如果是多个作者, 最后一个作者前加 ``and"; 如果存在 Middle name,
+      则 First name 和 Middle name 的缩写之间可以加空格, 如 ``\Verb|J. Y. Huang|".
+    \item 标题: 除第一个单词的首字母和专有名词外, 一律小写.
+    \item 杂志名: 首字母大写; 可以缩写, 也可以全名, 但这篇论文要统一; 建议加 \Verb|\emph{...}|
+    \item 卷, 年份, 页码: ``卷 (年份), 页码范围", 其中页码范围用两个连续的英文减号, 如 ``\Verb|106 (2007), 199--224|"
+    \item 其他: DOI, 网址等, 这些可选.
+  \end{itemize}
+
+
+  \item 格式要求: 图书 (含博士/硕士论文, 讲义, 示例源文件见下图)
+  \begin{itemize}
+    \item 作者名: 同论文.
+    \item 标题: 首字母大写.
+    \item 出版社, 城市, 年份.
+  \end{itemize}
+  \begin{center}
+    \boxed{\includegraphics[width=0.95\linewidth]{bib_book.png}}
+  \end{center}
+
+\end{itemize}
+
+
+
+\chapter{常见排版技巧}
+
+\section{数学公式}
+
+\begin{itemize}
+  \item 矩阵 $\to$ \verb|amsmath| 宏包提供了矩阵环境, 如 \Verb|bmatrix| 或 \Verb|pmatrix|
+  \item[] \Verb|\begin{bmatrix} A & B \\ B^\T & C \end{bmatrix}|
+    $\to$ $\bbm A & B \\ B^\T & C \ebm$
+  \item[] \Verb|\begin{pmatrix} 1 & 2 \\ -1 & 123 \end{pmatrix}|
+    $\to$ $\begin{pmatrix} 1 & 2 \\ -1 & 123 \end{pmatrix}$
+  \item[] (缺点: 列格式缺省是居中对齐, 无法修改, 解决方法: 用 \Verb|mathtools| 宏包)
+
+%  \item \verb|mathtools| 宏包提供了带 ``*" 的矩阵环境, 可以修改列格式:
+
+  \item 自定义命令, 如: \\
+    \Verb|\newcommand{\bbm}{\begin{bmatrix}}| \\
+    \Verb|\newcommand{\ebm}{\end{bmatrix}}|
+
+  \item 自适应长度 (可变高度) 的边界符 $\to$ \Verb|\left|, \Verb|\right|, 如:
+  \item[] \Verb<|\dfrac{a-1}{a+1}|<
+    $\to$ $|\dfrac{a-1}{a+1}|$
+  \item[] \Verb<\left|\dfrac{a-1}{a+1}\right|<
+    $\to$ $\left|\dfrac{a-1}{a+1}\right|$
+
+  \item 公式越界问题: 手工分割.
+\end{itemize}
+
+\bigskip
+\begin{Block}[mathtools 宏包]
+  对 \Verb|amsmath| 进行了扩展, 自动加载 \Verb|amsmath| 宏包, 提供以下功能 (部分)
+  \begin{itemize}
+    \item
+      \Verb|\mathtoolsset{showonlyrefs=true}|  \\
+      只对被引用的公式编号 (引用公式时需用 \Verb|eqref|)
+
+    \item 可指定对齐方式的矩阵环境: 
+      \Verb|matrix*, pmatrix*, bmatrix*, ...| \\
+      如右对齐 \Verb|\begin{bmatrix*}[r] ... | \\
+ {\small \Verb|\begin{bmatrix*}[r] 1 & -2 \\ -1 & 3 \end{bmatrix*}|
+    $\to$ $\begin{bmatrix*}[r] 1 & -2 \\ -1 & 3 \end{bmatrix*}$ }
+
+    \item 左角标: \Verb|\prescript{sup}{sub}{arg}| \\
+    {\Verb|\prescript{\mathrm{RL}}{a}{\mathrm{D}}^{x}_{c}|}
+    $\to\prescript{\mathrm{RL}}{a}{\mathrm{D}}^{x}_{c}$
+  \end{itemize}
+\end{Block}
+
+\clearpage
+\section{列表}
+\begin{enumerate}
+  \item 标准列表环境: \Verb|itemize| 和 \Verb|enumerate|
+  \item \Verb|enumitem| 宏包: 提供修改后的 \Verb|enumerate| 环境, 可以修改标签, 如:
+
+  \begin{enumerate}[label=$\triangleright$]
+    \item ...
+    \item ...
+  \end{enumerate}
+
+\begin{syntax}
+  \begin{enumerate}[label=$\triangleright$]
+    \item ...
+    \item ...
+  \end{enumerate}
+\end{syntax}
+\end{enumerate}
+
+\clearpage
+\section{表格与插图}
+
+\subsection{表格}
+\begin{Block}[建议]
+建议书写源文件时, 表格中的数据也对齐, 这样修改起来会比较方便, 如 \\[1ex]
+%\begin{syntax}
+%\begin{tabular}{*{5}{c}}
+%  0.90 & $2^{12}$ & 64 & 0.71 & 3 (6.0, 8.0) \\
+%       & $2^{13}$ & 83 & 1.71 & 3 (6.0, 8.2) \\
+%%
+%  0.95 & $2^{12}$ & 65 & 0.71 & 3 (5.2, 7.0) \\
+%       & $2^{13}$ & 85 & 1.86 & 3 (5.2, 7.0) \\
+%\end{tabular}
+%\end{syntax}
+\includegraphics[width=0.75\linewidth]{fig_tab11.png}
+\end{Block}
+
+\begin{itemize}
+  \item 表格的标题通常在表格的上方.
+  \item 常用宏包: \Verb|booktab|
+  \begin{itemize}
+    \item 画横线: \Verb|\toprule, \midrule, \cmidrule, \bottomrule|
+    \item 修改间距:
+    % \item[] 两条相邻 \Verb|\cmidrule| 之间的间隔: \Verb|\renewcommand{\cmidrulesep}{1mm}|
+    \item[] 在线条 (不包括 \Verb|\toprule|) 上面或下面增加垂直距离: \\
+       \hspace*{2em}\Verb|\setlength{\aboverulesep}{6mm}|\\
+       \hspace*{2em}\Verb|\setlength{\belowrulesep}{3mm}|
+    \item[] 表格与上面文字之间的距离: \Verb|\setlength{\abovetopsep}{5mm}|
+    \item[] 表格与下面文字之间的距离: \Verb|\setlength{\belowbottomsep}{8mm}|
+  \end{itemize}
+
+\begin{table}[H]
+\begin{center}
+\caption{表格示例: booktab \label{Tab:1}}
+\begin{tabular}{clc*{3}{ccc}}\toprule
+  $\beta$   & $n$ & $m$
+  && \multicolumn{2}{c}{GMRES($C$)}
+  && \multicolumn{2}{c}{GMRES($D$)}
+  && \multicolumn{2}{c}{GMRES($T$)} \\ \cmidrule{1-3}\cmidrule{5-6}\cmidrule{8-9}\cmidrule{11-12}
+  &         &    && Iter &  CPU && Iter         &  CPU   && Iter         & CPU      \\
+  \cmidrule{1-3}\cmidrule{5-6}\cmidrule{8-9}\cmidrule{11-12}
+  0.90
+  &$2^{12}$ & 64 && 64 &   0.71 &&  3 (6.0, 8.0) &   0.19 &&  2 (4.7, 7.7) &   0.14 \\
+  &$2^{13}$ & 90 && 83 &   1.71 &&  3 (6.0, 8.2) &   0.25 &&  2 (4.7, 8.0) &   0.19 \\
+  \cmidrule{1-3}\cmidrule{5-6}\cmidrule{8-9}\cmidrule{11-12}
+  0.95
+  &$2^{12}$ & 64 && 65 &   0.71 &&  3 (5.2, 7.0) &   0.16 &&  2 (4.0, 6.7) &   0.11 \\
+  &$2^{13}$ & 90 && 85 &   1.86 &&  3 (5.2, 7.0) &   0.21 &&  2 (4.0, 6.7) &   0.16 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+
+  \item 常用宏包: \Verb|multirow| $\to$ 合并多行
+\begin{syntax}
+  \multirow[c]{2}{*}[1ex]{...}
+\end{syntax}
+\begin{itemize} \addtolength{\itemsep}{-0.5ex}
+  \item[-] \Verb|[c]| 表示垂直方向的位置, 可取值 t, c, b, 缺省为 c, 即垂直居中
+
+  \item[-] \Verb|{2}| 表示行数
+
+  \item[-] \Verb|{*}| 宽度, * 表示自然宽度
+
+  \item[-] \Verb|[1ex]| 垂直方向的微调, 可以上升或下降指定的距离
+\end{itemize}
+
+\begin{table}[H]
+\begin{center}
+\caption{表格示例: multirow \label{Tab:2}}
+\begin{tabular}{clc*{3}{ccc}}\toprule
+  $\beta$   & $n$ & $m$
+  && \multicolumn{2}{c}{GMRES($C$)}
+  && \multicolumn{2}{c}{GMRES($D$)}
+  && \multicolumn{2}{c}{GMRES($T$)} \\ \cmidrule{1-3}\cmidrule{5-6}\cmidrule{8-9}\cmidrule{11-12}
+  &         &    && Iter &  CPU && Iter         &  CPU   && Iter         & CPU      \\
+  \cmidrule{1-3}\cmidrule{5-6}\cmidrule{8-9}\cmidrule{11-12}
+  \multirow{2}{*}{0.90}
+  &$2^{12}$ & 64 && 64 &   0.71 &&  3 (6.0, 8.0) &   0.19 &&  2 (4.7, 7.7) &   0.14 \\
+  &$2^{13}$ & 90 && 83 &   1.71 &&  3 (6.0, 8.2) &   0.25 &&  2 (4.7, 8.0) &   0.19 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+  \item 表格太宽 $\to$ 整体缩放: \Verb|\scalebox{倍数}{...}| \\
+  或 \Verb|\resizebox{width}{height}{...}| \\
+  (如果只指定宽度, 高度按比例缩放, 则用 \Verb|\resizebox{width}{!}{...}|)
+
+\begin{table}[H]
+\begin{center}
+\caption{表格缩放: \texttt{scalebox}\label{Tab:3}}
+\scalebox{0.85}{
+\begin{tabular}{clc*{4}{cc}c}\toprule
+  $\beta$   & $n$ & $m$
+  & \multicolumn{2}{c}{GMRES($C$)}
+  & \multicolumn{2}{c}{GMRES($D$)}
+  & \multicolumn{2}{c}{GMRES($T$)}
+  & \multicolumn{2}{c}{GMRES($T$)} \\\midrule
+  & & & Iter & CPU & Iter & CPU & Iter & CPU & Iter & CPU & $\|u_h-u\|_2$ \\\midrule
+  0.90
+  &$2^{12}$ & 64 & 64 &   0.71 &  3 (6.0, 8.0) &   0.19 &  3 (6.0, 8.0) &   0.19 &  2 (4.7, 7.7) &   0.14 & 3.65e-03 \\
+  &$2^{13}$ & 90 & 83 &   1.71 &  3 (6.0, 8.2) &   0.25 &  3 (6.0, 8.2) &   0.25 &  2 (4.7, 8.0) &   0.19 & 2.47e-03 \\
+  \midrule\midrule
+  0.95
+  &$2^{12}$ & 64 & 65 &   0.71 &  3 (5.2, 7.0) &   0.16 &  3 (5.2, 7.0) &   0.16 &  2 (4.0, 6.7) &   0.11 & 6.05e-02 \\
+  &$2^{13}$ & 90 & 85 &   1.86 &  3 (5.2, 7.0) &   0.21 &  3 (5.2, 7.0) &   0.21 &  2 (4.0, 6.7) &   0.16 & 2.37e-02 \\
+  \bottomrule
+\end{tabular}}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\begin{center}
+\caption{表格缩放: \texttt{resizebox}\label{Tab:3}}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{clc*{4}{cc}c}\toprule
+  $\beta$   & $n$ & $m$
+  & \multicolumn{2}{c}{GMRES($C$)}
+  & \multicolumn{2}{c}{GMRES($D$)}
+  & \multicolumn{2}{c}{GMRES($T$)}
+  & \multicolumn{2}{c}{GMRES($T$)} \\\midrule
+  & & & Iter & CPU & Iter & CPU & Iter & CPU & Iter & CPU & $\|u_h-u\|_2$ \\\midrule
+  0.90
+  &$2^{12}$ & 64 & 64 &   0.71 &  3 (6.0, 8.0) &   0.19 &  3 (6.0, 8.0) &   0.19 &  2 (4.7, 7.7) &   0.14 & 3.65e-03 \\
+  &$2^{13}$ & 90 & 83 &   1.71 &  3 (6.0, 8.2) &   0.25 &  3 (6.0, 8.2) &   0.25 &  2 (4.7, 8.0) &   0.19 & 2.47e-03 \\
+  \midrule\midrule
+  0.95
+  &$2^{12}$ & 64 & 65 &   0.71 &  3 (5.2, 7.0) &   0.16 &  3 (5.2, 7.0) &   0.16 &  2 (4.0, 6.7) &   0.11 & 6.05e-02 \\
+  &$2^{13}$ & 90 & 85 &   1.86 &  3 (5.2, 7.0) &   0.21 &  3 (5.2, 7.0) &   0.21 &  2 (4.0, 6.7) &   0.16 & 2.37e-02 \\
+  \bottomrule
+\end{tabular}}
+\end{center}
+\end{table}
+
+
+\item 如果表格中内容较长, 希望自动换行, 可以使用 \Verb|p{width}| 指定宽度, 如:
+\begin{syntax}
+  \begin{tabular}{p{1em}|p{30em}} 
+    ... ... 
+  \end{tabular}
+\end{syntax}  
+  
+  \begin{tabular}{p{1em}|p{30em}} \toprule
+    $d_{ij}$ & The distance between suppliers $i$ and $j$. \\\midrule
+    $tr_{ij}$ & Transportation cost between suppliers $i$ and $j$.\\\midrule
+    $\Gamma$ & Penalty for each unsatisfied demand after disruption occurrence
+      and  permitted distance between suppliers.\\ \midrule
+    $\partial_{t}$ & 初始启动值.\\ \bottomrule
+  \end{tabular}\smallskip
+
+  注: 单元格内容居左对齐, 如果要改变对齐方式, 可以使用 \Verb|makecell| 宏包.
+
+  \medskip
+
+  \item 如果表格中内容较长, 希望自动换行, 也可以使用 \Verb|tabularx| 宏包.
+
+  \item 宏包 \Verb|makecell| $\to$ 可以创建占多行的单元格, 并且能指定对齐方式,
+    可以与 \Verb|\multirow| 和 \Verb|\multicolumn| 实现更复杂的表格布局.
+
+  \item 如果表格需要跨页, 可以使用 \Verb|longtable| 或  \Verb|supertabular| 宏包.
+
+  \item 宏包 \Verb|diagbox| $\to$ 表格中的反斜线
+
+\end{itemize}
+
+
+\clearpage
+\subsection{插图}
+\begin{itemize}
+  \item 插图要清晰, 如果图中有文字或数学符号的话, 要大小合适. (MATLAB 绘图可以修改字体大小)
+  \item 图片建议用 \Verb|pdf| (可能需要裁边, 可使用 \Verb|Adobe Acrobat DC| 等软件), \Verb|png| 或 \Verb|jpg| 格式.
+%  \item \Verb|pdf| 裁边: \Verb|Adobe Acrobat DC|
+  \item 截图软件: 微信, \Verb|FastStone Capture| 等
+  \item MATLAB 绘图可以利用 \Verb|print| 打印成 \Verb|png| 或 \Verb|pdf|,
+    其中 \Verb|png| 格式比较容易控制边界空白的大小.
+    另外, 建议同时保存为 \Verb|fig| 文件, 方便后面修改.
+\end{itemize}
+
+\subsection{浮动图表}
+\begin{itemize}
+  \item 宏包 \Verb|float|
+
+    $\to$ 提供选项 ``\Verb|H|", 在当前位置排版浮动对象, 如 \Verb|\begin{table}[H]| \\
+    (使用该选项时要注意, 可能会引起大段空白)
+
+\item 宏包 \Verb|placeins|
+
+  $\to$ 提供 \Verb|\FloatBarrier| 命令, 强制在当前位置排版前面剩余的浮动对象.
+
+  $\to$ 也可以加 \Verb|section| 选项 (即 \Verb|\usepackage[section]{placeins}|),
+   确保浮动对象不会浮动到后面一节.
+
+
+\end{itemize}
+
+\clearpage
+\section{算法伪代码}
+
+本模板中算法伪代码的排版使用的是 \Verb|algorithm| 和 \Verb|algpseudocodex| 宏包,
+并新定义了一个 \Verb|breakablealgorithm| 环境, 用来排版特别长的算法 (跨页显示).
+
+\subsection{算法伪代码示例 --- algorithm 环境}
+
+算法 \ref{Alg:MGS-QR} 是用 \Verb|algorithm| 环境排版的伪代码.
+缺点是不支持换页, 可能会出现大片空白.
+
+\begin{algorithm}[H]
+\caption{基于 MGS 的 QR 分解\label{Alg:MGS-QR}}
+\begin{algorithmic}[1]
+  \Statex\hspace*{-2em}
+     \Comment{Given $A$, compute $Q=[q_1,\ldots,q_n]$ and $R$ such that $A=QR$}
+  \State Set $R=[r_{ij}]=0_{n\times n}$  (the $n\times n$ zero matrix)
+  \If{$a_1=0$}
+  \State $q_1=0$
+  \Else
+  \State $r_{11}=\|a_1\|_2$,\quad $q_1 = a_1/\|a_1\|_2$
+  \EndIf
+  \For{$j=2$ to $n$}
+  \State $q_j = a_j$
+  \For{$i=1$ to $j-1$} \Comment{MGS, 注意与 GS 的区别 }
+  \State $r_{ij} = (q_j,q_i)$,\quad $q_j = q_j - r_{ij}q_i$
+  \EndFor
+  \If{$q_j\neq 0$}
+  \State $r_{jj}=\|q_j\|_2$,\quad  $q_j = q_j/r_{jj}$
+  \EndIf
+  \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{算法伪代码示例 --- breakablealgorithm 环境}
+
+算法 \ref{Alg:GMRES} 是用 \Verb|breakablealgorithm| 环境排版的伪代码, 可以跨页显示.
+
+\begin{breakablealgorithm}
+\caption{实用 GMRES 方法\label{Alg:GMRES}}
+\begin{algorithmic}[1]
+  \State 选取初值 $x^{(0)}$, 停机标准 $\varepsilon>0$, 以及最大迭代步数 IterMax
+  \State $r_0=b-Ax^{(0)}$, $\beta=\|r_0\|_2$
+  \If{$\beta/\|b\|_2<\varepsilon$}
+  \State 停止计算, 输出近似解 $x^{(0)}$
+  \EndIf
+  \State $v_1=r_0/\beta$
+  \State $\xi=\beta e_1$ \Comment{记录 $q_1$}
+  \For{$j = 1$ to IterMax}
+  \State $w = Av_j$
+  \For{$i=1$ to $j$} \Comment{Arnoldi 过程}
+  \State $h_{i,j} = (v_i,w)$
+  \State $w = w - h_{i,j}v_i$
+  \EndFor
+  \State $h_{j+1,j}=\|w\|_2$
+  \If{$h_{j+1,j}=0$} \Comment{迭代中断}
+  \State $m=j$, break
+  \EndIf
+  \State $v_{j+1}=w/h_{j+1,j}$
+  \For{$i=1$ to $j-1$}
+         \Comment{计算 $G_{j-1}\cdots G_2G_1 H_{j+1,j}(1\!:\!j,j)$}
+  \smallskip
+  \State $\bbm h_{ij}\\ h_{i+1,j} \ebm = \bbm c_i & s_i \\ -s_i & c_i \ebm
+         \bbm h_{ij}\\ h_{i+1,j} \ebm $
+  \smallskip
+  \EndFor
+  \If{$|h_{jj}|>|h_{j+1,j}|$} \Comment{构造 Givens 变换 $G_j$}
+  \State $\tau=h_{j+1,j}/h_{jj}$, $c_j=1/\sqrt{1+\tau^2}$, $s_j=c_j\tau$
+  \Else
+  \State $\tau=h_{jj} / h_{j+1,j}$, $s_j=1/\sqrt{1+\tau^2}$, $c_j=s_j\tau$
+  \EndIf
+  \State $h_{jj}=c_jh_{jj}+s_jh_{j+1,j}$
+        \Comment{计算 $G_{j} H_{j+1,j}(1\!:\! j,j)$}
+  \State $h_{j+1,j}=0$ \smallskip
+  \State $\bbm \xi_j \\ \xi_{j+1} \ebm = \bbm c_j & s_j \\ -s_j & c_j \ebm
+         \bbm \xi_{j}\\ 0 \ebm $
+        \Comment{计算 $G_{j} (\beta G_{j-1}\cdots G_2G_1 e_1)$}
+  \smallskip
+  \State relres = $|\xi_{j+1}|/\beta$ \Comment{相对残量}
+  \If{$\mathrm{relres}<\varepsilon$} % \Comment{收敛检测}
+  \State $m=j$, break
+  \EndIf
+  \EndFor
+  \State $m=j$
+  \State $y^{(m)}=H(1:m,1:m) \backslash \xi(1:m)$
+        \Comment{求最小二乘问题的解, 回代求解}
+  \State $x^{(m)}=x^{(0)}+V_m y^{(m)}$
+  \If{$\mathrm{relres}<\varepsilon$}
+  \State 输出近似解 $x$ 及相关信息
+  \Else
+  \State 输出算法失败信息
+  \EndIf
+\end{algorithmic}
+\end{breakablealgorithm}
+
+\subsection{algorithm2e 宏包}
+另外, 也可以使用 \Verb|algorithm2e| 宏包 (此时不需要加载 \Verb|algorithm| 宏包),
+但样式与 \Verb|algpseudocodex/algcompatible/algorithmicx| 有所区别, 示例如下.
+
+\begin{center}
+  \includegraphics[width=0.9\linewidth]{fig_algorithm2e.pdf}
+\end{center}
+
+%\usepackage[lined,algoruled,algochapter,linesnumbered]{algorithm2e}
+%\SetAlgorithmName{算法}{算法}{算法目录}
+%\SetAlFnt{\zihao{-4}}         % fonts for the body of algorithm
+%\SetAlCapFnt{\zihao{-4}}      % fonts for the caption name
+%\SetAlCapNameFnt{\zihao{-4}}  % fonts for the caption
+%\SetAlCapHSkip{0em}           % indent of caption
+%\SetAlgoInsideSkip{smallskip} % 算法与 caption 之间的间距
+%\setlength{\algomargin}{1.5em}
+%\SetAlgoNlRelativeSize{-1}    % 行号字体大小（-1 表示比算法字体小 1 号，0 表示同样大小，缺省为 -2）
+%\SetNlSty{textbf}{}{.}        % 行号字样，与前、后文本
+%
+%\begin{algorithm}\linespread{1.1}\selectfont
+%%\SetNlSty{\relsize{-1}}
+%%\SetAlgoLined
+%\SetKwInOut{Input}{input}
+%\SetKwInOut{Output}{output}
+%
+%  \Input{矩阵 $A$ 和非零向量 $r$}
+%  \Output{单位正交基 $v_1, v_2, \ldots$}
+%  $v_1=r/\|r\|_2$\;
+%  \For{$j = 1,2, \ldots, m-1$}{
+%     $w_j=Av_{j}$ \;
+%     \For{$i = 1,2, \ldots, j$}{
+%       $$h_{ij}=(w_{j},v_i),\quad w_{j}=w_j - h_{ij}v_i, v_{j+1}=\frac{w_{j}}{h_{j+1,j}} $$
+%     }
+%     $h_{j+1,j} = \|w_{j}\|_2 $\;
+%     \If{$h_{j+1,j}=0$}{break}
+%  $v_{j+1}=w_{j}/h_{j+1,j}$\;
+%  }
+%\caption{基于 MGS (Modified Gram-Schmidt) 的 Arnoldi 过程}\label{Alg:Arnoldi}
+%\end{algorithm}
+
+
+\chapter{其他}
+
+\section{常见错误处理方法}
+
+\begin{itemize}
+  \item 编译出错时如何终止编译 $\to$ \Verb|x|
+  \item 如何清空辅助文件: \Verb|Erase Output Files|
+
+  \item 编译过程中停留时间过长 (如下图, 构造字体)
+    $\to$ 以管理员身份运行 \Verb|WinEdt|
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{fig_02_11.png}
+  \end{figure}
+
+\end{itemize}
+
+
+
+\section{WinEdt 符号补全等技巧}
+
+充分利用 WinEdt 自带的便捷功能可以大幅提升书写源代码的效率.
+
+\begin{itemize}
+  \item 命令补全功能
+  \item 环境自动补全功能
+  \item 常用数学符号
+\end{itemize}
+
+
+\section{常用宏包}
+
+\begin{itemize}
+  \item 建议必备: \pkgg{geometry, graphicx, hyperref, xcolor, mathtools}
+  \item 数学: \pkgg{amsmath, amssymb, amsfonts, bm, ntheorem/amsthm, unicode-math}
+  \item 格式定制: \pkgg{caption, enumitem, fancyhdr, fancyvbr, footmisc, titletoc, titlesec, makeidx}
+  \item 表格: \pkgg{array, booktabs, longtable, tabularx, diagbox, multirow, varwidth}
+  \item 插图/绘图: \pkgg{float, rotating, pdfpages, standalone, subfig, pgf/tikz, pgfplots}
+  \item 字体: \pkgg{newtx, newpx, pifont, fontspec}
+  \item 算法/代码: \pkgg{algorithmic/algpseudocode/algcompatible, algorithm, listings}
+  \item 参考文献: \pkgg{natbib, amsrefs}
+  \item 幻灯片/展板: \pkgg{beamer, beamerposter, baposter}
+  \item 其他: \pkgg{mhchem, microtype, minted, siunitx, calc, setspace}
+
+\end{itemize}
+
+
+
+\backmatter
+
+%%%% ===== 参考文献 =====
+%%%% ========================== %%%%%
+%%%% 注：此处参考文献格式仅作参考 %%%%%
+%%%% ========================== %%%%%
+
+\linespread{1.1}\selectfont
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{参考文献}
+\thispagestyle{plain}
+
+\bibitem{DDH07}
+\newblock J. Demmel, I. Dumitriu, O. Holtz and R. Kleinberg,
+\newblock Fast matrix multiplication is stable,
+\newblock \emph{Numerische Mathematik}, 106 (2007), 199--224.
+
+\bibitem{Hig02} % Book
+\newblock N. J. Higham,
+\newblock \emph{Accuracy and Stability of Numerical Algorithms}, 2nd Edition,
+\newblock SIAM, Philadelphia, 2002.
+
+\bibitem{Hua18} % PhD thesis
+\newblock J. Y. Huang,
+\newblock \emph{Practical Fast Matrix Multiplication Algorithms},
+\newblock PhD thesis, The University Of Texas At Austin, 2018.
+
+\bibitem{HSH16}
+\newblock J. Y. Huang, T. M. Smith, G. M. Henry and R. A. Van De Geijn,
+\newblock Strassen's Algorithm Reloaded,
+\newblock in: \emph{SC '16: Proceedings of the International Conference for High Performance Computing,
+Networking, Storage and Analysis}, 2016: pp. 690--701.
+
+\bibitem{NW99} % 书籍
+\newblock J. Nocedal and S. J. Wright,
+\newblock \emph{Numerical Optimization},
+\newblock Springer, New York, 1999.
+
+\bibitem{Zha08}
+\newblock 詹兴致,
+\newblock \emph{矩阵论},
+\newblock 高等教育出版社, 北京, 2008.
+
+\end{thebibliography}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\linespread{1.4}\selectfont
+\chapter*{附录}
+\addcontentsline{toc}{chapter}{附录}
+
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分,
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分,
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分,
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分.
+
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分,
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分,
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分,
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分.
+
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分,
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分,
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分,
+附录部分, 附录部分, 附录部分, 附录部分, 附录部分.
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{作者简历及在学期间所取得的科研成果}
+\addcontentsline{toc}{chapter}{作者简历及在学期间所取得的科研成果}
+
+\noindent{\heiti{作者简历:}}
+\begin{itemize}
+  \item 20xx.xx - 20xx.xx, xxx, 本科生
+  \item 20xx.xx - 20xx.xx, xxx, 硕士研究生
+  \item 20xx.xx - 20xx.xx, xxx, 博士研究生
+\end{itemize}
+
+\bigskip\bigskip
+\noindent{\heiti{在学期间所取得的科研成果:}}
+\begin{itemize}
+  \item[{[1]}]
+    科研成果 科研成果 科研成果 科研成果 科研成果
+    科研成果 科研成果 科研成果 科研成果 科研成果 .
+
+  \item[{[2]}] xxx
+  \item[{[3]}] xxx
+\end{itemize}
+
+
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{致谢}
+\addcontentsline{toc}{chapter}{致谢}
+
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分.
+
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分.
+
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分.
+
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分,
+致谢部分, 致谢部分, 致谢部分, 致谢部分, 致谢部分.
+
+\bigskip\bigskip
+\mbox{}\hfill 某某某\qquad\mbox{} \par
+\mbox{}\hfill 20xx 年 x 月 x 日
+
+\end{document}

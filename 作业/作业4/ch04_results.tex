@@ -1,0 +1,55 @@
+\chapter{结果展示、验证与敏感性分析}
+
+\section{结果展示格式}
+为与题目要求一致，结果按以下模块展示：
+\begin{enumerate}
+  \item 理想抛物面参数（顶点、焦距、轴向）；
+  \item 300 m 口径内节点调节后坐标；
+  \item 促动器径向伸缩量统计；
+  \item 接收比指标（工作态/基准态/提升率）。
+\end{enumerate}
+
+\section{约束可行性验证}
+对优化结果需执行两类约束检查：
+\begin{itemize}
+  \item \textbf{促动器约束}：验证全部 $\Delta l_i\in[-0.6,0.6]$；
+  \item \textbf{边长约束}：验证全部边满足式 \eqref{eq:length}。
+\end{itemize}
+若任一约束超限，需回到求解阶段调整权重、罚参数或初值。
+
+\section{性能指标对比}
+设工作态接收比为 $\eta_{\text{work}}$，基准态接收比为 $\eta_{\text{base}}$，则提升率定义为
+\[
+\text{Gain}=\frac{\eta_{\text{work}}-\eta_{\text{base}}}{\eta_{\text{base}}}.
+\]
+当 Gain 为正且数值显著时，说明调节策略在聚焦效果上优于基准态。
+
+\section{结果表模板}
+\begin{table}[H]
+\centering
+\caption{核心结果汇总（示例模板，提交时填入实算值）}
+\begin{tabular}{lc}
+\toprule
+指标 & 数值 \\
+\midrule
+理想抛物面顶点 $\mathbf v^\star$ & $(\cdot,\cdot,\cdot)$ \\
+最大促动器伸缩量 $\max|\Delta l_i|$ / m & -- \\
+边长约束最大相对变化 / \% & -- \\
+工作态接收比 $\eta_{\text{work}}$ & -- \\
+基准态接收比 $\eta_{\text{base}}$ & -- \\
+提升率 Gain & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{敏感性分析}
+建议从以下因素开展敏感性实验：
+\begin{enumerate}
+  \item \textbf{方向扰动}：对 $(\alpha,\beta)$ 加小扰动，观察顶点与接收比变化；
+  \item \textbf{初值扰动}：改变优化初值，检查解的一致性；
+  \item \textbf{权重变化}：调整拟合权重 $w_i$，比较边缘与中心误差分布；
+  \item \textbf{采样密度}：改变光线追踪采样点数，检验接收比估计稳定性。
+\end{enumerate}
+
+\section{本章小结}
+本章给出了从“可行性验证”到“性能对比”再到“敏感性分析”的完整结果解读框架，可直接支撑课程作业中的结果说明部分。

@@ -1,0 +1,29 @@
+\chapter{鲁棒性与敏感性分析}
+
+\section{参数敏感性定义}
+对参数 $\theta_j$ 的局部敏感性定义为
+\[
+S_j(t)=\frac{\partial x(t)}{\partial \theta_j}\cdot \frac{\theta_j}{x(t)+\epsilon},
+\]
+其中 $\epsilon$ 为数值稳定项。
+
+\section{噪声传播分析}
+设观测噪声协方差为 $\mathbf{\Sigma}_y$，在线性近似下参数协方差可估计为
+\[
+\mathbf{\Sigma}_\theta \approx \left(\mathbf{J}^\mathsf{T}\mathbf{\Sigma}_y^{-1}\mathbf{J}\right)^{-1}.
+\]
+据此可评估参数置信区间与相关性。
+
+\section{初值扰动试验}
+在基准初值附近施加随机扰动：
+\[
+\boldsymbol{\theta}_0^{(j)}=\boldsymbol{\theta}_0+\delta^{(j)},\quad \delta^{(j)}\sim \mathcal{N}(0,\sigma_0^2\mathbf{I}),
+\]
+记录多次求解结果统计量，以判断算法对初始化的敏感程度。
+
+\section{工程建议}
+\begin{itemize}
+  \item 使用参数归一化降低尺度差异带来的病态性；
+  \item 优先选取信息量高的观测时段提升可辨识性；
+  \item 对高噪声数据采用分段拟合与正则化联合策略。
+\end{itemize}

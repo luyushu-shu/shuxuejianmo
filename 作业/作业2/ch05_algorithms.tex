@@ -1,0 +1,56 @@
+\chapter{求解算法设计}
+
+\section{总体流程}
+算法按时间推进，每次处理一个滑动窗口，流程如下：
+\begin{enumerate}
+  \item 读取当前窗口 RSSI 数据并做异常预处理；
+  \item 基于第 4 章方法构造初始轨迹；
+  \item 执行迭代重加权最小二乘求解；
+  \item 输出当前时刻位置并滑动到下一窗口。
+\end{enumerate}
+
+\section{IRWLS 主算法}
+设窗口变量为 $\bm X$，在第 $k$ 次迭代：
+\begin{equation}
+\bm X^{(k+1)}=\bm X^{(k)}+\Delta\bm X^{(k)},
+\end{equation}
+其中 $\Delta\bm X^{(k)}$ 由线性化法方程求解得到。
+
+\begin{algorithm}[H]
+\caption{滑动窗口鲁棒定位算法}
+\begin{algorithmic}[1]
+\State 输入：窗口观测、初始轨迹、参数 $\lambda_s,\lambda_h,\delta$
+\For{$k=1$ to MaxIter}
+\State 计算各观测残差 $r_i$
+\State 根据 Huber 规则更新权重 $\omega_i$
+\State 构造线性系统 $\bm A\Delta\bm X=\bm b$
+\State 求解增量并更新 $\bm X\leftarrow\bm X+\Delta\bm X$
+\State 执行可行域投影修正
+\If{$\|\Delta\bm X\|/\|\bm X\|<\varepsilon$}
+\State break
+\EndIf
+\EndFor
+\State 输出窗口末端位置估计
+\end{algorithmic}
+\end{algorithm}
+
+\section{参数设置原则}
+核心参数包括：
+\begin{itemize}
+  \item $\lambda_s$：轨迹平滑强度，过大将抑制转弯；
+  \item $\lambda_h$：方向变化惩罚，控制航向突变；
+  \item $\delta$：Huber 阈值，决定异常点降权力度；
+  \item $w$：窗口长度，影响时延与稳定性权衡。
+\end{itemize}
+
+\section{收敛与复杂度}
+窗口维度为 $2w$，每步求解复杂度约为 $\mathcal O(w^3)$（稠密求解）或更低（稀疏求解）。在课程实验配置 $w=8$ 下，单帧平均计算时间可控制在毫秒级。
+
+\section{失败保护机制}
+为避免极端场景下发散，设置以下保护：
+\begin{enumerate}
+  \item 迭代步数上限；
+  \item 增量过大时执行阻尼缩放；
+  \item 连续异常时回退到预测轨迹；
+  \item 信标数量不足时启用短时外推模式。
+\end{enumerate}

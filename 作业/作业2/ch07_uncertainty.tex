@@ -1,0 +1,48 @@
+\chapter{不确定性分析}
+
+\section{局部协方差近似}
+在收敛点附近，窗口优化可线性化为
+\[
+\Delta\bm X\approx (\bm J^\T\bm W\bm J)^{-1}\bm J^\T\bm W\,\Delta\bm z.
+\]
+因此位置协方差可近似为
+\[
+\bm\Sigma_X\approx (\bm J^\T\bm W\bm J)^{-1}.
+\]
+提取窗口末端 $2\times2$ 子块即可得到当前时刻位置方差估计。
+
+\section{二维置信椭圆}
+设当前时刻协方差为 $\bm\Sigma_t$，则置信区域
+\[
+(\bm p-\hat{\bm p})^\T \bm\Sigma_t^{-1}(\bm p-\hat{\bm p})\le \chi^2_{2,p}.
+\]
+对 $p=0.95$，椭圆主轴长度由特征值决定，可用于可视化定位可信度。
+
+\section{不确定性来源分解}
+误差主要来自三部分：
+\begin{enumerate}
+  \item RSSI 测量噪声；
+  \item 路径损耗参数 $P_0,n$ 标定误差；
+  \item 停车场几何遮挡导致的系统偏差。
+\end{enumerate}
+其中第二、三项会引入模型偏差，难以通过简单滤波完全消除。
+
+\section{覆盖几何指标}
+定义局部几何指标
+\[
+G_t=\operatorname{trace}\left((\bm J_t^\T\bm J_t)^{-1}\right),
+\]
+$G_t$ 越大说明该时刻信标几何越差。实验发现，车道尽头和立柱密集区域通常对应较大 $G_t$，与误差峰值位置一致。
+
+\section{Bootstrap 经验区间}
+为避免高斯假设过强，采用残差重采样进行 Bootstrap，生成位置估计经验分布并给出 95\% 经验区间。该方法在遮挡场景下更贴近实际误差边界。
+
+\section{在线可信度输出}
+工程上建议实时输出以下可信度字段：
+\begin{itemize}
+  \item 椭圆长短轴长度；
+  \item 当前有效信标数量；
+  \item 残差均值与最大残差；
+  \item 是否触发异常保护。
+\end{itemize}
+这样调度端可区分“高可信定位”与“低可信定位”状态。

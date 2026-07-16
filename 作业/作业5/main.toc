@@ -1,0 +1,61 @@
+\contentsline {chapter}{中文摘要}{i}{section*.3}%
+\contentsline {chapter}{ABSTRACT}{ii}{section*.4}%
+\contentsline {chapter}{\numberline {第一章\hspace {.3em}}问题背景与资料整理}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}研究背景}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}数据与代码来源说明}{1}{section.1.2}%
+\contentsline {section}{\numberline {1.3}研究目标}{1}{section.1.3}%
+\contentsline {section}{\numberline {1.4}技术路线}{2}{section.1.4}%
+\contentsline {chapter}{\numberline {第二章\hspace {.3em}}模型建立}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}状态方程与参数向量}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}高阶导数递推关系}{3}{section.2.2}%
+\contentsline {section}{\numberline {2.3}参数辨识目标函数}{3}{section.2.3}%
+\contentsline {section}{\numberline {2.4}优化迭代模型}{4}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}牛顿法}{4}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}高斯牛顿法}{4}{subsection.2.4.2}%
+\contentsline {chapter}{\numberline {第三章\hspace {.3em}}高阶导数与泰勒积分求解}{5}{chapter.3}%
+\contentsline {section}{\numberline {3.1}16阶泰勒展开}{5}{section.3.1}%
+\contentsline {section}{\numberline {3.2}导数计算模块化设计}{5}{section.3.2}%
+\contentsline {section}{\numberline {3.3}局部误差与步长控制}{5}{section.3.3}%
+\contentsline {section}{\numberline {3.4}算法描述}{6}{section.3.4}%
+\contentsline {chapter}{\numberline {第四章\hspace {.3em}}牛顿类迭代与实现细节}{7}{chapter.4}%
+\contentsline {section}{\numberline {4.1}残差与雅可比构造}{7}{section.4.1}%
+\contentsline {section}{\numberline {4.2}阻尼高斯牛顿策略}{7}{section.4.2}%
+\contentsline {section}{\numberline {4.3}停止准则}{7}{section.4.3}%
+\contentsline {section}{\numberline {4.4}复杂度分析}{8}{section.4.4}%
+\contentsline {chapter}{\numberline {第五章\hspace {.3em}}数值实验与结果分析}{9}{chapter.5}%
+\contentsline {section}{\numberline {5.1}实验设置}{9}{section.5.1}%
+\contentsline {section}{\numberline {5.2}积分精度结果}{9}{section.5.2}%
+\contentsline {section}{\numberline {5.3}参数估计结果}{10}{section.5.3}%
+\contentsline {section}{\numberline {5.4}鲁棒性讨论}{10}{section.5.4}%
+\contentsline {chapter}{\numberline {第六章\hspace {.3em}}结论与展望}{11}{chapter.6}%
+\contentsline {section}{\numberline {6.1}主要结论}{11}{section.6.1}%
+\contentsline {section}{\numberline {6.2}模型不足}{11}{section.6.2}%
+\contentsline {section}{\numberline {6.3}后续工作}{11}{section.6.3}%
+\contentsline {chapter}{\numberline {第七章\hspace {.3em}}敏感性分析与稳定域讨论}{12}{chapter.7}%
+\contentsline {section}{\numberline {7.1}参数灵敏度定义}{12}{section.7.1}%
+\contentsline {section}{\numberline {7.2}单参数扰动结果}{12}{section.7.2}%
+\contentsline {section}{\numberline {7.3}多参数联合扰动}{12}{section.7.3}%
+\contentsline {section}{\numberline {7.4}稳定域经验边界}{12}{section.7.4}%
+\contentsline {section}{\numberline {7.5}小结}{13}{section.7.5}%
+\contentsline {chapter}{\numberline {第八章\hspace {.3em}}蒙特卡洛仿真与对比实验}{14}{chapter.8}%
+\contentsline {section}{\numberline {8.1}仿真设计}{14}{section.8.1}%
+\contentsline {section}{\numberline {8.2}统计指标}{14}{section.8.2}%
+\contentsline {section}{\numberline {8.3}实验现象}{14}{section.8.3}%
+\contentsline {section}{\numberline {8.4}可视化结论（文字描述）}{15}{section.8.4}%
+\contentsline {section}{\numberline {8.5}小结}{15}{section.8.5}%
+\contentsline {chapter}{\numberline {第九章\hspace {.3em}}工程实现建议与部署方案}{16}{chapter.9}%
+\contentsline {section}{\numberline {9.1}软件架构建议}{16}{section.9.1}%
+\contentsline {section}{\numberline {9.2}在线计算流程}{16}{section.9.2}%
+\contentsline {section}{\numberline {9.3}异常处理机制}{16}{section.9.3}%
+\contentsline {section}{\numberline {9.4}部署性能建议}{17}{section.9.4}%
+\contentsline {section}{\numberline {9.5}本章总结}{17}{section.9.5}%
+\contentsline {chapter}{参考文献}{18}{chapter*.10}%
+\contentsline {chapter}{附录 A：关键代码与模块说明}{19}{chapter*.11}%
+\contentsline {chapter}{附录 B：参数与批量实验记录}{20}{chapter*.15}%
+\contentsline {chapter}{附录 C：步长扫描完整数据}{21}{chapter*.19}%
+\contentsline {chapter}{附录 D：噪声扰动统计记录}{22}{chapter*.21}%
+\contentsline {chapter}{附录 E：初值敏感性批量试验}{23}{chapter*.23}%
+\contentsline {chapter}{附录 F：算法日志摘要}{24}{chapter*.25}%
+\contentsline {chapter}{附录 G：综合实验全量结果表}{25}{chapter*.27}%
+\contentsline {chapter}{附录 H：扩展讨论与复现实务}{26}{chapter*.29}%
+\contentsfinish 

@@ -1,0 +1,123 @@
+\chapter{数值算法设计与收敛判据}
+
+\section{算法总体流程}
+本文数值流程分为四个阶段：
+\begin{enumerate}
+  \item 读取测角和测距观测数据；
+  \item 由三测站测距几何定位得到初值 $\bm p_0$；
+  \item 采用牛顿法或法方程迭代更新估计；
+  \item 输出最优解、目标函数值、矩阵及精度指标。
+\end{enumerate}
+
+\section{牛顿法}
+\subsection{迭代公式}
+在第 $k$ 步，计算
+\[
+\bm g_k=\nabla F(\bm p_k),\quad
+\bm H_k=\nabla^2F(\bm p_k),
+\]
+解线性系统
+\[
+\bm H_k\Delta\bm p_k=\bm g_k,
+\]
+并更新
+\[
+\bm p_{k+1}=\bm p_k-\Delta\bm p_k.
+\]
+
+\subsection{收敛判据}
+定义相对步长
+\begin{equation}
+\eta_k=\frac{\|\Delta\bm p_k\|_2}{\|\bm p_{k+1}\|_2}.
+\end{equation}
+当 $\eta_k<10^{-10}$ 时判定收敛。若迭代超过上限（代码中设置额外保护），则返回失败状态。
+
+\subsection{优缺点}
+\begin{itemize}
+  \item 优点：局部二次收敛，收敛后可直接得到海森矩阵；
+  \item 缺点：对初值与海森矩阵正定性敏感；
+  \item 适用：观测质量较高、初值较好、维度中小的场景。
+\end{itemize}
+
+\section{法方程迭代法（代码中的 LM 方法）}
+\subsection{线性化思路}
+在 $\bm p_k$ 处线性化残差函数：
+\[
+r_i(\bm p_k+\Delta\bm p)\approx r_i(\bm p_k)-\bm J_i\Delta\bm p.
+\]
+令加权残差最小，可得法方程
+\begin{equation}
+\bm A_k\Delta\bm p_k=\bm B_k,
+\label{eq:normal_eq}
+\end{equation}
+其中
+\[
+\bm A_k=\sum_i w_i\bm J_i^{\T}\bm J_i,\quad
+\bm B_k=\sum_i w_i r_i\bm J_i^{\T}.
+\]
+更新规则为
+\[
+\bm p_{k+1}=\bm p_k+\Delta\bm p_k.
+\]
+
+\subsection{与高斯牛顿关系}
+式 \eqref{eq:normal_eq} 本质上是高斯牛顿框架。代码命名为 LM 方法，但未显式加入阻尼参数 $\lambda$。若后续需要增强鲁棒性，可拓展为
+\[
+(\bm A_k+\lambda_k\bm I)\Delta\bm p_k=\bm B_k.
+\]
+
+\subsection{优缺点}
+\begin{itemize}
+  \item 优点：避免显式二阶导数，计算结构清晰；
+  \item 缺点：强非线性区域可能收敛变慢；
+  \item 适用：导数信息可得且希望快速实现工程求解的场景。
+\end{itemize}
+
+\section{算法伪代码}
+\begin{algorithm}[H]
+\caption{融合测角测距的牛顿迭代定位}
+\begin{algorithmic}[1]
+\State 输入观测集 $S_1,S_2$，初值 $\bm p_0$
+\For{$k=0,1,\ldots$}
+\State 计算 $\bm g_k=\nabla F(\bm p_k)$ 和 $\bm H_k=\nabla^2F(\bm p_k)$
+\State 求解 $\bm H_k\Delta\bm p_k=\bm g_k$
+\State $\bm p_{k+1}\gets \bm p_k-\Delta\bm p_k$
+\If{$\|\Delta\bm p_k\|_2/\|\bm p_{k+1}\|_2<10^{-10}$}
+\State 返回 $\bm p_{k+1}$
+\EndIf
+\EndFor
+\State 返回失败状态
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{法方程迭代定位}
+\begin{algorithmic}[1]
+\State 输入观测集 $S_1,S_2$，初值 $\bm p_0$
+\For{$k=0,1,\ldots$}
+\State 线性化残差，累加构造 $\bm A_k,\bm B_k$
+\State 求解 $\bm A_k\Delta\bm p_k=\bm B_k$
+\State $\bm p_{k+1}\gets \bm p_k+\Delta\bm p_k$
+\If{$\|\Delta\bm p_k\|_2/\|\bm p_{k+1}\|_2<10^{-10}$}
+\State 计算 $\bm A_k^{-1}$ 并返回
+\EndIf
+\EndFor
+\State 返回失败状态
+\end{algorithmic}
+\end{algorithm}
+
+\section{复杂度分析}
+设总观测数 $N=2m+n$（测角每站贡献两个残差）。每次迭代主要代价在残差与导数累计，复杂度约为 $\mathcal O(N)$；线性求解为 $3\times3$ 小系统，复杂度常数量级。因此算法总耗时主要由迭代次数决定。
+
+\section{停止准则与异常处理}
+为提高工程可用性，建议采用以下多重停止准则：
+\begin{enumerate}
+  \item 参数增量准则：$\|\Delta\bm p\|/\|\bm p\|<\varepsilon_1$；
+  \item 目标下降准则：$|F_{k+1}-F_k|<\varepsilon_2$；
+  \item 梯度准则：$\|\nabla F\|<\varepsilon_3$；
+  \item 最大迭代次数准则。
+\end{enumerate}
+此外可在每次迭代监测矩阵行列式与条件数，必要时触发正则化或重启策略。
+
+\section{本章小结}
+本章完成了两类求解器的算法化表述，并给出各自优缺点与实现要点。后续实验将从收敛结果、精度表现和鲁棒性等方面进行对比分析。

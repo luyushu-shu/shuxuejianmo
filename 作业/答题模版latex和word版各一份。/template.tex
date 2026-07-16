@@ -1,0 +1,407 @@
+%! Mode:: "TeX:UTF-8"
+%! TEX program = xelatex
+
+\PassOptionsToPackage{quiet}{xeCJK}
+\documentclass[withoutpreface]{njtechmcmthesis}
+
+\usepackage{etoolbox}
+\BeforeBeginEnvironment{tabular}{\zihao{-5}}
+\usepackage[numbers,sort&compress]{natbib}  % 文献管理宏包
+\usepackage[framemethod=TikZ]{mdframed}  % 框架宏包
+\usepackage{url}  % 网页链接宏包
+\usepackage{subcaption}  % 子图宏包
+
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+\title{某商超蔬菜类商品动态定价与补货决策研究}  % 论文标题
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 正文
+\begin{document}
+% ========== 自制的封面 ==========
+\begin{titlepage}
+\centering
+
+% 校徽（根据实际文件名和宽度调整）
+\includegraphics[width=0.3\textwidth]{figures/logo.png}\\[1cm]
+
+% 主标题
+{\Huge\bfseries 南京工业大学数学建模竞赛}\\[0.8cm]
+
+% 副标题或年份
+{\Large  2026年 参赛论文}\\[2cm]
+
+% 参赛信息（可根据需要增删）
+{\Large 
+\begin{tabular}{ll}
+\centering
+  参赛题号： & A/B/C/D中选择 \\
+  参赛队号： & 202600123456 \\
+  队员1（签名）： & 张三 \\
+  队员2（签名）： & 李四 \\
+  队员3（签名）： & 王五 \\
+  指导教师（签名）： & 赵教授 \\
+  参赛日期： & 2026年6月12日 \\
+\end{tabular}}
+
+\vfill
+
+% 诚信承诺或说明文字
+{\small 我们承诺：严格遵守竞赛规则，独立完成论文，尊重知识产权。}
+
+\vspace{0.5cm}
+{\small \textcolor{gray}{（此页为封面，请打印后签字装订）}}
+
+\end{titlepage}
+% ========== 封面结束 ==========
+\maketitle
+\begin{abstract}
+随着生鲜市场规模的持续扩大，蔬菜零售行业的竞争也愈加激烈。为帮助某商超 改善经营模式，本文基于题目所给数据信息，建立数学模型进行分析，从而制定合理 的蔬菜类商品动态定价与补货决策，提高商超收益。
+
+针对问题一，第一问首先计算出蔬菜品类的标准差、偏度系数、峰度系数等描述 统计量。然后进行数据可视化处理，分析各蔬菜品类、单品蔬菜的销售量分布规律。
+结果可得各单品和各蔬菜品类的日销售量都呈现出不同程度的季节性波动，其中花叶 类和辣椒类蔬菜日销售量的波动性较大。第二问引入Spearman相关系数，以各蔬菜 品类及单品蔬菜的日销售量为指标，进行相关性分析，求解得出除茄类外，其它五种 品类蔬菜之间都呈现出显著的正相关关系。然后以单品的总销售量、每日最大销售量 和日均销售量为指标，通过K-means++聚类算法将单品划分为热销、畅销、平销和滞 销四大类，进行相关性分析，结果可得热销单品较其他单品呈现出高总销售量，高每 日最大销售量和高日均销售量特点。
+
+针对问题二，第一问首先计算出各蔬菜品类每日成本加成定价，然后通过Pearson 相关系数检验出各蔬菜品类销售总量与成本加成定价呈负线性相关关系，于是建立线 性回归模型，利用最小二乘法求出线性回归方程。第二问首先针对不同品类蔬菜建立 时间序列预测模型，考虑数据的时效性以前半年的日销售量为原始数据预测出未来一 周各蔬菜品类的日销售量，再根据预测结果确立决策变量，以利润最大化为目标函数， 以蔬菜的补货量、定价、损耗为约束条件建立优化模型，求解出未来一周最大收益为 5105.60元，最后引入模拟退火模型求出最优的蔬菜品类的补货和定价策略。
+
+
+
+\keywords{关键词\quad  关键词\quad  关键词\quad  关键词 \quad 关键词}
+\end{abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+% \tableofcontents  % 目录
+% \newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+\section{问题重述222}
+\subsection{问题背景}
+问题背景
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\subsection{问题要求}
+
+\textbf{问题1}  今天好热
+
+\textbf{问题2}  
+
+\textbf{问题3} 
+
+\textbf{问题4}  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\section{问题分析}
+\subsection{问题一分析}
+对于问题一，
+
+\subsection{问题二分析}	
+对于问题二，
+
+\subsection{问题三分析}
+对于问题三，
+
+\subsection{问题四分析}
+对于问题四，
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\section{模型假设}
+
+为简化问题，本文做出以下假设：
+
+\begin{itemize}[itemindent=2em]
+\item 假设1
+\item 假设2
+\item 假设3
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\section{符号说明}
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{CLC}
+\toprule
+符号    & 说明    & 单位 \\
+\midrule
+$m     $& 质量 & $kg$ \\
+$V     $& 体积 & $m^3$ \\
+\bottomrule
+\end{tabularx}
+\label{tab:符号说明}
+\end{table}
+
+
+\begin{table}[]  
+\centering
+\begin{tabular}{cc}  
+\toprule
+\textbf{符号} & \textbf{说明} \\ \midrule 
+$X_k$ & 第k个指标（假设为单品蔬菜总销量、每日最大销量和日均销量） \\   
+$C_{jk}$ & 第k个聚类中心第j个指标 \\   
+$CS_i$ & 第$i$种蔬菜品类销量 \\   
+$cpp$ & 第1种蔬菜品类成本加成定价 \\  
+单品蔬菜单位成本 & 单品蔬菜的单位成本 \\  
+单品蔬菜批发价格 & 单品蔬菜的批发价格 \\  
+单品蔬菜损耗率 & 单品蔬菜的损耗率 \\   
+$S_{ij}$ & 第i蔬菜品类第j天的日销量 \\   
+$R_{ij}$ & 第i蔬菜品类第j天的补货量 \\   
+$P_u$ & 第i蔬菜品类第u天的定价 \\   
+第蓝菜品类的单位成本 & 假设为某种特定菜品类的单位成本 \\  
+第萨菜品类平均损耗率 & 假设为某种特定菜品类的平均损耗率 \\   
+$L_i$ & 第i蔬菜品类前三年日最大销售量 \\  
+$Simax$ & 假设为与$L_i$相关的某种最大值或统计量 \\   
+是否补货（0-1变量） & 0表示不补货，1表示补货 \\   
+$y_i$ & 0-1变量，用于表示补货决策 \\  
+$Ximax$ & 2023.6.24-6.30期间第1类单品蔬菜最大补货量 \\ \bottomrule  
+\end{tabular}  
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\section{问题一的模型的建立和求解}
+\subsection{模型建立}
+这是一个行内公式$E = mc^2$,看见了么。nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnhsadjdsajdsjadhajskdhsjkahdkjsah
+\begin{table}
+\centering
+\begin{tabular}{cc}
+\hline
+\textbf{符号} & \textbf{说明} \\ 
+\hline
+$X_{ik}$ & 第$i$种单品蔬菜第$k$个指标（单品蔬菜总销量、每日最大销量和日均销量）\\ 
+
+$k_{jk}$ & 第k个聚类中心第j个指标\\ 
+
+C$S_{1}$ & 第i种蔬菜品类销量\\ 
+
+Cppl & 第i种蔬菜品类成本加成定价 \\ 
+
+B & 单品蔬菜单位成本 \\ 
+
+C & 单品蔬菜批发价格 \\ 
+
+L & 单品蔬菜损耗率 \\ 
+
+$S_{ij}$ & 第$i$蔬菜品类第j天的日销量 \\ 
+
+$R_{ij}$ & 第$i$蔬菜品类第j天的补货量 \\ 
+
+$P_{ij}$ & 第$i$蔬菜品类第j天的定价\\ 
+
+$B_{i}$ & 第$i$菜品类的单位成本 \\ 
+
+$L_{i}$ & 第$i$蔬菜品类平均损耗率 \\ 
+
+$S_{imax}$ & 第$i$蔬菜品类前三年日最大销售量 \\ 
+
+y$_{i}$ & 是否补货0-1变量\\ 
+
+x$_{max}$ & 2023.6.24-6.30第i类单品蔬菜最大补货量 \\ 
+\hline
+\end{tabular}
+\caption{蔬菜类商品统计模型分析文档中的符号及其说明}
+\label{tab:symbols_description}
+\end{table}
+
+在这里断行
+$$
+E = mc^2
+$$
+
+
+\begin{equation}
+   r_{s}=1-\frac{6\sum _{i=1}^Nd_i^2}{N(N^2-1)}  
+\end{equation}
+
+
+
+引用公式\cref{eq:公式1}。
+
+\begin{equation*}
+\label{eq:公式1}
+r_{s}=1-\frac{6\sum _{i=1}^Nd_i^2}{N(N^2-1)}
+\end{equation*}
+
+引用\cref{fig:单图2}。
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\textwidth]{example.eps}
+\caption{单图}
+\label{fig:单图}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\textwidth]{example.eps}
+\caption{单图2}
+\label{fig:单图2}
+\end{figure}
+
+这句话引用了文献\cite{司守奎2011数学建模算法与应用}。
+
+这句话引用了文献\upcite{卓金武2011MATLAB}。
+\cite{司守奎2011数学建模算法与应用}
+
+\subsection{模型求解}
+\begin{enumerate}
+    \item 第一行
+    \item 第二行
+\end{enumerate}
+\textbf{Step1：} 
+
+\textbf{Step2：} 
+
+\textbf{Step3：} 
+
+\subsection{求解结果}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\section{问题二的模型的建立和求解}
+\subsection{模型建立}
+
+引用\cref{fig:双图}，引用\cref{fig:双图a}，引用\cref{fig:双图b}。
+
+\begin{figure}[ht]
+\centering
+\subcaptionbox{双图a子标题\label{fig:双图a}}
+{\includegraphics[width=.4\textwidth]{example.eps}}
+\subcaptionbox{双图b子标题\label{fig:双图b}}
+{\includegraphics[width=.4\textwidth]{example.eps}}
+\caption{双图}\label{fig:双图}
+\end{figure} 
+
+\subsection{模型求解}
+
+\textbf{Step1：} 
+
+\textbf{Step2：} 
+
+\textbf{Step3：} 
+
+\subsection{求解结果}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\section{问题三的模型的建立和求解}
+\subsection{模型建立}
+
+\subsection{模型求解}
+
+\textbf{Step1：} 
+
+\textbf{Step2：} 
+
+\textbf{Step3：} 
+
+\subsection{求解结果}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\section{问题四的模型的建立和求解}
+\subsection{模型建立}
+
+\subsection{模型求解}
+
+\textbf{Step1：} 
+
+\textbf{Step2：} 
+
+\textbf{Step3：} 
+
+\subsection{求解结果}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{模型的分析与检验}
+
+\subsection{灵敏度分析}
+
+\subsection{误差分析}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{模型的评价}
+
+\subsection{模型的优点}
+\begin{itemize}[itemindent=2em]
+\item 优点1
+\item 优点2
+\item 优点3
+\end{itemize}
+
+\subsection{模型的缺点}
+\begin{itemize}[itemindent=2em]
+\item 缺点1
+\item 缺点2
+\end{itemize}
+文章引用\cite{陈秀梅2001对类风湿关节炎病人性格的调查分析}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 参考文献
+\nocite{*}
+\bibliographystyle{gbt7714-numerical}  % 引用格式
+\bibliography{ref.bib}  % bib源
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 附录
+\begin{appendices}
+\section{文件列表}
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{LL}
+\toprule
+文件名   & 功能描述 \\
+\midrule
+q1.m & 问题一程序代码 \\
+q2.py & 问题二程序代码 \\
+q3.c & 问题三程序代码 \\
+q4.cpp & 问题四程序代码 \\
+\bottomrule
+\end{tabularx}
+\label{tab:文件列表}
+\end{table}
+
+\section{代码}
+\noindent q1.m
+\lstinputlisting[language=matlab]{code/q1.m}
+q2.py
+\lstinputlisting[language=python]{code/q2.py}
+q3.c
+\lstinputlisting[language=c]{code/q3.c}
+q4.cpp
+\lstinputlisting[language=c++]{code/q4.cpp}
+\end{appendices}
+
+\section{人工智能使用报告}
+使用AI平台：
+\begin{enumerate}
+    \item 提问问题：帮我生成遗传算法的matlab代码\\
+        返回信息：
+    \item 提问问题：帮我找出代码的错误\\
+        返回信息：
+\end{enumerate}
+
+
+
+
+
+\end{document}
+
+
+%%%%%双图模板%%%%%%
+\begin{figure}
+\centering
+\subcaptionbox{炉温曲线示意图\label{fig:双图a}}
+{\includegraphics[width=.4\textwidth]{炉温曲线示意图.png}}
+\subcaptionbox{问题1炉温曲线\label{fig:双图b}}
+{\includegraphics[width=.4\textwidth]{问题1炉温曲线.png}}
+\caption{双图}\label{fig:双图}
+\end{figure} 
+%%%%%双图模板%%%%%%

@@ -1,0 +1,48 @@
+\chapter{参数估计算法设计}
+
+\section{高斯牛顿法}
+在第 $k$ 次迭代，构造线性化方程
+\[
+\left(\mathbf{J}_k^\mathsf{T}\mathbf{J}_k\right)\Delta\boldsymbol{\theta}_k
+=-\mathbf{J}_k^\mathsf{T}\mathbf{r}_k.
+\]
+更新
+\[
+\boldsymbol{\theta}_{k+1}=\boldsymbol{\theta}_k+\Delta\boldsymbol{\theta}_k.
+\]
+
+\section{阻尼牛顿法}
+当雅可比病态或初值偏差较大时，引入阻尼参数 $\lambda_k$：
+\[
+\left(\mathbf{J}_k^\mathsf{T}\mathbf{J}_k+\lambda_k\mathbf{I}\right)\Delta\boldsymbol{\theta}_k
+=-\mathbf{J}_k^\mathsf{T}\mathbf{r}_k.
+\]
+该方式兼顾下降性与稳定性。
+
+\section{多初值筛选策略}
+为降低局部最优风险，设置候选初值集合
+\[
+\Theta_0=\left\{\boldsymbol{\theta}_0^{(1)},\ldots,\boldsymbol{\theta}_0^{(s)}\right\},
+\]
+并行运行辨识过程，选取最终目标值最小且满足物理约束的一组参数。
+
+\section{算法伪代码}
+\begin{algorithm}[H]
+\caption{多初值阻尼高斯牛顿辨识}
+\begin{algorithmic}[1]
+\Require 候选初值集 $\Theta_0$，最大迭代次数 $k_{\max}$
+\Ensure 最优参数 $\boldsymbol{\theta}^{\star}$
+\For{每个初值 $\boldsymbol{\theta}_0^{(j)}\in\Theta_0$}
+\State 初始化 $\lambda\gets\lambda_0$
+\For{$k=1$ to $k_{\max}$}
+\State 数值积分得到预测轨迹并计算 $\mathbf{r}_k,\mathbf{J}_k$
+\State 求解阻尼线性方程得到 $\Delta\boldsymbol{\theta}_k$
+\State 若目标下降不足，则增大 $\lambda$；否则减小 $\lambda$ 并接受更新
+\If{满足停止条件}
+\State \textbf{break}
+\EndIf
+\EndFor
+\EndFor
+\State 在所有候选结果中选择目标函数最小者
+\end{algorithmic}
+\end{algorithm}

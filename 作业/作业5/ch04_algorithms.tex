@@ -1,0 +1,34 @@
+\chapter{牛顿类迭代与实现细节}
+
+\section{残差与雅可比构造}
+对每个观测点，先调用泰勒积分器得到预测值，再计算残差。雅可比可由两种方式获得：
+\begin{enumerate}
+  \item 解析/符号导数方式：精度高，但推导复杂；
+  \item 差分近似方式：实现简单，但需控制扰动尺度。
+\end{enumerate}
+综合可维护性与稳定性，本文推荐“核心参数解析导数 + 其余参数差分修正”的混合策略。
+
+\section{阻尼高斯牛顿策略}
+为避免远离最优点时出现发散，采用阻尼更新：
+\[
+\left(\mathbf{J}^\mathsf{T}\mathbf{J}+\lambda \mathbf{I}\right)\Delta\boldsymbol{\theta}
+=-\mathbf{J}^\mathsf{T}\mathbf{r}.
+\]
+当目标函数下降不明显时增大 $\lambda$，下降明显时减小 $\lambda$。
+
+\section{停止准则}
+设置三类停止条件：
+\begin{itemize}
+  \item 参数步长：$\|\Delta\boldsymbol{\theta}\|_2 < \varepsilon_\theta$；
+  \item 梯度范数：$\|\mathbf{g}\|_2 < \varepsilon_g$；
+  \item 最大迭代次数：$k\ge k_{\max}$。
+\end{itemize}
+
+\section{复杂度分析}
+设状态维度 $n$、参数维度 $p$、观测点数 $m$。每次迭代主要成本包括：
+\begin{enumerate}
+  \item 积分求解：$O(m\cdot n \cdot q)$，$q$ 为导数级数计算常数；
+  \item 构造雅可比：$O(mnp)$；
+  \item 线性方程求解：$O(p^3)$。
+\end{enumerate}
+当 $p$ 远小于 $mn$ 时，积分与雅可比评估是主导开销。

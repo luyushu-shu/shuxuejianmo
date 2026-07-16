@@ -1,0 +1,39 @@
+\section*{B.1 参数扫描记录模板}
+{
+\renewcommand{\arraystretch}{1.2}
+\footnotesize
+\begin{longtable}{ccccccc}
+\caption{参数扫描实验记录（模板）}\\
+\toprule
+编号 & 初值方案 & 噪声标准差 & 步长 & 迭代次数 & 终止指标 & 备注 \\
+\midrule
+\endfirsthead
+\multicolumn{7}{c}{续表：参数扫描实验记录}\\
+\toprule
+编号 & 初值方案 & 噪声标准差 & 步长 & 迭代次数 & 终止指标 & 备注 \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & S1 & 0.00 & 0.010 & 9 & $\|\Delta\theta\|$ & 收敛 \\
+2 & S1 & 0.01 & 0.010 & 13 & $\|\Delta\theta\|$ & 收敛 \\
+3 & S2 & 0.01 & 0.005 & 15 & $k_{\max}$ & 慢收敛 \\
+4 & S3 & 0.03 & 0.010 & 20 & $k_{\max}$ & 阻尼增大 \\
+5 & S3 & 0.05 & 0.005 & 20 & $k_{\max}$ & 需改初值 \\
+\end{longtable}
+}
+
+\section*{B.2 误差指标汇总模板}
+\begin{table}[H]
+\centering
+\caption{多方法误差与效率统计模板}
+\begin{tabular}{ccccc}
+\toprule
+方法 & 平均MSE & 最大误差 & 平均迭代次数 & 平均时间（ms） \\
+\midrule
+Taylor-16 + GN & --- & --- & --- & --- \\
+RK4 + GN & --- & --- & --- & --- \\
+Taylor-16 + Newton & --- & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
