@@ -1,0 +1,10 @@
+﻿# LaTeX intermediates
+*.aux
+*.log
+*.out
+*.lof
+*.lot
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk

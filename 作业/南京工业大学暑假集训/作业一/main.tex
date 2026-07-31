@@ -1,0 +1,818 @@
+%! Mode:: "TeX:UTF-8"
+%! TEX program = xelatex
+\documentclass[withoutpreface,bwprint]{cumcmthesis}
+
+\usepackage{url}
+\usepackage{subcaption}
+
+\graphicspath{{figures/}}
+
+\title{基于运动学与视线遮挡判据的烟幕干扰弹投放策略研究}
+
+\tihao{A}
+\baominghao{00000001}
+\schoolname{南京工业大学}
+\membera{队员一}
+\memberb{队员二}
+\memberc{队员三}
+\supervisor{指导教师}
+\yearinput{2025}
+\monthinput{9}
+\dayinput{8}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+针对无人机投放烟幕干扰弹以遮蔽来袭导弹对真目标探测的问题，本文建立了导弹匀速直指假目标、无人机等高度匀速直线飞行、烟幕弹自由落体与云团匀速下沉的运动学模型，并以“导弹—真目标几何中心视线被半径 $10\,\mathrm{m}$ 烟幕球遮挡”作为有效遮蔽判据。对问题~1，在给定航向、速度与投放/起爆时序下，数值积分得到 FY1 对 M1 的有效遮蔽时长为 $1.43\,\mathrm{s}$。对问题~2，以航向角、飞行速度、投放时刻与引信延时为决策变量，采用邻域粗网格搜索与局部加密相结合的直接搜索方法，得到遮蔽时长提升至 $4.71\,\mathrm{s}$ 的优良策略。结果表明：在导弹逼近早期于视线附近布置起爆点，并适当降低飞行速度以调整时空匹配，可显著延长有效遮蔽时间。
+
+\keywords{烟幕干扰\quad 视线遮挡\quad 运动学模型\quad 直接搜索优化\quad 无人机投放}
+\end{abstract}
+
+\renewcommand{\abstractname}{Abstract}
+\begin{abstract}
+To screen an incoming missile from detecting the true target, we study the deployment of smoke bombs released by an unmanned aerial vehicle (UAV). A kinematics model is established for the missile flying straight toward a decoy, the UAV flying at constant altitude and speed, the free-fall motion of a smoke bomb after release, and the uniform sinking of the smoke cloud after detonation. Effective screening is defined by the criterion that the line of sight between the missile and the geometric center of the true target lies within $10\,\mathrm{m}$ of the cloud center during the $20\,\mathrm{s}$ after detonation. For Problem~1, under the given heading, speed and timing, the effective screening duration of FY1 against M1 is computed as $1.43\,\mathrm{s}$. For Problem~2, with decision variables including heading angle, flight speed, release time and fuse delay, a two-stage direct search (coarse grid plus local refinement) yields an improved strategy with screening duration $4.71\,\mathrm{s}$. The results show that placing the detonation near the line of sight at an early stage and matching the space--time geometry by a moderate flight speed can substantially prolong effective screening.
+
+\noindent\textbf{Keywords:} smoke screening;\ line-of-sight occlusion;\ kinematics model;\ direct search;\ UAV deployment
+\end{abstract}
+\renewcommand{\abstractname}{摘要}
+
+\newpage
+\listoffigures
+\listoftables
+\newpage
+
+\section{问题重述}
+
+\subsection{问题背景}
+烟幕干扰弹通过燃烧或爆炸形成烟幕/气溶胶云团，在来袭武器与保护目标之间构成遮蔽，具有成本低、效费比高等优点。本文考虑由长续航无人机挂载烟幕干扰弹，在警戒雷达发现目标后受领任务，于特定空域投放并起爆，以尽量避免来袭空地导弹发现真目标。
+
+\subsection{已知条件}
+以假目标为坐标原点，水平面为 $xy$ 平面。真目标为底面圆心 $(0,200,0)$、半径 $7\,\mathrm{m}$、高 $10\,\mathrm{m}$ 的圆柱。导弹飞行速度 $300\,\mathrm{m/s}$，飞行方向直指假目标。烟幕干扰弹起爆后瞬时形成球状云团，并以 $3\,\mathrm{m/s}$ 匀速下沉；云团中心 $10\,\mathrm{m}$ 范围内的烟幕在起爆后 $20\,\mathrm{s}$ 内可提供有效遮蔽。无人机等高度匀速直线飞行，速度范围为 $70\sim140\,\mathrm{m/s}$，航向与速度一经确定不再调整。烟幕弹脱离无人机后仅在重力作用下运动。
+
+警戒雷达发现目标时，导弹 M1 位于 $(20000,0,2000)$，无人机 FY1 位于 $(17800,0,1800)$。
+
+\subsection{求解任务}
+\begin{enumerate}
+  \item \textbf{问题1}：FY1 以 $120\,\mathrm{m/s}$ 朝向假目标飞行，受领任务 $1.5\,\mathrm{s}$ 后投放 1 枚烟幕干扰弹，间隔 $3.6\,\mathrm{s}$ 后起爆，求对 M1 的有效遮蔽时长。
+  \item \textbf{问题2}：确定 FY1 的飞行方向、飞行速度、投放点与起爆点，使对 M1 的有效遮蔽时间尽可能长。
+\end{enumerate}
+
+\section{问题分析}
+
+\subsection{总体思路}
+本问题的核心不是单纯“把烟幕投到导弹飞行路径上”，而是使烟幕在尽可能长的时间区间内阻断导弹对真目标的探测视线。由于导弹始终飞向假目标 $O$，而真目标偏置于 $(0,200)$ 附近，导弹轨迹与“导弹—真目标”视线是两条不同的空间曲线族：前者是固定射线，后者随导弹位置 $M(t)$ 不断变化。因此，建模必须同时刻画三类运动（导弹、无人机/弹体、云团）以及一条时变几何关系（视线遮挡）。
+
+据此，本文将求解过程分解为：
+\begin{enumerate}
+  \item \textbf{运动学建模}：给出 $M(t)$、$U(t)$、$B(t)$、$C(t)$ 的解析表达式；
+  \item \textbf{遮蔽判定建模}：将“有效遮蔽”转化为点到线段距离不等式；
+  \item \textbf{指标量化}：把有效时间集合的测度作为目标函数 $J$；
+  \item \textbf{分问题求解}：问题1做正向仿真，问题2做约束优化。
+\end{enumerate}
+
+\subsection{几何关系与遮蔽机理}
+记真目标几何中心为 $T=(0,200,5)$。任意时刻导弹位置为 $M(t)$，则探测视线可抽象为线段 $MT$。烟幕云团在起爆后为以 $C(t)$ 为心、$R=10\,\mathrm{m}$ 为半径的球体。若球体与线段 $MT$ 相交（等价于点 $C(t)$ 到线段 $MT$ 的最短距离 $d(t)\le 10$），则认为该时刻视线被遮挡，从而对真目标形成有效遮蔽。
+
+该判据有两方面含义：
+\begin{enumerate}
+  \item \textbf{空间条件}：云团必须位于导弹与真目标之间或其邻域，而不能仅“靠近导弹轨迹却远离视线”；
+  \item \textbf{时间条件}：即使某一瞬间 $d(t)$ 很小，若不能在连续（或较长）时段内保持，则总遮蔽时长仍然有限。
+\end{enumerate}
+
+由于云团起爆后\emph{水平位置固定}、仅竖直下沉，其水平投影是一个“一次性落点”。这意味着问题2的本质是：选择合适的落点（由航向、速度、投放与引信共同决定）以及起爆时刻，使导弹在高速逼近过程中，“扫过”的视线族能够较长时间掠过该固定球心邻域。
+
+\subsection{问题1的分析}
+问题1给出了全部控制量：航向朝向假目标、速度 $120\,\mathrm{m/s}$、投放时刻 $1.5\,\mathrm{s}$、引信延时 $3.6\,\mathrm{s}$。因此不存在优化自由度，属于\textbf{正向仿真问题}。求解路径为：
+\begin{enumerate}
+  \item 计算投放点、起爆点与起爆后云团轨迹 $C(t)$；
+  \item 同步推进导弹轨迹 $M(t)$；
+  \item 在 $[t_e,\min(t_e+20,t_{\mathrm{hit}})]$ 上逐时刻检验 $d(t)\le 10$；
+  \item 对满足条件的时刻累加得到 $J_1$。
+\end{enumerate}
+该结果既是题目要求的答案，也是后续优化的对照基线：任何改进策略都应至少显著优于 $J_1$。
+
+\subsection{问题2的分析}
+问题2需要同时决定“飞哪里、飞多快、何时投、何时爆”。若直接以三维落点坐标为决策变量，还需反演无人机能否到达，约束耦合较强。更自然的参数化是：
+\begin{equation}
+\mathbf{x}=(\theta,v,t_d,\tau),
+\end{equation}
+其中 $\theta$ 控制航向，$v$ 控制水平推进快慢，$(t_d,\tau)$ 控制起爆时空位置。四者一经给定，投放点与起爆点便唯一确定，因而“投放点、起爆点”并非独立变量，而是决策变量的导出量。
+
+目标函数 $J(\mathbf{x})$ 具有如下特征：
+\begin{enumerate}
+  \item \textbf{非光滑性}：由 0-1 判定诱导，导数几乎处处不存在；
+  \item \textbf{多峰性}：不同起爆高度与航向组合可能对应多个局部较好窗口；
+  \item \textbf{计算可替代性}：单次评估只需一次时间离散扫描，成本可控。
+\end{enumerate}
+因此梯度类方法不适用，宜采用网格搜索、模式搜索或进化算法等直接法。考虑到无人机初始位置接近导弹来向、且“朝向假目标”是合理先验，本文采用“航向邻域粗搜 + 局部加密”的两阶段策略，在精度与计算量之间取得平衡。
+
+\subsection{关键时间尺度}
+对 M1，$\|P_{M0}\|\approx 20100\,\mathrm{m}$，$t_{\mathrm{hit}}\approx 67\,\mathrm{s}$。云团有效寿命仅 $20\,\mathrm{s}$，无人机速度远低于导弹。这说明：
+\begin{itemize}
+  \item 有效遮蔽通常发生在导弹尚未飞临真目标之前的中前期窗口；
+  \item 过晚起爆会导致云团尚未进入视线邻域，导弹已掠过；
+  \item 过早起爆虽可能捕捉早期视线，但若落点偏离，窗口仍然很短。
+\end{itemize}
+问题1给出的 $t_e=5.1\,\mathrm{s}$ 属于偏早起爆；问题2的优化结果进一步提前到约 $2.5\,\mathrm{s}$，并微调航向，从而拉长有效窗口。
+
+\section{模型假设}
+
+为突出主要矛盾并保证模型可解，作如下假设：
+\begin{enumerate}
+  \item 忽略风场与空气阻力；烟幕弹水平速度保持投放瞬间无人机速度，竖直方向做初速为 0 的自由落体。
+  \item 重力加速度取 $g=9.8\,\mathrm{m/s^2}$，地球曲率与科氏力可忽略。
+  \item 云团视为半径 $R=10\,\mathrm{m}$ 的球体，球心以 $3\,\mathrm{m/s}$ 匀速下沉，形状不随时间扩散变形。
+  \item 有效遮蔽采用中心视线判据：导弹位置与真目标几何中心连线段到烟幕球心的最短距离不大于 $10\,\mathrm{m}$，且处于起爆后 $20\,\mathrm{s}$ 内。
+  \item 无人机受领任务后瞬时完成航向与速度调整，之后保持等高度匀速直线飞行，中途不转弯、不变速。
+  \item 假目标固定于原点，导弹速度大小恒定、方向始终指向假目标，不考虑末段机动。
+  \item 雷达发现、任务下发与无人机响应之间的延迟已体现在题目给定时序中，不再另设通信延迟变量。
+\end{enumerate}
+
+\section{符号说明}
+
+\begin{table}[!htbp]
+\centering
+\caption{主要符号说明}
+\label{tab:symbol}
+\begin{tabular}{cc}
+\toprule[1.5pt]
+符号 & 意义 \\
+\midrule[1pt]
+$O$ & 假目标位置（坐标原点） \\
+$T$ & 真目标几何中心 $(0,200,5)$ \\
+$P_{M0}$ & 导弹初始位置 \\
+$U_0$ & 无人机初始位置 \\
+$v_m$ & 导弹速度，$300\,\mathrm{m/s}$ \\
+$v$ & 无人机水平飞行速度 \\
+$\mathbf{h}$ & 无人机水平航向单位向量 \\
+$\theta$ & 水平航向角（相对 $+x$ 轴） \\
+$t_d$ & 投放时刻 \\
+$\tau$ & 引信延时（投放至起爆时间间隔） \\
+$t_e$ & 起爆时刻，$t_e=t_d+\tau$ \\
+$t_{\mathrm{hit}}$ & 导弹命中假目标时刻 \\
+$M(t)$ & $t$ 时刻导弹位置 \\
+$U(t)$ & $t$ 时刻无人机位置 \\
+$B(t)$ & $t$ 时刻烟幕弹位置 \\
+$C(t)$ & $t$ 时刻烟幕球心位置 \\
+$d(t)$ & 球心到线段 $M(t)T$ 的最短距离 \\
+$R$ & 有效遮蔽半径，$10\,\mathrm{m}$ \\
+$J$ & 有效遮蔽时长 \\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{table}
+
+\section{模型建立}
+
+\subsection{建模框架}
+本文模型由“对象运动层—遮蔽判定层—优化决策层”三层构成：
+\begin{enumerate}
+  \item \textbf{对象运动层}：分别建立导弹、无人机、自由下落弹体与下沉云团的运动方程；
+  \item \textbf{遮蔽判定层}：将物理上的“看见/看不见”转化为几何不等式 $d(t)\le R$，并定义目标函数 $J$；
+  \item \textbf{优化决策层}（主要用于问题2）：在可行域内搜索使 $J$ 最大的控制参数。
+\end{enumerate}
+
+\subsection{导弹运动模型}
+导弹自 $P_{M0}$ 指向假目标，单位方向
+\begin{equation}
+\mathbf{e}_m=\frac{-P_{M0}}{\|P_{M0}\|},
+\label{eq:missile-dir}
+\end{equation}
+于是
+\begin{equation}
+M(t)=P_{M0}+v_m t\,\mathbf{e}_m,\qquad
+t_{\mathrm{hit}}=\frac{\|P_{M0}\|}{v_m}.
+\label{eq:missile}
+\end{equation}
+对 M1，$P_{M0}=(20000,0,2000)$，故
+\[
+\|P_{M0}\|=\sqrt{20000^2+2000^2}\approx 20099.75,\qquad
+t_{\mathrm{hit}}\approx 67.00\,\mathrm{s}.
+\]
+式\eqref{eq:missile}表明导弹轨迹是连接 $P_{M0}$ 与原点的直线段参数方程，速度恒定，便于后续与云团轨迹联立。
+
+\subsection{无人机运动模型}
+题目规定无人机“等高度匀速直线飞行”，因此速度向量只有水平分量。设
+\begin{equation}
+\mathbf{h}=(\cos\theta,\sin\theta,0),
+\end{equation}
+则
+\begin{equation}
+U(t)=U_0+vt\mathbf{h},\qquad 70\le v\le 140.
+\label{eq:uav}
+\end{equation}
+对问题1，$\theta=\pi$（朝向假目标），即 $\mathbf{h}=(-1,0,0)$。对问题2，$\theta$ 作为决策变量在 $\pi$ 附近搜索，以兼顾“尽快进入交战空域”与“微调落点以贴近视线”。
+
+\subsection{烟幕弹抛撒与自由下落模型}
+在 $t_d$ 时刻投放时，弹体继承无人机速度 $v\mathbf{h}$，竖直初速为 0。设 $z$ 轴向上，则
+\begin{equation}
+B(t)=U(t_d)+v(t-t_d)\mathbf{h}-\frac12 g(t-t_d)^2\mathbf{e}_z,
+\label{eq:bomb}
+\end{equation}
+其中 $\mathbf{e}_z=(0,0,1)$。式\eqref{eq:bomb}蕴含两个重要推论：
+\begin{enumerate}
+  \item 水平位置由“投放点 + 水平匀速漂移”决定，引信越长，水平漂移越大；
+  \item 起爆高度
+  \[
+  B_z(t_e)=U_{0z}-\frac12 g\tau^2
+  \]
+  随 $\tau$ 增大而迅速降低，故引信不可过长，否则云团在低空甚至贴地附近形成，几何优势下降。
+\end{enumerate}
+
+\subsection{云团下沉模型}
+引信延时 $\tau$ 后于 $t_e=t_d+\tau$ 起爆。起爆瞬间形成球状云团，其后
+\begin{equation}
+C(t)=\big(B_x(t_e),\,B_y(t_e),\,B_z(t_e)-3(t-t_e)\big),
+\quad t\in[t_e,t_e+20].
+\label{eq:cloud}
+\end{equation}
+由此可见：一旦起爆，云团水平坐标被锁定，仅 $z$ 坐标随时间线性下降。这进一步说明问题2必须在起爆前通过无人机机动“把点找准”。
+
+\subsection{点到线段距离与有效遮蔽判据}
+对任意时刻 $t$，令 $A=M(t)$，$B=T$，$\mathbf{w}=B-A$。点 $C=C(t)$ 到线段 $AB$ 的最短距离为
+\begin{equation}
+d(t)=\left\|
+C-A-s^\ast\mathbf{w}
+\right\|,\qquad
+s^\ast=\mathrm{clip}\!\left(
+\frac{(C-A)\cdot\mathbf{w}}{\mathbf{w}\cdot\mathbf{w}},\,0,\,1
+\right),
+\label{eq:dist}
+\end{equation}
+其中 $\mathrm{clip}(\cdot,0,1)$ 表示截断到 $[0,1]$，以保证最近点落在线段上而非无限直线上。采用线段而非直线，是为避免把“云团位于导弹身后或目标身后”的情形误判为遮挡。
+
+若
+\begin{equation}
+d(t)\le R=10,
+\label{eq:shield}
+\end{equation}
+则称时刻 $t$ 有效遮蔽。综合云团寿命与导弹命中时间，有效遮蔽时长定义为
+\begin{equation}
+J=\mathrm{meas}\big\{t\,:\, d(t)\le 10,\;
+t_e\le t\le \min(t_e+20,t_{\mathrm{hit}})\big\}.
+\label{eq:J}
+\end{equation}
+数值上取步长 $\Delta t=0.01\,\mathrm{s}$（优化阶段可暂用 $0.03\sim0.05\,\mathrm{s}$）做矩形法累加：
+\begin{equation}
+J\approx \Delta t\sum_{k}\mathbf{1}_{\{d(t_k)\le 10\}}.
+\end{equation}
+
+\subsection{问题2的优化模型}
+综合上述定义，问题2可写为
+\begin{equation}
+\begin{aligned}
+\max_{\theta,v,t_d,\tau}\quad
+& J(\theta,v,t_d,\tau)\\
+\mathrm{s.t.}\quad
+& 70\le v\le 140,\\
+& t_d\ge 0,\ \tau>0,\\
+& B_z(t_e)>0,\\
+& t_e<t_{\mathrm{hit}}.
+\end{aligned}
+\label{eq:opt}
+\end{equation}
+该模型是典型的低维、非光滑黑箱优化问题。本文采用两阶段直接搜索逼近其优良解，具体步骤见第~\ref{sec:q2}~节。
+
+\section{问题1的求解}
+
+\subsection{求解目标与已知量}
+问题1要求在\emph{全部控制量给定}的条件下，求 FY1 对 M1 的有效遮蔽时长 $J_1$。已知：
+\begin{align}
+U_0&=(17800,0,1800),\quad
+P_{M0}=(20000,0,2000),\\
+v&=120,\quad
+\mathbf{h}=(-1,0,0),\quad
+t_d=1.5,\quad
+\tau=3.6.
+\end{align}
+因此起爆时刻
+\[
+t_e=t_d+\tau=5.1\,\mathrm{s}.
+\]
+本问属于正向仿真，求解流程可概括为“先求关键点位，再做时间扫描，最后统计有效时长”。
+
+\subsection{步骤一：确定无人机航迹与投放点}
+由等高度匀速直线飞行模型，
+\begin{equation}
+U(t)=U_0+vt\mathbf{h}=(17800-120t,\ 0,\ 1800).
+\end{equation}
+代入投放时刻 $t_d=1.5\,\mathrm{s}$，得投放点
+\begin{equation}
+U(1.5)=(17800-180,\ 0,\ 1800)=(17620,\ 0,\ 1800).
+\label{eq:q1-drop}
+\end{equation}
+此时弹体初速度等于无人机速度 $\mathbf{v}_b=v\mathbf{h}=(-120,0,0)$。
+
+\subsection{步骤二：确定自由落体段与起爆点}
+投放后历经 $\tau=3.6\,\mathrm{s}$ 起爆。水平方向匀速、竖直方向自由落体：
+\begin{align}
+B_x(t_e)&=17620-120\times 3.6=17188,\\
+B_y(t_e)&=0,\\
+B_z(t_e)&=1800-\frac12\times 9.8\times 3.6^2
+=1800-63.504=1736.496.
+\end{align}
+故起爆点为
+\begin{equation}
+B(t_e)=(17188,\ 0,\ 1736.496).
+\label{eq:q1-det}
+\end{equation}
+起爆后云团中心
+\begin{equation}
+C(t)=(17188,\ 0,\ 1736.496-3(t-5.1)),
+\quad t\in[5.1,25.1].
+\end{equation}
+
+\subsection{步骤三：确定导弹轨迹与扫描区间}
+导弹单位方向
+\[
+\mathbf{e}_m=\frac{-P_{M0}}{\|P_{M0}\|}
+=\frac{(-20000,0,-2000)}{\sqrt{20000^2+2000^2}}
+\approx (-0.995037,\ 0,\ -0.099504).
+\]
+从而
+\begin{equation}
+M(t)=P_{M0}+300t\,\mathbf{e}_m,
+\qquad
+t_{\mathrm{hit}}=\frac{\|P_{M0}\|}{300}\approx 66.999\,\mathrm{s}.
+\end{equation}
+有效扫描区间取
+\[
+t\in\big[t_e,\ \min(t_e+20,t_{\mathrm{hit}})\big]
+=[5.1,\ 25.1].
+\]
+即只需考察起爆后 $20\,\mathrm{s}$ 的云团寿命窗；该窗远早于导弹命中假目标的时刻。
+
+\subsection{步骤四：时间离散与遮蔽判定}
+取步长 $\Delta t=0.01\,\mathrm{s}$，令
+\[
+t_k=5.1+0.01k,\qquad
+k=0,1,\ldots,2000.
+\]
+对每个 $t_k$ 执行：
+\begin{enumerate}
+  \item 计算导弹位置 $M(t_k)$ 与云团中心 $C(t_k)$；
+  \item 计算点 $C(t_k)$ 到线段 $M(t_k)T$ 的最短距离 $d(t_k)$（式\eqref{eq:dist}）；
+  \item 若 $d(t_k)\le 10$，则记该时刻有效，累加 $\Delta t$。
+\end{enumerate}
+为说明计算细节，表~\ref{tab:q1-sample} 给出若干代表时刻的中间量。
+
+\begin{table}[!htbp]
+\centering
+\caption{问题1部分时刻的中间计算结果}
+\label{tab:q1-sample}
+\begin{tabular}{cccc}
+\toprule[1.5pt]
+$t\,(\mathrm{s})$ & $M_x\,(\mathrm{m})$ & $C_z\,(\mathrm{m})$ & $d(t)$ 情形 \\
+\midrule[1pt]
+5.10 & 18477.6 & 1736.50 & $\approx 22.2\,\mathrm{m}>10$，尚未有效 \\
+5.50 & 18358.0 & 1735.30 & 接近阈值，即将进入 \\
+6.00--7.50 & 持续减小 & 缓慢下沉 & $d(t)\le 10$，有效遮蔽段 \\
+8.00 以后 & 继续前出 & --- & $d(t)$ 迅速大于 10，离开有效区 \\
+10.00 & 17014.9 & 1721.80 & 已远大于 10 \\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{table}
+
+由表可见：起爆瞬间尚未形成有效遮蔽；随后视线掠过云团邻域并短暂满足阈值；导弹越过云团水平位置后，$d(t)$ 迅速增大。
+
+\subsection{步骤五：统计有效遮蔽时长}
+对全部有效节点累加，得到
+\begin{equation}
+J_1=\Delta t\cdot N_{\mathrm{eff}}=0.01\times 143=1.43\,\mathrm{s}.
+\end{equation}
+相应结果汇总于表~\ref{tab:q1}。
+
+\begin{table}[!htbp]
+\centering
+\caption{问题1计算结果}
+\label{tab:q1}
+\begin{tabular}{cc}
+\toprule[1.5pt]
+项目 & 数值 \\
+\midrule[1pt]
+飞行速度 $(\mathrm{m/s})$ & $120$ \\
+航向单位向量 & $(-1,0,0)$ \\
+投放时刻 $(\mathrm{s})$ & $1.5$ \\
+起爆时刻 $(\mathrm{s})$ & $5.1$ \\
+投放点 $(\mathrm{m})$ & $(17620,\,0,\,1800)$ \\
+起爆点 $(\mathrm{m})$ & $(17188,\,0,\,1736.496)$ \\
+扫描区间 $(\mathrm{s})$ & $[5.1,\ 25.1]$ \\
+有效遮蔽时长 $(\mathrm{s})$ & $1.43$ \\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{table}
+
+图~\ref{fig:q1-dist} 给出 $d(t)$ 全时程曲线：曲线下穿 $10\,\mathrm{m}$ 阈值的区间长度即为 $J_1$。图~\ref{fig:q1-3d} 给出三维态势示意。
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.82\textwidth]{q1_distance_time}
+\caption{问题1：烟幕球心到导弹—真目标视线距离随时间变化}
+\label{fig:q1-dist}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{q1_3d_situation}
+\caption{问题1三维空间态势示意}
+\label{fig:q1-3d}
+\end{figure}
+
+\subsection{结果分析与讨论}
+综合曲线与中间计算可归纳：
+\begin{enumerate}
+  \item \textbf{有效窗口短}：仅约 $1.43\,\mathrm{s}$，说明给定策略只“擦过”视线邻域；
+  \item \textbf{横向几何不佳}：起爆点 $y=0$，真目标 $y=200$，视线相对云团存在固定横向偏置；
+  \item \textbf{高速掠过效应}：导弹 $300\,\mathrm{m/s}$，即使几何对准，单弹可维持时间也有上限；
+  \item \textbf{优化启示}：若能把起爆点略向真目标一侧平移，并调整起爆早晚，有望拉长 $d(t)\le 10$ 的区间。这正是问题2的出发点。
+\end{enumerate}
+
+\section{问题2的求解}
+\label{sec:q2}
+
+\subsection{求解目标与建模转写}
+问题2要求在允许范围内选择 FY1 的飞行方向、速度、投放点与起爆点，使对 M1 的有效遮蔽时间尽可能长。由前文模型可知，投放点、起爆点并非独立自由量，而由
+\[
+\mathbf{x}=(\theta,v,t_d,\tau)
+\]
+唯一决定。因此实际求解的是优化模型\eqref{eq:opt}，再回代输出题目所需点位。
+
+\subsection{步骤一：决策变量参数化}
+\begin{enumerate}
+  \item 航向角 $\theta$：$\mathbf{h}=(\cos\theta,\sin\theta,0)$。先验上应接近朝向假目标的 $\theta=\pi$；
+  \item 速度 $v\in[70,140]$；
+  \item 投放时刻 $t_d\ge 0$；
+  \item 引信延时 $\tau>0$，并满足 $B_z(t_e)=1800-\frac12 g\tau^2>0$。
+\end{enumerate}
+对任意候选 $\mathbf{x}$，按
+\[
+U(t_d)\rightarrow B(t_e)\rightarrow C(t)\rightarrow d(t)\rightarrow J(\mathbf{x})
+\]
+完成一次黑箱评估。
+
+\subsection{步骤二：单次评估子程序}
+给定 $\mathbf{x}$，评估 $J$ 的过程与问题1完全同构，步骤为：
+\begin{enumerate}
+  \item 由 $(\theta,v,t_d,\tau)$ 计算投放点与起爆点；
+  \item 若起爆高度非正，或 $t_e\ge t_{\mathrm{hit}}$，则令 $J=0$；
+  \item 在 $[t_e,\min(t_e+20,t_{\mathrm{hit}})]$ 上按步长 $\mathrm{d}t$ 扫描；
+  \item 对每个时刻计算 $d(t)$，累计满足 $d(t)\le 10$ 的时长。
+\end{enumerate}
+优化阶段为提高速度，先用较大步长 $\mathrm{d}t=0.05$ 或 $0.03$；最终报告值再用 $\mathrm{d}t=0.01$ 精算。
+
+\subsection{步骤三：第一阶段粗网格搜索}
+考虑到 FY1 初始位置接近导弹来向，将航向限制在
+\[
+\theta\in[\pi-0.25,\ \pi+0.25]
+\]
+（约 $\pm 14.3^\circ$）。离散方案为：
+\begin{itemize}
+  \item $\theta$：11 个等分点；
+  \item $v\in\{70,85,100,115,130,140\}$；
+  \item $t_d$：在 $[0.3,10]$ 上取 12 个等分点；
+  \item $\tau$：在 $[1,7]$ 上取 11 个等分点。
+\end{itemize}
+网格规模约为 $11\times 6\times 12\times 11=8712$ 次评估。对每个可行点计算 $J$，保留当前最优
+\[
+\mathbf{x}^{(0)}=\arg\max J(\mathbf{x}).
+\]
+粗搜的作用是在较大范围内定位“有希望的盆地”，避免一开始就陷入过细网格带来的计算浪费。
+
+\subsection{步骤四：第二阶段局部加密}
+以 $\mathbf{x}^{(0)}=(\theta_0,v_0,t_{d0},\tau_0)$ 为中心，构造邻域
+\begin{align}
+\theta&\in[\theta_0-0.08,\theta_0+0.08],\\
+v&\in[\max(70,v_0-12),\min(140,v_0+12)],\\
+t_d&\in[\max(0.05,t_{d0}-1),\ t_{d0}+1],\\
+\tau&\in[\max(0.4,\tau_0-1),\ \tau_0+1],
+\end{align}
+并分别取 9、7、9、9 个节点加密搜索，评估步长改为 $\Delta t=0.03\,\mathrm{s}$。记加密后最优为 $\mathbf{x}^\ast$，再用 $\Delta t=0.01\,\mathrm{s}$ 计算最终 $J_2=J(\mathbf{x}^\ast)$。
+
+两阶段策略的逻辑是：\textbf{先广后精}——先保证不漏掉主要航向趋势，再在最优附近提高分辨率。
+
+\subsection{步骤五：最优解回代与点位输出}
+最终得到
+\begin{align}
+v^\ast&=70,\quad
+\theta^\ast\approx 3.091593,\quad
+\mathbf{h}^\ast\approx(-0.99875,\ 0.04998,\ 0),\\
+t_d^\ast&=0.05,\quad
+\tau^\ast&=2.45,\quad
+t_e^\ast&=2.50.
+\end{align}
+回代动力学方程：
+\begin{align}
+\text{投放点 }U(t_d^\ast)
+&=(17800,\ 0,\ 1800)+70\times 0.05\,\mathbf{h}^\ast
+\approx(17796.50,\ 0.17,\ 1800),\\
+\text{起爆点 }B(t_e^\ast)
+&\approx(17625.22,\ 8.75,\ 1770.59).
+\end{align}
+精算得
+\begin{equation}
+J_2=4.71\,\mathrm{s}.
+\end{equation}
+
+\begin{table}[!htbp]
+\centering
+\caption{问题2优化结果}
+\label{tab:q2}
+\begin{tabular}{cc}
+\toprule[1.5pt]
+项目 & 数值 \\
+\midrule[1pt]
+飞行速度 $(\mathrm{m/s})$ & $70$ \\
+航向角 $(\mathrm{rad})$ & $3.091593$ \\
+航向单位向量 & $(-0.99875,\ 0.04998,\ 0)$ \\
+投放时刻 $(\mathrm{s})$ & $0.05$ \\
+引信延时 $(\mathrm{s})$ & $2.45$ \\
+起爆时刻 $(\mathrm{s})$ & $2.50$ \\
+投放点 $(\mathrm{m})$ & $(17796.50,\ 0.17,\ 1800)$ \\
+起爆点 $(\mathrm{m})$ & $(17625.22,\ 8.75,\ 1770.59)$ \\
+有效遮蔽时长 $(\mathrm{s})$ & $4.71$ \\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.82\textwidth]{q2_distance_time}
+\caption{问题2：烟幕球心到导弹—真目标视线距离随时间变化}
+\label{fig:q2-dist}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{q2_3d_situation}
+\caption{问题2三维空间态势示意}
+\label{fig:q2-3d}
+\end{figure}
+
+\subsection{步骤六：与问题1对照验证}
+为确认优化不是数值噪声，将两问关键量并列比较（表~\ref{tab:cmp}）。
+
+\begin{table}[!htbp]
+\centering
+\caption{问题1与问题2结果对比}
+\label{tab:cmp}
+\begin{tabular}{ccccc}
+\toprule[1.5pt]
+问题 & 速度$(\mathrm{m/s})$ & 投放时刻$(\mathrm{s})$ & 起爆时刻$(\mathrm{s})$ & 遮蔽时长$(\mathrm{s})$ \\
+\midrule[1pt]
+问题1 & 120 & 1.50 & 5.10 & 1.43 \\
+问题2 & 70 & 0.05 & 2.50 & 4.71 \\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\begin{minipage}[c]{0.48\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{q1q2_duration_compare}
+\subcaption{遮蔽时长对比}
+\label{fig:cmp-a}
+\end{minipage}
+\begin{minipage}[c]{0.48\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{q1q2_topview}
+\subcaption{水平俯视对比}
+\label{fig:cmp-b}
+\end{minipage}
+\caption{问题1与问题2策略对比}
+\label{fig:cmp}
+\end{figure}
+
+对照表明：$J_2/J_1\approx 3.29$，提升显著；且图~\ref{fig:q2-dist} 中低于阈值的区间明显宽于图~\ref{fig:q1-dist}，与数值结果一致。图~\ref{fig:cmp-b} 也显示问题2起爆点相对问题1向真目标一侧平移。
+
+\subsection{结果机理解释}
+优化解相对问题1呈现三个一致改进：
+\begin{enumerate}
+  \item \textbf{更早起爆}：$t_e:5.1\rightarrow 2.5$，云团更早进入可工作状态；
+  \item \textbf{航向微偏}：起爆点 $y$ 由 $0$ 增至约 $8.75\,\mathrm{m}$，更贴近指向 $T$ 的视线族；
+  \item \textbf{较低速度}：$v=70\,\mathrm{m/s}$ 避免高速过冲，便于在短提前量内校准落点。
+\end{enumerate}
+
+\subsection{灵敏度与稳健性}
+在 $\mathbf{x}^\ast$ 附近做单因素扰动，可观察到：
+\begin{enumerate}
+  \item 固定其他量，将 $\theta$ 偏离 $\pm 0.05\,\mathrm{rad}$，$J$ 通常明显下降，说明航向最敏感；
+  \item $\tau$ 增大使起爆高度下降、水平漂移增加，过长会迅速变差；
+  \item $v$ 在 $[70,100]$ 内变化时 $J$ 相对平滑，存在一段可接受平台。
+\end{enumerate}
+因此该解具有一定工程稳健性，但对航向控制精度要求较高。
+
+\subsection{算法复杂度说明}
+粗搜约 $8.7\times 10^3$ 次评估，每次扫描约 $20/0.05=400$ 个时间点；加密阶段评估次数约 $9\times 7\times 9\times 9\approx 5.1\times 10^3$。总体在普通个人计算机上可在分钟量级完成，满足建模竞赛的可实现性要求。
+
+
+\section{模型评价与推广}
+
+\subsection{优点}
+\begin{enumerate}
+  \item 运动学方程封闭、参数明确，便于复现与检验；
+  \item 遮蔽判据几何意义清晰，把物理问题转化为可计算的距离条件；
+  \item 决策变量参数化与动力学一致，避免“先给落点再反推”的不可行风险；
+  \item 直接搜索对目标非光滑性不敏感，适合本问题。
+\end{enumerate}
+
+\subsection{不足与改进}
+\begin{enumerate}
+  \item 中心视线判据弱于“圆柱全表面视线均被遮挡”的严格判据，所得 $J$ 可能略偏乐观；后续可用柱面采样点做更严格检验；
+  \item 网格搜索得到的是优良可行解，非严格全局最优，可进一步结合差分进化、贝叶斯优化等；
+  \item 未计入风场、云团扩散、能见度阈值随时间衰减及导弹机动等因素。
+\end{enumerate}
+
+\subsection{推广}
+若推广到多弹/多机协同，可将单弹遮蔽时间集合做并：
+\[
+J_{\mathrm{union}}=\mathrm{meas}\Big(\bigcup_i\{t:d_i(t)\le 10\}\Big),
+\]
+并以同机投放间隔、航路冲突等为约束进行组合优化。问题1--2给出的单弹模型与算法，可作为多弹问题的基础模块。
+
+\section{结论}
+本文从“时变视线遮挡”这一本质出发，建立了烟幕干扰弹投放的运动学与几何判定模型。问题分析表明：导弹轨迹与真目标视线并不重合，因而必须同时优化起爆时空位置与航向微调。数值上，问题~1 在给定策略下有效遮蔽时长为 $1.43\,\mathrm{s}$；问题~2 经两阶段直接搜索优化后可达 $4.71\,\mathrm{s}$，约为原策略的 3.3 倍。研究说明，合理选择航向、速度与起爆时序，能够显著提升对真目标的有效遮蔽时间。
+
+\begin{thebibliography}{9}
+\bibitem{cumcm2025}
+全国大学生数学建模竞赛组委会.
+\newblock 2025 年高教社杯全国大学生数学建模竞赛题目 A 题：烟幕干扰弹的投放策略.
+\bibitem{format2023}
+全国大学生数学建模竞赛组委会.
+\newblock 全国大学生数学建模竞赛论文格式规范（2023 年修改）.
+\bibitem{liuhaiyang2013latex}
+刘海洋.
+\newblock \LaTeX{}入门[M].
+\newblock 北京：电子工业出版社, 2013.
+\end{thebibliography}
+
+\newpage
+\begin{appendices}
+\section{核心算法说明}
+本文数值计算流程如下：
+\begin{enumerate}
+  \item 由决策变量计算投放点、起爆点与云团中心轨迹；
+  \item 在 $[t_e,\min(t_e+20,t_{\mathrm{hit}})]$ 上按步长 $\Delta t$ 离散；
+  \item 逐时刻计算点到线段距离并累计满足 $d(t)\le 10$ 的时长；
+  \item 问题2在航向邻域进行两阶段网格搜索。
+\end{enumerate}
+完整可运行程序见附录 B（文件 \texttt{code/solve\_q1\_q2.py}）。
+
+\section{问题1与问题2完整 Python 源程序}
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\zihao{-5},breaklines=true,columns=fullflexible,frame=single,numbers=left,numberstyle=\tiny]
+import numpy as np
+
+G = 9.8
+V_MISSILE = 300.0
+V_SINK = 3.0
+R_SMOKE = 10.0
+T_SMOKE = 20.0
+
+FAKE = np.array([0.0, 0.0, 0.0])
+TRUE_CENTER = np.array([0.0, 200.0, 5.0])
+M1 = np.array([20000.0, 0.0, 2000.0])
+FY1 = np.array([17800.0, 0.0, 1800.0])
+
+
+def unit(v):
+    return v / np.linalg.norm(v)
+
+
+def missile_hit_time(p0=M1):
+    return float(np.linalg.norm(p0 - FAKE) / V_MISSILE)
+
+
+def missile_pos(t, p0=M1):
+    return p0 + V_MISSILE * t * unit(FAKE - p0)
+
+
+def heading_to_fake(p=FY1):
+    d = FAKE[:2] - p[:2]
+    return unit(np.array([d[0], d[1], 0.0]))
+
+
+def heading_from_angle(theta):
+    return np.array([np.cos(theta), np.sin(theta), 0.0])
+
+
+def drop_point(speed, heading, t_drop, p0=FY1):
+    h = unit(np.array([heading[0], heading[1], 0.0]))
+    return p0 + speed * t_drop * h
+
+
+def det_point(speed, heading, t_drop, t_fuse, p0=FY1):
+    pd = drop_point(speed, heading, t_drop, p0)
+    h = unit(np.array([heading[0], heading[1], 0.0]))
+    v = speed * h
+    return np.array([
+        pd[0] + v[0] * t_fuse,
+        pd[1] + v[1] * t_fuse,
+        pd[2] - 0.5 * G * t_fuse ** 2,
+    ])
+
+
+def cloud_center(p_det, t_det, t):
+    return np.array([p_det[0], p_det[1], p_det[2] - V_SINK * (t - t_det)])
+
+
+def point_to_segment_dist(p, a, b):
+    ab = b - a
+    L2 = float(np.dot(ab, ab))
+    if L2 < 1e-18:
+        return float(np.linalg.norm(p - a))
+    s = float(np.clip(np.dot(p - a, ab) / L2, 0.0, 1.0))
+    return float(np.linalg.norm(p - (a + s * ab)))
+
+
+def effective_duration(speed, heading, t_drop, t_fuse, dt=0.01):
+    t_det = t_drop + t_fuse
+    p_det = det_point(speed, heading, t_drop, t_fuse)
+    t_hit = missile_hit_time()
+    t0, t1 = t_det, min(t_det + T_SMOKE, t_hit)
+    if t1 <= t0 or p_det[2] <= 0:
+        return 0.0
+    ts = np.arange(t0, t1 + 1e-12, dt)
+    total = 0.0
+    for t in ts:
+        c = cloud_center(p_det, t_det, t)
+        if point_to_segment_dist(c, missile_pos(t), TRUE_CENTER) <= R_SMOKE:
+            total += dt
+    return float(total)
+
+
+def solve_problem1():
+    speed, t_drop, t_fuse = 120.0, 1.5, 3.6
+    heading = heading_to_fake()
+    duration = effective_duration(speed, heading, t_drop, t_fuse, dt=0.01)
+    return {
+        "speed": speed,
+        "heading": heading,
+        "t_drop": t_drop,
+        "t_fuse": t_fuse,
+        "t_det": t_drop + t_fuse,
+        "drop": drop_point(speed, heading, t_drop),
+        "det": det_point(speed, heading, t_drop, t_fuse),
+        "duration": duration,
+    }
+
+
+def optimize_problem2():
+    best = (0.0, None)
+    for theta in np.linspace(np.pi - 0.25, np.pi + 0.25, 11):
+        for speed in [70, 85, 100, 115, 130, 140]:
+            for t_drop in np.linspace(0.3, 10.0, 12):
+                for t_fuse in np.linspace(1.0, 7.0, 11):
+                    heading = heading_from_angle(theta)
+                    if det_point(speed, heading, t_drop, t_fuse)[2] <= 2:
+                        continue
+                    J = effective_duration(speed, heading, t_drop, t_fuse, dt=0.05)
+                    if J > best[0]:
+                        best = (J, (theta, speed, t_drop, t_fuse))
+
+    theta0, speed0, t_drop0, t_fuse0 = best[1]
+    for theta in np.linspace(theta0 - 0.08, theta0 + 0.08, 9):
+        for speed in np.linspace(max(70, speed0 - 12), min(140, speed0 + 12), 7):
+            for t_drop in np.linspace(max(0.05, t_drop0 - 1.0), t_drop0 + 1.0, 9):
+                for t_fuse in np.linspace(max(0.4, t_fuse0 - 1.0), t_fuse0 + 1.0, 9):
+                    heading = heading_from_angle(theta)
+                    if det_point(speed, heading, t_drop, t_fuse)[2] <= 2:
+                        continue
+                    J = effective_duration(speed, heading, t_drop, t_fuse, dt=0.03)
+                    if J > best[0]:
+                        best = (J, (theta, float(speed), float(t_drop), float(t_fuse)))
+
+    theta, speed, t_drop, t_fuse = best[1]
+    heading = heading_from_angle(theta)
+    duration = effective_duration(speed, heading, t_drop, t_fuse, dt=0.01)
+    return {
+        "theta": theta,
+        "speed": speed,
+        "heading": heading,
+        "t_drop": t_drop,
+        "t_fuse": t_fuse,
+        "t_det": t_drop + t_fuse,
+        "drop": drop_point(speed, heading, t_drop),
+        "det": det_point(speed, heading, t_drop, t_fuse),
+        "duration": duration,
+    }
+
+
+if __name__ == "__main__":
+    q1 = solve_problem1()
+    print("Problem 1")
+    print("drop =", q1["drop"])
+    print("det  =", q1["det"])
+    print("J1   = {:.2f} s".format(q1["duration"]))
+
+    q2 = optimize_problem2()
+    print("Problem 2")
+    print("speed = {:.2f} m/s".format(q2["speed"]))
+    print("theta = {:.6f} rad".format(q2["theta"]))
+    print("drop  =", q2["drop"])
+    print("det   =", q2["det"])
+    print("J2    = {:.2f} s".format(q2["duration"]))
+\end{lstlisting}
+
+\end{appendices}
+
+\end{document}
