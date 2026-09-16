@@ -1,0 +1,245 @@
+%! Mode:: "TeX:UTF-8"
+%! TEX program = xelatex
+\documentclass[12pt,a4paper]{ctexart}
+
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+
+\geometry{margin=2.2cm}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.5em}{}
+
+\title{\textbf{定日镜场优化设计——报告提纲}\\[0.4em]
+\large 2023年高教社杯全国大学生数学建模竞赛 A题}
+\author{南京工业大学暑假集训\quad 作业二}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{汇报开场（1--2 分钟）}
+\begin{enumerate}
+  \item \textbf{题目}：2023 高教社杯全国大学生数学建模竞赛 A 题——定日镜场的优化设计。
+  \item \textbf{核心目标}：评价既有镜场年平均光学/热性能；在额定功率 $\ge 60\,\mathrm{MW}$ 下，最大化单位镜面面积年平均输出热功率。
+  \item \textbf{一句话结论}：
+  \begin{itemize}
+    \item 问题一：$\eta\approx0.5668$，$P\approx34.60\,\mathrm{MW}$，$E\approx0.5508\,\mathrm{kW/m^2}$（未达额定）；
+    \item 问题二：统一尺寸达标，$P\approx60.74\,\mathrm{MW}$，$E\approx0.4851\,\mathrm{kW/m^2}$；
+    \item 问题三：分环变尺寸,$P\approx60.38\,\mathrm{MW}$，$E\approx0.5112\,\mathrm{kW/m^2}$（较问题二约 $+5.4\%$）。
+  \end{itemize}
+\end{enumerate}
+
+\section{问题重述（简要）}
+\subsection{背景}
+塔式光热电站通过大量定日镜将太阳直射辐射反射汇聚至吸收塔顶部集热器，加热工质并发电。年平均光学效率与单位镜面面积年平均输出热功率是评价与优化的核心指标。
+
+\subsection{场地与设备}
+北纬 $39.4^\circ$、海拔 $3000\,\mathrm{m}$；圆形镜场半径 $350\,\mathrm{m}$；塔高 $80\,\mathrm{m}$；集热器直径 $7\,\mathrm{m}$、高 $8\,\mathrm{m}$；塔周 $100\,\mathrm{m}$ 空地；定日镜边长 $2\sim8\,\mathrm{m}$，安装高度 $2\sim6\,\mathrm{m}$；邻距至少比镜面宽度多 $5\,\mathrm{m}$。
+
+\subsection{三问任务}
+\begin{enumerate}
+  \item \textbf{问题1}：给定布局（$1745$ 面，$6\times6\,\mathrm{m}$，高 $4\,\mathrm{m}$）$\rightarrow$ 年平均光学效率、热功率、单位面积功率；
+  \item \textbf{问题2}：统一尺寸/高度，$P\ge60\,\mathrm{MW}$，最大化 $E$，输出 \texttt{result2.xlsx}；
+  \item \textbf{问题3}：允许尺寸/高度不同，同样约束，最大化 $E$，输出 \texttt{result3.xlsx}。
+\end{enumerate}
+
+\section{建模思路（重点）}
+\subsection{总体框架（四层）}
+\begin{enumerate}
+  \item \textbf{天文层}：太阳高度角、方位角、法向直接辐射辐照度 $DNI$；
+  \item \textbf{几何光学层}：入射/反射/法向 $\rightarrow$ 余弦效率；斜距 $\rightarrow$ 大气透射率；
+  \item \textbf{损失层}：阴影遮挡效率、截断效率（光斑溢出）；
+  \item \textbf{场级汇总与优化层}：$60$ 个代表时刻平均得到 $P_{\mathrm{year}}$、$E$；再在额定功率约束下寻优。
+\end{enumerate}
+
+\subsection{核心公式}
+光学效率：
+\begin{equation}
+\eta=\eta_{sb}\,\eta_{cos}\,\eta_{at}\,\eta_{trunc}\,\eta_{ref},\qquad \eta_{ref}=0.92.
+\end{equation}
+瞬时场功率：
+\begin{equation}
+P(t)=DNI(t)\sum_{i=1}^{N} A_i\eta_i(t),\qquad A_i=w_ih_i.
+\end{equation}
+年平均与单位面积指标：
+\begin{equation}
+P_{\mathrm{year}}=\overline{P(t)},\qquad
+E=\frac{P_{\mathrm{year}}}{\sum_{i=1}^{N}A_i}.
+\end{equation}
+
+\subsection{关键机理（口头解释要点）}
+\begin{enumerate}
+  \item \textbf{余弦效率}：入射与法向夹角，受纬度与镜—塔方位影响，往往是主瓶颈；
+  \item \textbf{截断效率}：太阳张角与镜面尺寸共同决定光斑尺度，远端/大镜更易溢出；
+  \item \textbf{遮挡效率}：塔影 + 邻镜入射/反射遮挡，随排布密度上升而下降；
+  \item \textbf{额定功率与单位面积的矛盾}：扩容达标会引入外圈低效面积，可能拉低 $E$。
+\end{enumerate}
+
+\subsection{主要模型假设}
+\begin{enumerate}
+  \item 晴空代表时刻评价（每月21日五个时刻，共60个）；
+  \item 理想双轴跟踪：镜心反射精确指向集热器中心；
+  \item 镜面反射率取常数 $0.92$；
+  \item 阴影遮挡与截断采用工程可计算近似，便于优化循环反复调用；
+  \item 问题二、三最优布局可用“塔位 + 同心圆（+ 分环尺寸）”参数化逼近。
+\end{enumerate}
+
+\subsection{降维策略（优化亮点）}
+\begin{enumerate}
+  \item \textbf{问题二}：决策由数千镜位收缩为 $(x_t,y_t,w,z)$，镜位由同心圆规则自动生成；
+  \item \textbf{问题三}：同环同尺寸/高度，以环参数 $\{w_k,z_k\}$ 做低维搜索。
+\end{enumerate}
+
+\section{求解思路与过程}
+\subsection{问题一：正向评价}
+\begin{enumerate}
+  \item 读取附件坐标，构造场配置（$N=1745$，$w=h=6\,\mathrm{m}$，$z=4\,\mathrm{m}$，塔在圆心）；
+  \item 对 $60$ 个代表时刻：计算太阳位置 $\rightarrow$ 各效率分量 $\rightarrow$ 场功率；
+  \item 输出月平均表、年平均表，并绘制布局图、月效率曲线、效率空间分布；
+  \item \textbf{预期检验}：余弦主导季节变化；效率内高外低；年平均功率明显低于 $60\,\mathrm{MW}$。
+\end{enumerate}
+
+\subsection{问题二：统一尺寸约束优化}
+\textbf{模型}：
+\begin{equation}
+\max E\quad\mathrm{s.t.}\quad P_{\mathrm{year}}\ge60,\quad
+2\le w\le8,\ 2\le z\le6,\ z>w/2,\ \text{邻距/空地/场地约束}.
+\end{equation}
+\textbf{过程}：
+\begin{enumerate}
+  \item 以塔为圆心生成同心圆：环距 $=$ 弧距 $=w+5$，裁剪到场地圆与塔周 $100\,\mathrm{m}$ 空地外；
+  \item 对 $y_t$、$w$（及配套 $z$）做网格枚举，全量年平均评价；
+  \item 筛选：先判断是否可行（$P\ge60$），再比较 $E$；
+  \item \textbf{最优方案}：塔位 $(0,0)$，$w=7.5\,\mathrm{m}$，$z=4.15\,\mathrm{m}$，$N=2226$。
+\end{enumerate}
+
+\subsection{问题三：分环变尺寸}
+\begin{enumerate}
+  \item 固定问题二最优塔位，隔离“尺寸分层”效应；
+  \item 参数化：$w_k=\mathrm{clip}\bigl(w_0\cdot s\cdot(a-bk)\bigr)$，$z_k=\max(z_0,w_k/2+\delta)$；
+  \item 对尺度因子 $s$、基准高度 $z_0$ 网格搜索并全量评价；
+  \item \textbf{最优方案}：$N=2503$，尺寸约 $6.15\sim7.95\,\mathrm{m}$，高度约 $4.00\sim4.33\,\mathrm{m}$。
+\end{enumerate}
+
+\subsection{程序实现（可一带而过）}
+\begin{itemize}
+  \item \texttt{code/heliostat\_field.py}：太阳位置、效率分量、年平均评价、布局生成；
+  \item \texttt{code/finalize2.py}：问题二、三搜索与结果导出；
+  \item \texttt{A题\_定日镜场的优化设计.ipynb}：流程演示；图表存于 \texttt{figures/}。
+\end{itemize}
+
+\section{结果分析（重点）}
+\subsection{问题一}
+\begin{table}[htbp]
+\centering
+\caption{问题一核心结果}
+\begin{tabular}{clc}
+\toprule
+指标 & 数值 & 解读 \\
+\midrule
+年平均光学效率 & $0.5668$ & 中等偏上 \\
+年平均余弦效率 & $0.7565$ & 主要损失源 \\
+遮挡 / 截断效率 & $0.9248$ / $0.9115$ & 布局较疏、溢出不大 \\
+年平均功率 & $34.60\,\mathrm{MW}$ & 距额定缺口约 $42\%$ \\
+单位面积功率 & $0.5508\,\mathrm{kW/m^2}$ & 高 $E$、低总功率 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{分析要点}：
+\begin{itemize}
+  \item 月效率关于6月近似对称，与太阳高度角年变化一致；
+  \item 由内环到外环效率下降；北侧整体略优于南侧（北半球几何特征）；
+  \item 若保持问题一的单位面积水平粗估达 $60\,\mathrm{MW}$，总面积约需扩大到当前的 $1.7$ 倍量级。
+\end{itemize}
+
+\subsection{问题二}
+\begin{enumerate}
+  \item $P=60.74\,\mathrm{MW}$，仅略高于额定，体现\textbf{边界最优}；
+  \item $E$ 由 $0.5508$ 降至 $0.4851$（约 $-11.9\%$）：外圈大尺寸、远距离镜面拉低截断与遮挡；
+  \item 余弦效率几乎不变（约 $0.75$）$\rightarrow$ 扩容主要靠面积，而非抬升余弦；
+  \item 对照叙事：问题一“精而不足”，问题二“满而达标”。
+\end{enumerate}
+
+\subsection{问题三}
+\begin{enumerate}
+  \item $E=0.5112\,\mathrm{kW/m^2}$，相对问题二约提高 $5.4\%$；
+  \item 截断效率由 $0.8466$ 升至 $0.8725$，为主要贡献；
+  \item 总面积略降、镜数增加：说明在额定功率附近，“更多稍小的镜子”优于“更少的大镜子”；
+  \item 仍低于问题一的 $E$：因存在 $60\,\mathrm{MW}$ 硬约束，无法回到无约束高效率点。
+\end{enumerate}
+
+\subsection{三问对比总表}
+\begin{table}[htbp]
+\centering
+\caption{三问核心指标汇总}
+\begin{tabular}{cccccc}
+\toprule
+问题 & $N$ & 光学效率 & 功率(MW) & 单位面积功率 & 是否达额定 \\
+\midrule
+一 & 1745 & 0.5668 & 34.60 & 0.5508 & 否 \\
+二 & 2226 & 0.4994 & 60.74 & 0.4851 & 是 \\
+三 & 2503 & 0.5163 & 60.38 & 0.5112 & 是 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{灵敏度与机制小结}
+\begin{itemize}
+  \item 增大 $w$：总功率上升，单位面积功率下降（光斑变大）；
+  \item 过度加密：遮挡效率下降；
+  \item 塔南移：北侧几何可能改善，但可用南侧面积变化，需数值权衡；
+  \item 额定功率附近提升 $E$：分环缩小外径尺寸是最有效低维手段之一。
+\end{itemize}
+
+\section{模型评价与展望}
+\subsection{优点}
+\begin{enumerate}
+  \item 光学效率分解清晰，便于定位损失来源；
+  \item 同心圆/分环参数化显著降维，结果可解释、可复现；
+  \item 三问形成完整叙事：评价基线 $\rightarrow$ 额定扩容 $\rightarrow$ 分层赎回效率。
+\end{enumerate}
+
+\subsection{不足与改进}
+\begin{enumerate}
+  \item 遮挡与截断为工程近似，精细阶段可换蒙特卡洛与多边形裁剪；
+  \item 网格搜索可嵌入遗传算法/粒子群做连续精修；
+  \item 可进一步引入成本、清洗、多塔等形成多目标优化。
+\end{enumerate}
+
+\section{结束语（约 30 秒）}
+\begin{enumerate}
+  \item 完成了评价—约束优化—分层改进的完整流程；
+  \item \textbf{核心认识}：额定功率硬约束会迫使镜场扩容并稀释单位面积效率；分环变尺寸可在达标附近“赎回”效率；
+  \item 谢谢各位老师，欢迎提问。
+\end{enumerate}
+
+\section{答辩可能问题（备答）}
+\begin{enumerate}
+  \item \textbf{为何问题二的 $E$ 比问题一低？}\\
+  因为必须扩容以达到 $60\,\mathrm{MW}$，外圈低效面积稀释了单位面积均值。
+  \item \textbf{截断为何不用全程蒙特卡洛？}\\
+  布局搜索需反复评价，光斑近似保持正确趋势且计算可行；精细校核阶段可替换。
+  \item \textbf{为何采用同心圆布局？}\\
+  工程上常见，同距离镜光学环境相近，可把数千维布局降为数维参数优化。
+  \item \textbf{问题三为何固定塔位？}\\
+  为隔离“尺寸分层”本身的贡献，避免与塔位移动效应混杂。
+  \item \textbf{60 个时刻能否代表全年？}\\
+  按赛题规定的代表时刻与晴空 $DNI$ 口径评价，与竞赛评分标准一致。
+\end{enumerate}
+
+\vspace{1.5em}
+\noindent\rule{\textwidth}{0.4pt}\\[0.5em]
+{\small 说明：本提纲对应作业二论文与程序结果；详细公式、图表与完整代码见 \texttt{main.pdf} 及附录。}
+
+\end{document}
